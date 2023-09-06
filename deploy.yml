@@ -1,0 +1,26 @@
+---
+- hosts: all
+  become: true
+  roles:
+    - docker
+
+  vars_files: 
+    - vars/vars.yml
+    - vars/vault.yml
+
+- ansible.builtin.import_playbook: docker/watchtower.yml
+- ansible.builtin.import_playbook: docker/vpn.yml
+- ansible.builtin.import_playbook: docker/traefik.yml
+- ansible.builtin.import_playbook: docker/cooking.yml
+- ansible.builtin.import_playbook: docker/calibre-web.yml
+- ansible.builtin.import_playbook: docker/calibre.yml
+- ansible.builtin.import_playbook: docker/homeassistant.yml
+- ansible.builtin.import_playbook: docker/jellyfin.yml
+- ansible.builtin.import_playbook: docker/nextcloud.yml
+- ansible.builtin.import_playbook: docker/ombi.yml
+- ansible.builtin.import_playbook: docker/prowlarr.yml
+- ansible.builtin.import_playbook: docker/qbittorrent.yml
+- ansible.builtin.import_playbook: docker/radarr.yml
+- ansible.builtin.import_playbook: docker/readarr.yml
+- ansible.builtin.import_playbook: docker/reddit-top-rss.yml
+- ansible.builtin.import_playbook: docker/sonarr.yml

@@ -1,0 +1,65 @@
+---
+- vars:
+    service: "ombi"
+    labels:
+    - key: "com.centurylinklabs.watchtower.enable"
+      value: "true"
+    - key: "traefik.enable"
+      value: "true"
+    - key: "traefik.http.routers.{{ service }}.rule"
+      value: "Host(`{{ service }}.{{ DOMAIN }}`)"
+    - key: "traefik.http.routers.{{ service }}.entrypoints"
+      value: "https"
+    - key: "traefik.http.routers.{{ service }}.tls"
+      value: "true"
+    - key: "traefik.http.routers.{{ service }}.tls.certresolver"
+      value: "letsencrypt"
+    - key: "traefik.http.routers.{{ service }}.service"
+      value: "{{ service }}"
+    - key: "traefik.http.routers.{{ service }}.tls.domains[0].main"
+      value: "*.{{ DOMAIN }}"
+    - key: "traefik.http.routers.{{ service }}.tls.domains[0].sans"
+      value: "{{ DOMAIN }}"
+    - key: "traefik.http.middlewares.{{ service }}.headers.SSLRedirect"
+      value: "true"
+    - key: "traefik.http.middlewares.{{ service }}.headers.STSSeconds"
+      value: "315360000"
+    - key: "traefik.http.middlewares.{{ service }}.headers.browserXSSFilter"
+      value: "true"
+    - key: "traefik.http.middlewares.{{ service }}.headers.contentTypeNosniff"
+      value: "true"
+    - key: "traefik.http.middlewares.{{ service }}.headers.forceSTSHeader"
+      value: "true"
+    - key: "traefik.http.middlewares.{{ service }}.headers.SSLHost"
+      value: ""
+    - key: "traefik.http.middlewares.{{ service }}.headers.STSIncludeSubdomains"
+      value: "true"
+    - key: "traefik.http.middlewares.{{ service }}.headers.STSPreload"
+      value: "true"
+    - key: "traefik.http.middlewares.{{ service }}.headers.frameDeny"
+      value: "true"
+    - key: "traefik.http.services.{{ service }}.loadbalancer.server.port"
+      value: "3579"
+    - key: "traefik.docker.network"
+      value: "traefik_proxy"
+
+  hosts: all
+  vars_files: 
+    - ../vars/vars.yml
+    - ../vars/vault.yml
+
+  tasks:
+    - name: Start ombi
+      docker_container:
+        image: lscr.io/linuxserver/ombi:latest
+        name: "{{ service }}"
+        env:
+          PUID: "1000"
+          PGID: "1000"
+          TZ: "Europe/Amsterdam"
+          BASE_URL: "/ombi" #optional
+        volumes:
+          - "{{ docker_config_dir }}/{{ service }}:/config"
+        restart_policy: unless-stopped
+        network_mode: container:vpn
+        labels: "{{ labels | items2dict}}"

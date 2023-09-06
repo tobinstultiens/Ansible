@@ -1,0 +1,78 @@
+---
+- vars:
+    service: "vpn"
+    wireguard: "/home/tobins"
+
+  become: yes
+  hosts: all
+  vars_files: 
+    - ../vars/vars.yml
+    - ../vars/vault.yml
+
+  tasks:
+    - name: Check if scripts are up to date
+      ansible.builtin.copy:
+        src: ../local/WireGuard
+        dest: "{{ wireguard }}"
+
+    - name: Set sysctl
+      sysctl:
+        name: net.ipv4.conf.all.src_valid_mark
+        value: "1"
+        state: present
+
+    - name: Start vpn
+      docker_container:
+        image: thrnz/docker-wireguard-pia:latest
+        name: "{{ service }}"
+        restart_policy: unless-stopped
+        state: started
+        privileged: true
+        volumes:
+          - "{{ wireguard }}:/pia-shared"
+        capabilities:
+          - NET_ADMIN
+          - SYS_MODULE
+        ports:
+          # Sonarr
+          - "8989:8989"
+          # Radarr
+          - "7878:7878"
+          # Bazarr
+          - "6767:6767"
+          # "Readarr  
+          - "8787:8787"
+          # "Prowlarr 
+          - "9696:9696"
+          # "Calibre  
+          - "8081:8081"
+          - "8181:8181"
+          # "qbittorrent
+          - "6881:6881"
+          - "6881:6881/udp"
+          - "8080:8080"
+          - "4343:4343"
+          # "Tautulli 
+          #-" 8181:8181"
+          # "Ombi     
+          - "3579:3579"
+        env:
+          LOC: poland
+          USER: "{{ VPN_USER }}"
+          PASS: "{{ VPN_PASS }}"
+          PORT_FORWARDING: "1"
+          QBT_USER: "{{ QBT_USER }}"
+          QBT_PASS: "{{ QBT_PASS }}"
+          QBT_HOST: "{{ QBT_HOST }}"
+          PORT_SCRIPT: "/pia-shared/updateport.sh"
+          LOCAL_NETWORK: "192.168.178.0/24"
+          NFTABLES: "1"
+        sysctls:
+          {
+            # wg-quick fails to set this without --privileged, so set it here instead if needed
+            #net.ipv4.conf.all.src_valid_mark": "1",
+          }
+        labels:
+          {
+            "traefik.enable": "true"
+          }

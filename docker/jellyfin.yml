@@ -1,0 +1,47 @@
+---
+- vars:
+    service: "jellyfin"
+    labels:
+    - key: "com.centurylinklabs.watchtower.enable"
+      value: "true"
+    - key: "traefik.enable"
+      value: "true"
+    - key: "traefik.http.routers.{{ service }}.rule"
+      value: "Host(`{{ service }}.{{ DOMAIN }}`)"
+    - key: "traefik.http.routers.{{ service }}.service"
+      value: "{{ service }}"
+    - key: "traefik.http.routers.{{ service }}.entrypoints"
+      value: "https"
+    - key: "traefik.http.routers.{{ service }}.tls"
+      value: "true"
+    - key: "traefik.http.routers.{{ service }}.tls.certresolver"
+      value: "letsencrypt"
+    - key: "traefik.http.services.{{ service }}.loadbalancer.server.port"
+      value: "8096"
+
+  hosts: all
+  vars_files: 
+    - ../vars/vars.yml
+    - ../vars/vault.yml
+
+  tasks:
+    - name: Start Jellyfin
+      docker_container:
+        image: lscr.io/linuxserver/jellyfin:latest
+        name: "{{ service }}"
+        env:
+          PUID: "1000"
+          PGID: "1000"
+          TZ: Europe/Amsterdam
+        devices:
+          - "/dev/dri:/dev/dri"
+        volumes:
+          - '/media/NAS/Tobin/Jellyfin/dist:/usr/share/jellyfin/web:ro'
+          - "{{ docker_config_dir }}/{{ service }}:/config"
+          - "{{ docker_nas_dir }}:/storage"
+        ports:
+          - 8920:8920 # optional
+          - 7359:7359/udp # optional
+          - 1900:1900/udp # optional
+        restart_policy: unless-stopped
+        labels: "{{ labels | items2dict}}"

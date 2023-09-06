@@ -1,0 +1,59 @@
+---
+- vars:
+    service: "nextcloud"
+    database: "nextclouddb"
+    labels:
+    - key: "com.centurylinklabs.watchtower.enable"
+      value: "true"
+    - key: "traefik.enable"
+      value: "true"
+    - key: "traefik.http.routers.{{ service }}.rule"
+      value: "Host(`{{ service }}.{{ DOMAIN }}`)"
+    - key: "traefik.http.routers.{{ service }}.service"
+      value: "{{ service }}"
+    - key: "traefik.http.routers.{{ service }}.entrypoints"
+      value: "https"
+    - key: "traefik.http.routers.{{ service }}.tls"
+      value: "true"
+    - key: "traefik.http.routers.{{ service }}.tls.certresolver"
+      value: "letsencrypt"
+    - key: "traefik.http.services.{{ service }}.loadbalancer.server.port"
+      value: "80"
+
+  hosts: all
+  vars_files: 
+    - ../vars/vars.yml
+    - ../vars/vault.yml
+
+  tasks:
+    - name: Start nextcloud database
+      docker_container:
+        image: mariadb:10.6
+        name: "{{ database }}"
+        command: --transaction-isolation=READ-COMMITTED --log-bin=binlog --binlog-format=ROW
+        env:
+          MYSQL_ROOT_PASSWORD: "askldfaslkjd"
+          MYSQL_PASSWORD: "askldfaslkjd"
+          MYSQL_DATABASE: "nextcloud"
+          MYSQL_USER: "nextcloud"
+        volumes:
+          - /db/nextcloud:/var/lib/mysql
+        restart_policy: unless-stopped
+
+    - name: Start nextcloud
+      docker_container:
+        image: nextcloud
+        hostname: "{{ service }}.{{ DOMAIN }}"
+        name: "{{ service }}"
+        links:
+          - nextclouddb
+        env:
+          MYSQL_PASSWORD: askldfaslkjd
+          MYSQL_DATABASE: nextcloud
+          MYSQL_USER: nextcloud
+          MYSQL_HOST: nextclouddb
+          NEXTCLOUD_HOSTNAME: "{{ service }}.{{ DOMAIN }}"
+        volumes:
+          - "{{ docker_config_dir }}/{{ service }}:/var/www/html"
+        restart_policy: unless-stopped
+        labels: "{{ labels | items2dict}}"

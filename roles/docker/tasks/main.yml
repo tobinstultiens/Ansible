@@ -1,0 +1,38 @@
+---
+    - name: Ensure python-requests is installed.
+      package:
+        name: python-requests
+        state: present
+
+    - name: Ensure python-docker is installed.
+      package:
+        name: python-docker
+        state: present
+
+    - name: Ensure docker is installed.
+      package: 
+        name: docker
+        state: present
+
+    - name: Ensure docker-compose is installed.
+      package: 
+        name: docker-compose
+        state: present
+
+    - name: Ensure docker is running.
+      service: 
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Add user to docker group
+      ansible.builtin.user:
+        name: "{{ ansible_user }}"
+        groups: docker
+        append: true
+      register: add_to_docker_group_result
+
+    - name: Reset ssh connection to allow user changes to affect ansible user
+      ansible.builtin.meta: reset_connection
+      when: add_to_docker_group_result
+

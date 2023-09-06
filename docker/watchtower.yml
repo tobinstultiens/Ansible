@@ -1,0 +1,23 @@
+---
+- vars:
+    service: "watchtower"
+
+  hosts: all
+  vars_files: 
+    - ../vars/vars.yml
+    - ../vars/vault.yml
+
+  tasks:
+    - name: Start watchtower
+      docker_container:
+        image: containrrr/watchtower
+        name: "{{ service }}"
+        command: --cleanup --label-enable --interval 3600
+        labels:
+          {
+            "com.centurylinklabs.watchtower.enable": "true"
+          }
+        restart_policy: always
+        network_mode: none
+        volumes:
+          - /var/run/docker.sock:/var/run/docker.sock

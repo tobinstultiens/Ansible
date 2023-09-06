@@ -1,0 +1,33 @@
+---
+- hosts: all
+  become: true
+  roles:
+    - docker
+
+  vars_files: vars/vars.yml
+
+  tasks:
+    - name: Run the equivalent of "pacman -Sy" as a separate step
+      ansible.builtin.package:
+        update_cache: true
+
+    - name: Ensure sshfs is installed.
+      ansible.builtin.package:
+        name: sshfs
+        state: present
+
+    - name: Check if nas is already defined in the fstab
+      ansible.builtin.lineinfile:
+        state: absent
+        path: "/etc/fstab"
+        regexp: "^stultiensnas@{{ nas_ip }}"
+      check_mode: true
+      changed_when: false # This just makes things look prettier in the logs
+      register: check
+
+    - name: Define nas mount if undefined
+      ansible.builtin.lineinfile:
+        state: present
+        path: "/etc/fstab"
+        line: "stultiensnas@{{ nas_ip }}:/ /mnt/stultnas fuse.sshfs noauto,x-systemd.automount,_netdev,reconnect,identityfile=/home/tobins/.ssh/id_rsa,allow_other,default_permissions 0 0"
+      when: check.found == 0

@@ -1,0 +1,41 @@
+---
+- vars:
+    service: "reddit-top-rss"
+    labels:
+    - key: "com.centurylinklabs.watchtower.enable"
+      value: "true"
+    - key: "traefik.enable"
+      value: "true"
+    - key: "traefik.http.routers.{{ service }}.rule"
+      value: "Host(`{{ service }}.{{ DOMAIN }}`)"
+    - key: "traefik.http.routers.{{ service }}.service"
+      value: "{{ service }}"
+    - key: "traefik.http.routers.{{ service }}.entrypoints"
+      value: "https"
+    - key: "traefik.http.routers.{{ service }}.tls"
+      value: "true"
+    - key: "traefik.http.routers.{{ service }}.tls.certresolver"
+      value: "letsencrypt"
+
+  hosts: all
+  vars_files: 
+    - ../vars/vars.yml
+    - ../vars/vault.yml
+
+  tasks:
+    - name: Start reddit top rss
+      docker_container:
+        image: johnny5w/reddit-top-rss
+        name: "{{ service }}"
+        env:
+          REDDIT_USER: "{{ reddit_rss_user }}"
+          REDDIT_CLIENT_ID: "{{ reddit_client_id }}"
+          REDDIT_CLIENT_SECRET: "{{ reddit_client_secret }}"
+          DEFAULT_SUBREDDIT: dankmemes
+        volumes:
+          - "{{ docker_config_dir }}/{{ service }}:/config"
+          - "{{ docker_nas_dir }}:/tv"
+          - "{{ docker_nas_dir }}/Download:/downloads"
+        restart_policy: unless-stopped
+        network_mode: container:vpn
+        labels: "{{ labels | items2dict}}"

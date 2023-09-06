@@ -1,0 +1,9 @@
+[home]
+192.168.178.33
+
+[multi:children]
+home
+
+[multi:vars]
+ansible_user=tobins
+ansible_port=69
