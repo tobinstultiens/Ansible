@@ -20,7 +20,7 @@
       ansible.builtin.lineinfile:
         state: absent
         path: "/etc/fstab"
-        regexp: "^stultiensnas@{{ nas_ip }}"
+        regexp: "^{{ nas_user }}@{{ nas_ip }}"
       check_mode: true
       changed_when: false # This just makes things look prettier in the logs
       register: check
@@ -31,7 +31,7 @@
       ansible.builtin.lineinfile:
         state: present
         path: "/etc/fstab"
-        line: "stultiensnas@{{ nas_ip }}:/ {{ docker_nas }} fuse.sshfs noauto,x-systemd.automount,_netdev,reconnect,identityfile=/home/tobins/.ssh/id_ed25519,allow_other,default_permissions 0 0"
+        line: "{{ nas_user }}@{{ nas_ip }}:/ {{ docker_nas }} fuse.sshfs noauto,x-systemd.automount,_netdev,reconnect,identityfile=/home/tobins/.ssh/id_ed25519,allow_other,default_permissions 0 0"
       when: check.found == 0
 
     - name: Reboot if nas mount was undefined
