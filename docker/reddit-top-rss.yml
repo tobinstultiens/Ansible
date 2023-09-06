@@ -32,10 +32,6 @@
           REDDIT_CLIENT_ID: "{{ reddit_client_id }}"
           REDDIT_CLIENT_SECRET: "{{ reddit_client_secret }}"
           DEFAULT_SUBREDDIT: dankmemes
-        volumes:
-          - "{{ docker_config_dir }}/{{ service }}:/config"
-          - "{{ docker_nas_dir }}:/tv"
-          - "{{ docker_nas_dir }}/Download:/downloads"
         restart_policy: unless-stopped
         network_mode: container:vpn
         labels: "{{ labels | items2dict}}"

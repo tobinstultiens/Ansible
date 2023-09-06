@@ -38,7 +38,7 @@
         volumes:
           - "{{ docker_config_dir }}/{{ service }}:/config"
           - "{{ docker_nas_dir }}:/storage"
-          - "{{ docker_nas_dir }}/Download:/downloads"
+          - "{{ docker_nas_dir }}:/downloads"
         network_mode: container:vpn
         restart_policy: unless-stopped
         labels: "{{ labels | items2dict}}"

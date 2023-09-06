@@ -36,7 +36,7 @@
         devices:
           - "/dev/dri:/dev/dri"
         volumes:
-          - '/media/NAS/Tobin/Jellyfin/dist:/usr/share/jellyfin/web:ro'
+          #- '{{ docker_nas_dir }}/Jellyfin/dist:/usr/share/jellyfin/web:ro'
           - "{{ docker_config_dir }}/{{ service }}:/config"
           - "{{ docker_nas_dir }}:/storage"
         ports:
