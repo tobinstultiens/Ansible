@@ -1,7 +1,6 @@
 ---
 - vars:
     service: "vpn"
-    wireguard: "/home/tobins"
 
   become: yes
   hosts: all
