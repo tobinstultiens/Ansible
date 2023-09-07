@@ -14,6 +14,11 @@
         src: ../local/WireGuard
         dest: "{{ wireguard }}"
 
+    - name: Changing permissions of WireGuard script with +x
+      file:
+        dest: "{{ wireguard }}/WireGuard/updateport.sh"
+        mode: "a+x"
+
     - name: Set sysctl
       sysctl:
         name: net.ipv4.conf.all.src_valid_mark
@@ -63,7 +68,7 @@
           QBT_USER: "{{ QBT_USER }}"
           QBT_PASS: "{{ QBT_PASS }}"
           QBT_HOST: "{{ QBT_HOST }}"
-          PORT_SCRIPT: "/pia-shared/updateport.sh"
+          PORT_SCRIPT: "/pia-shared/WireGuard/updateport.sh"
           LOCAL_NETWORK: "192.168.178.0/24"
           NFTABLES: "1"
         sysctls:
