@@ -16,10 +16,10 @@
       value: "letsencrypt"
     - key: "traefik.http.routers.{{ service }}.service"
       value: "{{ service }}"
-    - key: "traefik.http.routers.{{ service }}.tls.domains[0].main"
-      value: "*.{{ DOMAIN }}"
-    - key: "traefik.http.routers.{{ service }}.tls.domains[0].sans"
-      value: "{{ DOMAIN }}"
+        #    - key: "traefik.http.routers.{{ service }}.tls.domains[0].main"
+        #      value: "{{ service }}.{{ DOMAIN }}"
+        #    - key: "traefik.http.routers.{{ service }}.tls.domains[0].sans"
+        #      value: "{{ DOMAIN }}"
     - key: "traefik.http.middlewares.{{ service }}.headers.SSLRedirect"
       value: "true"
     - key: "traefik.http.middlewares.{{ service }}.headers.STSSeconds"
@@ -53,11 +53,11 @@
       docker_container:
         image: lscr.io/linuxserver/ombi:latest
         name: "{{ service }}"
+        recreate: true
         env:
           PUID: "1000"
           PGID: "1000"
           TZ: "Europe/Amsterdam"
-          BASE_URL: "/ombi" #optional
         volumes:
           - "{{ docker_config_dir }}/{{ service }}:/config"
         restart_policy: unless-stopped

@@ -56,8 +56,6 @@
           - "6881:6881/udp"
           - "8080:8080"
           - "4343:4343"
-          # "Tautulli 
-          #-" 8181:8181"
           # "Ombi     
           - "3579:3579"
         env:
@@ -71,6 +69,7 @@
           PORT_SCRIPT: "/pia-shared/WireGuard/updateport.sh"
           LOCAL_NETWORK: "192.168.178.0/24"
           NFTABLES: "1"
+          FIREWALL: "0"
         sysctls:
           {
             # wg-quick fails to set this without --privileged, so set it here instead if needed
@@ -80,3 +79,11 @@
           {
             "traefik.enable": "true"
           }
+      notify: Run command within the vpn container
+
+  handlers: 
+    - name: Run command within the vpn container
+      community.docker.docker_container_exec:
+        container: "{{ service }}"
+        command:
+           /bin/sh -c "curl -c /mam.cookies -b 'mam_id={{ MAM_SESSION }}' https://t.myanonamouse.net/json/dynamicSeedbox.php"

@@ -37,7 +37,7 @@
           TZ: Europe/Amsterdam
         volumes:
           - "{{ docker_config_dir }}/{{ service }}:/config"
-          - "{{ docker_nas_dir }}:/storage"
+          - "{{ docker_nas_dir }}:/books"
           - "{{ docker_nas_dir }}/Download:/downloads"
         network_mode: container:vpn
         restart_policy: unless-stopped

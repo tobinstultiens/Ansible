@@ -11,6 +11,13 @@ entryPoints:
           scheme: https
   https:
     address: ":443"
+    http:
+      tls:
+        certResolver: letsencrypt
+        domains:
+          - main: "{{ DOMAIN }}"
+            sans:
+              - "*.{{ DOMAIN }}"
 
 providers:
   docker:
@@ -21,6 +28,6 @@ certificatesResolvers:
     acme:
       email: "{{ email }}"
       storage: "/letsencrypt/acme.json"
-      caServer: "https://acme-staging-v02.api.letsencrypt.org/directory"
+      caServer: "https://acme-v02.api.letsencrypt.org/directory"
       httpChallenge:
         entryPoint: http
