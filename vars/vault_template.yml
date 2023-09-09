@@ -1,0 +1,34 @@
+---
+# Reddit rss service
+reddit_rss_user: ""
+reddit_client_id: ""
+reddit_client_secret: ""
+
+# Email for traefik and letsencrypt
+email: ""
+DOMAIN: ""
+traefik: "/home/user/traefik"
+# traefik basic auth
+traefik_user: ""
+traefik_password: ""
+
+# Qbittorrent setup and for the script
+QBT_USER: ""
+QBT_PASS: ""
+QBT_HOST: "IP:PORT"
+
+# The nas information
+nas_ip: "IP"
+nas_user: "nas_user"
+
+# Configuration location of the docker containers
+docker_config_dir: "/config"
+# Connection between nas and service
+docker_nas: "/mnt/nas"
+docker_nas_dir: "/mnt/nas/Location/Of/Media/Files"
+
+# VPN PIA
+VPN_USER: ""
+VPN_PASS: ""
+wireguard: "/home/user"
+MAM_SESSION: ""
