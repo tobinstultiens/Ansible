@@ -1,0 +1,75 @@
+---
+- vars:
+    service: "tdarr"
+    labels:
+    - key: "com.centurylinklabs.watchtower.enable"
+      value: "true"
+    - key: "traefik.enable"
+      value: "true"
+    - key: "traefik.http.routers.{{ service }}.rule"
+      value: "Host(`{{ service }}.{{ DOMAIN }}`)"
+    - key: "traefik.http.routers.{{ service }}.service"
+      value: "{{ service }}"
+    - key: "traefik.http.routers.{{ service }}.entrypoints"
+      value: "https"
+    - key: "traefik.http.routers.{{ service }}.tls"
+      value: "true"
+    - key: "traefik.http.routers.{{ service }}.tls.certresolver"
+      value: "letsencrypt"
+    - key: "traefik.http.services.{{ service }}.loadbalancer.server.port"
+      value: "8265"
+
+  hosts: all
+  vars_files: 
+    - ../vars/vars.yml
+    - ../vars/vault.yml
+
+  tasks:
+    - name: Start tdarr
+      docker_container:
+        image: ghcr.io/haveagitgat/tdarr:latest
+        name: "{{ service }}"
+        env:
+          PUID: "1000"
+          PGID: "1000"
+          TZ: Europe/Amsterdam
+          UMASK_SET: 002
+          serverIP: 0.0.0.0
+          serverPort: 8266
+          webUIPort: 8265
+          internalNode: true
+          inContainer: true
+          nodeName: MyInternalNode
+        devices:
+          - "/dev/dri:/dev/dri"
+        volumes:
+          - "{{ docker_config_dir }}/{{ service }}/server:/app/server"
+          - "{{ docker_config_dir }}/{{ service }}/config:/app/configs"
+          - "{{ docker_config_dir }}/{{ service }}/logs:/app/logs"
+          - "{{ docker_nas_dir }}:/media"
+          - "/tmp/tdarr:/temp"
+        restart_policy: unless-stopped
+        labels: "{{ labels | items2dict}}"
+
+    - name: Start tdarr node.
+      docker_container:
+        name: "{{ service }}-node"
+        image: ghcr.io/haveagitgat/tdarr_node:latest
+        network_mode: service:tdarr
+        env:
+          PUID: "1000"
+          PGID: "1000"
+          TZ: Europe/Amsterdam
+          UMASK_SET: 002
+          nodeName: MyExternalNode
+          serverIP: 0.0.0.0
+          serverPort: 8266
+          inContainer: true
+        devices:
+          - "/dev/dri:/dev/dri"
+        volumes:
+          - "{{ docker_config_dir }}/{{ service }}/config:/app/configs"
+          - "{{ docker_config_dir }}/{{ service }}/logs:/app/logs"
+          - "{{ docker_nas_dir }}:/media"
+          - "/tmp/tdarr:/temp"
+        restart_policy: unless-stopped
