@@ -33,13 +33,13 @@
           PUID: "1000"
           PGID: "1000"
           TZ: Europe/Amsterdam
-          UMASK_SET: 002
-          serverIP: 0.0.0.0
-          serverPort: 8266
-          webUIPort: 8265
-          internalNode: true
-          inContainer: true
-          nodeName: MyInternalNode
+          UMASK_SET: "002"
+          serverIP: "0.0.0.0"
+          serverPort: "8266"
+          webUIPort: "8265"
+          internalNode: "true"
+          inContainer: "true"
+          nodeName: "MyInternalNode"
         devices:
           - "/dev/dri:/dev/dri"
         volumes:
@@ -55,16 +55,16 @@
       docker_container:
         name: "{{ service }}-node"
         image: ghcr.io/haveagitgat/tdarr_node:latest
-        network_mode: service:tdarr
+        network_mode: "container:{{ service }}"
         env:
           PUID: "1000"
           PGID: "1000"
           TZ: Europe/Amsterdam
-          UMASK_SET: 002
+          UMASK_SET: "002"
           nodeName: MyExternalNode
-          serverIP: 0.0.0.0
-          serverPort: 8266
-          inContainer: true
+          serverIP: "0.0.0.0"
+          serverPort: "8266"
+          inContainer: "true"
         devices:
           - "/dev/dri:/dev/dri"
         volumes:
