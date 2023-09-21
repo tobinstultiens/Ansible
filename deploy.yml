@@ -25,3 +25,4 @@
 - ansible.builtin.import_playbook: docker/reddit-top-rss.yml
 - ansible.builtin.import_playbook: docker/sonarr.yml
 - ansible.builtin.import_playbook: docker/tdarr.yml
+- ansible.builtin.import_playbook: docker/uptime-kuma.yml
