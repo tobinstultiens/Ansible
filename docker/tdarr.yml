@@ -75,3 +75,6 @@
           - "{{ docker_nas_dir }}:/media"
           - "/tmp/tdarr:/temp"
         restart_policy: unless-stopped
+        labels:
+          com.centurylinklabs.watchtower.enable: "true"
+
