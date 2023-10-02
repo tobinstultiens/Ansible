@@ -12,11 +12,11 @@
     - name: Check if scripts are up to date
       ansible.builtin.copy:
         src: ../local/WireGuard
-        dest: "{{ wireguard }}"
+        dest: "{{ home }}"
 
     - name: Changing permissions of WireGuard script with +x
       file:
-        dest: "{{ wireguard }}/WireGuard/updateport.sh"
+        dest: "{{ home }}/WireGuard/updateport.sh"
         mode: "a+x"
 
     - name: Set sysctl
@@ -33,7 +33,7 @@
         state: started
         privileged: true
         volumes:
-          - "{{ wireguard }}:/pia-shared"
+          - "{{ home }}:/pia-shared"
         capabilities:
           - NET_ADMIN
           - SYS_MODULE

@@ -49,7 +49,7 @@
           - "{{ docker_config_dir }}/{{ service }}/config:/app/configs"
           - "{{ docker_config_dir }}/{{ service }}/logs:/app/logs"
           - "{{ docker_nas_dir }}:/media"
-          - "/tmp/tdarr:/temp"
+          - "{{ home }}/tmp/tdarr:/temp"
         restart_policy: unless-stopped
         labels: "{{ labels | items2dict}}"
 

@@ -30,5 +30,5 @@ docker_nas_dir: "/mnt/nas/Location/Of/Media/Files"
 # VPN PIA
 VPN_USER: ""
 VPN_PASS: ""
-wireguard: "/home/user"
+home: "/home/user"
 MAM_SESSION: ""
