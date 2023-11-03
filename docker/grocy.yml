@@ -1,0 +1,40 @@
+---
+- vars:
+    service: "grocy"
+    labels:
+    - key: "com.centurylinklabs.watchtower.enable"
+      value: "true"
+    - key: "traefik.enable"
+      value: "true"
+    - key: "traefik.http.routers.{{ service }}.rule"
+      value: "Host(`{{ service }}.{{ DOMAIN }}`)"
+    - key: "traefik.http.routers.{{ service }}.service"
+      value: "{{ service }}"
+    - key: "traefik.http.routers.{{ service }}.entrypoints"
+      value: "https"
+    - key: "traefik.http.routers.{{ service }}.tls"
+      value: "true"
+    - key: "traefik.http.routers.{{ service }}.tls.certresolver"
+      value: "letsencrypt"
+    - key: "traefik.http.services.{{ service }}.loadbalancer.server.port"
+      value: "9283"
+
+  hosts: all
+  vars_files: 
+    - ../vars/vars.yml
+    - ../vars/vault.yml
+
+  tasks:
+    - name: Start grocy
+      docker_container:
+        image: linuxserver/grocy
+        name: "{{ service }}"
+        env:
+          PUID: "1000"
+          PGID: "1000"
+          TZ: Europe/Amsterdam
+        volumes:
+          - "{{ docker_config_dir }}/{{ service }}:/config"
+        restart_policy: unless-stopped
+        network_mode: container:vpn
+        labels: "{{ labels | items2dict}}"
