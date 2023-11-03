@@ -17,7 +17,7 @@
     - key: "traefik.http.routers.{{ service }}.tls.certresolver"
       value: "letsencrypt"
     - key: "traefik.http.services.{{ service }}.loadbalancer.server.port"
-      value: "9283"
+      value: "80"
 
   hosts: all
   vars_files: 
