@@ -36,5 +36,4 @@
         volumes:
           - "{{ docker_config_dir }}/{{ service }}:/config"
         restart_policy: unless-stopped
-        network_mode: container:vpn
         labels: "{{ labels | items2dict}}"
