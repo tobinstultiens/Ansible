@@ -39,4 +39,5 @@
           - "{{ docker_config_dir }}/{{ service }}:/config"
           - "{{ docker_nas_dir }}:/tv"
         restart_policy: unless-stopped
+        network_mode: container:vpn
         labels: "{{ labels | items2dict}}"

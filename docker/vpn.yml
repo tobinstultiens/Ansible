@@ -72,13 +72,11 @@
           NFTABLES: "1"
           FIREWALL: "0"
         sysctls:
-          {
-            # wg-quick fails to set this without --privileged, so set it here instead if needed
-            #net.ipv4.conf.all.src_valid_mark": "1",
-            #net.ipv6.conf.default.disable_ipv6: "1",
-            #net.ipv6.conf.all.disable_ipv6: "1",
-            #net.ipv6.conf.lo.disable_ipv6: "1",
-          }
+          # wg-quick fails to set this without --privileged, so set it here instead if needed
+          net.ipv4.conf.all.src_valid_mark: "1"
+          net.ipv6.conf.default.disable_ipv6: "1"
+          net.ipv6.conf.all.disable_ipv6: "1"
+          net.ipv6.conf.lo.disable_ipv6: "1"
         labels:
           {
             "traefik.enable": "true"
