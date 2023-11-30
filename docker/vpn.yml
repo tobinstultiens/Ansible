@@ -31,7 +31,6 @@
         name: "{{ service }}"
         restart_policy: unless-stopped
         state: started
-        privileged: true
         volumes:
           - "{{ home }}:/pia-shared"
         capabilities:

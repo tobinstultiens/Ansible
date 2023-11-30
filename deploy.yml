@@ -23,6 +23,7 @@
 - ansible.builtin.import_playbook: docker/radarr.yml
 - ansible.builtin.import_playbook: docker/grocy.yml
 - ansible.builtin.import_playbook: docker/readarr.yml
+- ansible.builtin.import_playbook: docker/lidarr.yml
 - ansible.builtin.import_playbook: docker/reddit-top-rss.yml
 - ansible.builtin.import_playbook: docker/sonarr.yml
 - ansible.builtin.import_playbook: docker/tdarr.yml
