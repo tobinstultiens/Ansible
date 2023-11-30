@@ -2,8 +2,6 @@
 - vars:
     service: "sonarr"
     labels:
-      - key: "traefik.http.routers.{{ service }}.rule"
-        value: "Host(`{{ service }}.{{ DOMAIN }}`)"
       - key: "com.centurylinklabs.watchtower.enable"
         value: "true"
       - key: "traefik.enable"
