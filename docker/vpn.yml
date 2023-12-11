@@ -69,7 +69,7 @@
           PORT_SCRIPT: "/pia-shared/WireGuard/updateport.sh"
           LOCAL_NETWORK: "192.168.178.0/24"
           NFTABLES: "1"
-          FIREWALL: "0"
+          FIREWALL: "1"
         sysctls:
           # wg-quick fails to set this without --privileged, so set it here instead if needed
           net.ipv4.conf.all.src_valid_mark: "1"
