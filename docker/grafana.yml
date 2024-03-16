@@ -1,6 +1,6 @@
 ---
 - vars:
-    service: "uptime-kuma"
+    service: "grafana"
     labels:
     - key: "com.centurylinklabs.watchtower.enable"
       value: "true"
@@ -19,7 +19,7 @@
     - key: "traefik.http.routers.{{ service }}.tls.certresolver"
       value: "letsencrypt"
     - key: "traefik.http.services.{{ service }}.loadbalancer.server.port"
-      value: "3001"
+      value: "3000"
 
   hosts: all
   vars_files: 
@@ -27,11 +27,12 @@
     - ../vars/vault.yml
 
   tasks:
-    - name: Start uptime kuma
+    - name: Start grafana
       docker_container:
-        image: louislam/uptime-kuma:latest
+        image: grafana/grafana
         name: "{{ service }}"
+        user: "0:0"
         volumes:
-          - "{{ docker_config_dir }}/{{ service }}:/app/data"
+          - "{{ docker_config_dir }}/{{ service }}:/var/lib/grafana"
         restart_policy: unless-stopped
         labels: "{{ labels | items2dict}}"
