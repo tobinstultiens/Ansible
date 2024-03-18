@@ -2,17 +2,56 @@
 # For configuration options and examples, please see:
 # https://gethomepage.dev/latest/configs/services
 
-- My First Group:
-    - My First Service:
-        href: http://localhost/
-        description: Homepage is awesome
+- Media:
+    - Jellyfin:
+        icon: jellyfin.png
+        href: https://jellyfin.tstultiens.com/
+        description: Series management
+        siteMonitor: https://jellyfin.tstultiens.com/
+        widget:
+          type: jellyfin
+          url: https://jellyfin.tstultiens.com
+          key: {{jellyfin_apikey}}
+          enableBlocks: true # optional, defaults to false
+          enableNowPlaying: true # optional, defaults to true
+    - Ombi:
+        icon: ombi.png
+        href: https://ombi.tstultiens.com/
+        description: Series management
+        siteMonitor: https://ombi.tstultiens.com/
+        widget:
+          type: ombi
+          url: https://ombi.tstultiens.com
+          key: {{ombi_apikey}}
 
-- My Second Group:
-    - My Second Service:
-        href: http://localhost/
-        description: Homepage is the best
-
-- My Third Group:
-    - My Third Service:
-        href: http://localhost/
-        description: Homepage is 😎
+- Sourcers:
+    - Sonarr:
+        icon: sonarr.png
+        href: https://sonarr.tstultiens.com/
+        description: Series management
+        siteMonitor: https://sonarr.tstultiens.com/
+        widget:
+          type: sonarr
+          url: https://sonarr.tstultiens.com
+          key: {{sonarr_apikey}}
+          enableQueue: true # optional, defaults to false
+    - Radarr:
+        icon: radarr.png
+        href: https://radarr.tstultiens.com/
+        description: Movie management
+        siteMonitor: https://radarr.tstultiens.com/
+        widget:
+          type: radarr
+          url: https://radarr.tstultiens.com
+          key: {{radarr_apikey}}
+          enableQueue: true # optional, defaults to false
+    - Readarr:
+        icon: readarr.png
+        href: https://readarr.tstultiens.com/
+        description: Movie management
+        siteMonitor: https://readarr.tstultiens.com/
+        widget:
+          type: readarr
+          url: https://readarr.tstultiens.com
+          key: {{readarr_apikey}}
+          enableQueue: true # optional, defaults to false

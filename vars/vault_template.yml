@@ -32,3 +32,10 @@ VPN_USER: ""
 VPN_PASS: ""
 home: "/home/user"
 MAM_SESSION: ""
+
+# Services
+sonarr_apikey: apikey
+radarr_apikey: apikey
+jellyfin_apikey: apikey
+ombi_apikey: apikey
+readarr_apikey: apikey

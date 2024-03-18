@@ -2,6 +2,8 @@
 # For configuration options and examples, please see:
 # https://gethomepage.dev/latest/configs/settings
 
+title: This Is My Super Secret Homepage
+
 providers:
   openweathermap: openweathermapapikey
   weatherapi: weatherapiapikey

@@ -22,11 +22,32 @@
       value: "3000"
 
   hosts: all
+  become: yes
   vars_files: 
     - ../vars/vars.yml
     - ../vars/vault.yml
 
   tasks:
+    - name: Copy CA files
+      copy:
+        src: ../local/homepage/{{item}}
+        dest: '{{ docker_config_dir }}/{{ service }}'
+      loop:
+        - custom.css
+        - custom.js
+
+    - name: Adding traefik.yml file
+      template:
+        src: ../local/homepage/{{item}}
+        dest: '{{ docker_config_dir }}/{{ service }}/{{item}}'
+      loop:
+        - services.yaml
+        - settings.yaml
+        - bookmarks.yaml
+        - docker.yaml
+        - kubernetes.yaml
+        - widgets.yaml
+
     - name: Start homepage
       docker_container:
         image: ghcr.io/gethomepage/homepage:latest

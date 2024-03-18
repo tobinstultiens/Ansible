@@ -6,6 +6,7 @@
     cpu: true
     memory: true
     disk: /
+    nas_disk: /mnt/stultnas/
 
 - search:
     provider: duckduckgo
