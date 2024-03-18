@@ -1,0 +1,27 @@
+---
+    - name: Rsync copy docker var
+      ansible.builtin.shell: rsync -av /var/lib/docker/ /home/docker
+
+    - name: Stop docker
+      service:
+        name: docker
+        state: stopped
+
+    - name: Recursively remove docker directory
+      ansible.builtin.file:
+        path: /var/lib/docker
+        state: absent
+
+    - name: Create a symbolic link
+      ansible.builtin.file:
+        src: /var/lib/docker/
+        dest: /home/docker
+        owner: root
+        group: root
+        state: link
+        force: true
+
+    - name: Start docker
+      service:
+        name: docker
+        state: started

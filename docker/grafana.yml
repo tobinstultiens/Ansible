@@ -32,6 +32,7 @@
         image: grafana/grafana
         name: "{{ service }}"
         user: "0:0"
+        state: absent
         volumes:
           - "{{ docker_config_dir }}/{{ service }}:/var/lib/grafana"
         restart_policy: unless-stopped
