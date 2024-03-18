@@ -5,8 +5,10 @@
 - resources:
     cpu: true
     memory: true
-    disk: /
-    nas_disk: /mnt/stultnas/
+    disk:
+      - /
+      - {{docker_nas_dir}}
+    expanded: true
 
 - search:
     provider: duckduckgo

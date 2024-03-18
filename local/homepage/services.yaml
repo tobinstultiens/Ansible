@@ -54,4 +54,3 @@
           type: readarr
           url: https://readarr.tstultiens.com
           key: {{readarr_apikey}}
-          enableQueue: true # optional, defaults to false
