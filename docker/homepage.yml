@@ -1,0 +1,38 @@
+---
+- vars:
+    service: "homepage"
+    labels:
+    - key: "com.centurylinklabs.watchtower.enable"
+      value: "true"
+    - key: "traefik.enable"
+      value: "true"
+    - key: "traefik.http.routers.{{ service }}.rule"
+      value: "Host(`{{ service }}.{{ DOMAIN }}`)"
+    - key: "traefik.http.routers.{{ service }}.service"
+      value: "{{ service }}"
+    - key: "traefik.http.routers.{{ service }}.entrypoints"
+      value: "https"
+    - key: "traefik.http.routers.{{ service }}.middlewares"
+      value: "auth"
+    - key: "traefik.http.routers.{{ service }}.tls"
+      value: "true"
+    - key: "traefik.http.routers.{{ service }}.tls.certresolver"
+      value: "letsencrypt"
+    - key: "traefik.http.services.{{ service }}.loadbalancer.server.port"
+      value: "3000"
+
+  hosts: all
+  vars_files: 
+    - ../vars/vars.yml
+    - ../vars/vault.yml
+
+  tasks:
+    - name: Start homepage
+      docker_container:
+        image: ghcr.io/gethomepage/homepage:latest
+        name: "{{ service }}"
+        volumes:
+          - "{{ docker_config_dir }}/{{ service }}:/app/config"
+          - /var/run/docker.sock:/var/run/docker.sock:ro # optional, for docker integrations
+        restart_policy: unless-stopped
+        labels: "{{ labels | items2dict}}"
