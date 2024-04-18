@@ -7,7 +7,7 @@
     memory: true
     disk:
       - /
-      - {{docker_nas_dir}}
+      - /storage
     expanded: true
 
 - search:

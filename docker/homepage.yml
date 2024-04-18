@@ -28,7 +28,7 @@
     - ../vars/vault.yml
 
   tasks:
-    - name: Copy CA files
+    - name: Copy css and js files
       copy:
         src: ../local/homepage/{{item}}
         dest: '{{ docker_config_dir }}/{{ service }}'
@@ -36,7 +36,7 @@
         - custom.css
         - custom.js
 
-    - name: Adding traefik.yml file
+    - name: Adding yaml files
       template:
         src: ../local/homepage/{{item}}
         dest: '{{ docker_config_dir }}/{{ service }}/{{item}}'
@@ -55,5 +55,6 @@
         volumes:
           - "{{ docker_config_dir }}/{{ service }}:/app/config"
           - /var/run/docker.sock:/var/run/docker.sock:ro # optional, for docker integrations
+          - "{{ docker_nas_dir }}:/storage"
         restart_policy: unless-stopped
         labels: "{{ labels | items2dict}}"

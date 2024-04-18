@@ -23,6 +23,21 @@
           type: ombi
           url: https://ombi.tstultiens.com
           key: {{ombi_apikey}}
+    - Calibre:
+        icon: calibre.png
+        href: https://calibre.tstultiens.com/
+        description: Series management
+        siteMonitor: https://calibre.tstultiens.com/
+    - Calibre-Web:
+        icon: calibre-web.png
+        href: https://calibre-web.tstultiens.com/
+        description: Series management
+        siteMonitor: https://calibre-web.tstultiens.com/
+        widget:
+          type: calibreweb
+          url: https://calibre-web.tstultiens.com
+          username: {{calibreweb_username}}
+          password: {{calibreweb_password}}
 
 - Sourcers:
     - Sonarr:
@@ -54,3 +69,13 @@
           type: readarr
           url: https://readarr.tstultiens.com
           key: {{readarr_apikey}}
+
+    - Prowlarr:
+        icon: prowlarr.png
+        href: https://prowlarr.tstultiens.com/
+        description: Movie management
+        siteMonitor: https://prowlarr.tstultiens.com/
+        widget:
+          type: prowlarr
+          url: https://prowlarr.tstultiens.com
+          key: {{prowlarr_apikey}}

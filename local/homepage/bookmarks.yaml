@@ -2,6 +2,11 @@
 # For configuration options and examples, please see:
 # https://gethomepage.dev/latest/configs/bookmarks
 
+- Cooking:
+    - Personal:
+        - abbr: CO
+          href: https://cooking.tstultiens.com/
+
 - Developer:
     - Github:
         - abbr: GH
