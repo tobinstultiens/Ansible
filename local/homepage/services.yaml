@@ -79,3 +79,13 @@
           type: prowlarr
           url: https://prowlarr.tstultiens.com
           key: {{prowlarr_apikey}}
+
+    - Lidarr:
+        icon: lidarr.png
+        href: https://lidarr.tstultiens.com/
+        description: Movie management
+        siteMonitor: https://lidarr.tstultiens.com/
+        widget:
+          type: lidarr
+          url: https://lidarr.tstultiens.com
+          key: {{lidarr_apikey}}
