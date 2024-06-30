@@ -5,7 +5,7 @@
     - key: "traefik.enable"
       value: "true"
     - key: "traefik.http.middlewares.auth.basicauth.users"
-      value: "{{ traefik_user }}:{{ traefik_password | password_hash('blowfish','1234567890123456789012') }}"
+      value: "echo $(htpasswd -nB {{ traefik_user }} {{ traefik_password }}) | sed -e s/\\$/\\$\\$/g"
 
   hosts: all
   become: yes

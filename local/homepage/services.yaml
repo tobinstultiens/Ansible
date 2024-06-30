@@ -89,3 +89,11 @@
           type: lidarr
           url: https://lidarr.tstultiens.com
           key: {{lidarr_apikey}}
+    - Tdarr:
+        icon: tdarr.png
+        href: https://tdarr.tstultiens.com/
+        description: Movie management
+        siteMonitor: https://tdarr.tstultiens.com/
+        widget:
+          type: tdarr
+          url: https://tdarr.tstultiens.com
