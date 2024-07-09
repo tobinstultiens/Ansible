@@ -1,0 +1,6 @@
+---
+    - name: Ensure apache is installed.
+      package:
+        name: apache
+        state: present
+

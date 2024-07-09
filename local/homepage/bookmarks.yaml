@@ -3,7 +3,7 @@
 # https://gethomepage.dev/latest/configs/bookmarks
 
 - Cooking:
-    - Personal Cooking:
+    - PersonalCooking:
         - abbr: CO
           href: https://cooking.tstultiens.com/
 

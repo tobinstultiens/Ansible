@@ -4,8 +4,6 @@
     labels:
     - key: "traefik.enable"
       value: "true"
-    - key: "traefik.http.middlewares.auth.basicauth.users"
-      value: "echo $(htpasswd -nB {{ traefik_user }} {{ traefik_password }}) | sed -e s/\\$/\\$\\$/g"
 
   hosts: all
   become: yes
@@ -30,6 +28,14 @@
         src: ../local/traefik/traefik.yml.j2
         dest: "{{ traefik }}/traefik.yml"
         mode: 0600
+
+    - name: Generate basic auth password and username and output to variable
+      shell: "echo $(htpasswd -nbB {{ traefik_user }} '{{ traefik_password }}') | sed -e s/\\$/\\$\\$/g"
+      register: shell_output
+
+    - name: Update labels with generated basic auth
+      ansible.builtin.set_fact:
+        labels: "{{ labels + [{ 'key': 'traefik.http.middlewares.auth.basicauth.users', 'value': (shell_output.stdout) }] }}"
 
     - name: Starting the reverse proxy.
       docker_container:

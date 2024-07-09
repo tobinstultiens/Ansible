@@ -3,8 +3,9 @@
   become: true
   roles:
     - docker
+    - htpasswd
 
-  vars_files: 
+  vars_files:
     - vars/vars.yml
     - vars/vault.yml
 
