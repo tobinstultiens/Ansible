@@ -52,8 +52,6 @@
       docker_container:
         image: ghcr.io/gethomepage/homepage:latest
         name: "{{ service }}"
-        ports:
-          - 3000:3000
         volumes:
           - "{{ docker_config_dir }}/{{ service }}:/app/config"
           - /var/run/docker.sock:/var/run/docker.sock:ro # optional, for docker integrations

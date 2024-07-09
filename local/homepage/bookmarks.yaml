@@ -3,7 +3,7 @@
 # https://gethomepage.dev/latest/configs/bookmarks
 
 - Cooking:
-    - PersonalCooking:
+    - Personal Cooking:
         - abbr: CO
           href: https://cooking.tstultiens.com/
 
@@ -21,3 +21,7 @@
     - YouTube:
         - abbr: YT
           href: https://youtube.com/
+    - Dropout 
+        - abbr: DP
+          href: https://dropout.com/
+
