@@ -30,8 +30,8 @@
         image: linuxserver/bazarr
         name: "{{ service }}"
         env:
-          PUID: 1000
-          PGID: 1000
+          PUID: "1000"
+          PGID: "1000"
           TZ: Europe/Amsterdam
         volumes:
           - "{{ docker_config_dir }}/{{ service }}:/config"
