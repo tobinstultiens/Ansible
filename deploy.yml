@@ -30,3 +30,4 @@
 - ansible.builtin.import_playbook: docker/uptime-kuma.yml
 - ansible.builtin.import_playbook: docker/grafana.yml
 - ansible.builtin.import_playbook: docker/homepage.yml
+- ansible.builtin.import_playbook: docker/bazarr.yml

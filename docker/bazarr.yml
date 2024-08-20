@@ -8,8 +8,6 @@
       value: "true"
     - key: "traefik.http.routers.{{ service }}.rule"
       value: "Host(`{{ service }}.{{ DOMAIN }}`)"
-    - key: "traefik.http.routers.{{ service }}.middlewares"
-      value: "auth"
     - key: "traefik.http.routers.{{ service }}.service"
       value: "{{ service }}"
     - key: "traefik.http.routers.{{ service }}.entrypoints"
@@ -32,12 +30,12 @@
         image: linuxserver/bazarr
         name: "{{ service }}"
         env:
-          - PUID=1000
-          - PGID=1000
-          - TZ=Europe/Amsterdam
+          PUID: 1000
+          PGID: 1000
+          TZ: Europe/Amsterdam
         volumes:
           - "{{ docker_config_dir }}/{{ service }}:/config"
           - "{{ docker_nas_dir }}:/storage"
-        network_mode: service:vpn
+        network_mode: container:vpn
         restart_policy: unless-stopped
         labels: "{{ labels | items2dict}}"

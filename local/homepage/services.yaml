@@ -90,6 +90,16 @@
           url: https://lidarr.tstultiens.com
           key: {{lidarr_apikey}}
 
+    - Bazarr:
+        icon: bazarr.png
+        href: https://bazarr.tstultiens.com/
+        description: Movie management
+        siteMonitor: https://bazarr.tstultiens.com/
+        widget:
+          type: bazarr
+          url: https://bazarr.tstultiens.com
+          key: {{bazarr_apikey}}
+
     - Tdarr:
         icon: tdarr.png
         href: https://tdarr.tstultiens.com/

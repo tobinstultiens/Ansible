@@ -1,5 +1,5 @@
 [home]
-192.168.178.33
+nucserver
 
 [multi:children]
 home

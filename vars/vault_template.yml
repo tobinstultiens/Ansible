@@ -7,9 +7,10 @@ reddit_client_secret: ""
 # Email for traefik and letsencrypt
 email: ""
 DOMAIN: ""
-traefik: "/home/user/traefik"
+traefik: "/home/user/traefik/"
+traefik_file: "traefik.yml"
 # traefik basic auth
-traefik_user: ""
+traefik_user: "traefik_user"
 traefik_password: ""
 
 # Qbittorrent setup and for the script
@@ -18,14 +19,14 @@ QBT_PASS: ""
 QBT_HOST: "IP:PORT"
 
 # The nas information
-nas_ip: "IP"
-nas_user: "nas_user"
+nas_ip: ""
+nas_user: ""
 
 # Configuration location of the docker containers
-docker_config_dir: "/config"
+docker_config_dir: "/home/user/config"
 # Connection between nas and service
 docker_nas: "/mnt/nas"
-docker_nas_dir: "/mnt/nas/Location/Of/Media/Files"
+docker_nas_dir: "/mnt/nas/Location"
 
 # VPN PIA
 VPN_USER: ""
@@ -39,3 +40,10 @@ radarr_apikey: apikey
 jellyfin_apikey: apikey
 ombi_apikey: apikey
 readarr_apikey: apikey
+prowlarr_apikey: apikey
+lidarr_apikey: apikey
+bazarr_apikey: apikey
+
+# Calibre-web
+calibreweb_username: ""
+calibreweb_password: ""
