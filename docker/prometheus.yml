@@ -1,6 +1,6 @@
 ---
 - vars:
-    service: "bazarr"
+    service: "prometheus"
     labels:
     - key: "com.centurylinklabs.watchtower.enable"
       value: "true"
@@ -17,25 +17,31 @@
     - key: "traefik.http.routers.{{ service }}.tls.certresolver"
       value: "letsencrypt"
     - key: "traefik.http.services.{{ service }}.loadbalancer.server.port"
-      value: "6767"
+      value: "9090"
 
   hosts: all
+  become: true
   vars_files: 
     - ../vars/vars.yml
     - ../vars/vault.yml
 
   tasks:
-    - name: Start Bazarr
+    - name: Adding yaml files
+      template:
+        src: ../local/prometheus/{{ item }}
+        dest: '{{ docker_config_dir }}/prometheus-etc/{{ item }}'
+      loop:
+        - prometheus.yml
+
+    - name: Start prometheus
       docker_container:
-        image: linuxserver/bazarr:latest
+        image: prom/prometheus:latest
         name: "{{ service }}"
-        env:
-          PUID: "1000"
-          PGID: "1000"
-          TZ: Europe/Amsterdam
+        user: root
         volumes:
-          - "{{ docker_config_dir }}/{{ service }}:/config"
-          - "{{ docker_nas_dir }}:/storage"
-        network_mode: container:vpn
+          - "{{ docker_config_dir }}/{{ service }}:/prometheus"
+          - "{{ docker_config_dir }}/prometheus-etc:/etc/prometheus"
+          - /var/run/docker.sock:/var/run/docker.sock
         restart_policy: unless-stopped
+        network_mode: container:vpn
         labels: "{{ labels | items2dict}}"

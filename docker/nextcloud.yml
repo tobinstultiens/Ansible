@@ -28,7 +28,7 @@
   tasks:
     - name: Start nextcloud database
       docker_container:
-        image: mariadb:10.6
+        image: mariadb:10.6:latest
         name: "{{ database }}"
         command: --transaction-isolation=READ-COMMITTED --log-bin=binlog --binlog-format=ROW
         env:
@@ -42,7 +42,7 @@
 
     - name: Start nextcloud
       docker_container:
-        image: nextcloud
+        image: nextcloud:latest
         hostname: "{{ service }}.{{ DOMAIN }}"
         name: "{{ service }}"
         links:

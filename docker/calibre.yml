@@ -29,7 +29,7 @@
   tasks:
     - name: Start calibre
       docker_container:
-        image: linuxserver/calibre
+        image: linuxserver/calibre:latest
         name: "{{ service }}"
         env:
           PUID: "1000"

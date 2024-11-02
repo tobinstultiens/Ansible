@@ -10,7 +10,7 @@
   tasks:
     - name: Start watchtower
       docker_container:
-        image: containrrr/watchtower
+        image: containrrr/watchtower:latest
         name: "{{ service }}"
         command: --cleanup --label-enable --interval 3600
         labels:

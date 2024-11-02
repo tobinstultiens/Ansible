@@ -36,7 +36,7 @@
     - name: Start pihole
       docker_container:
         name: "{{ service }}"
-        image: pihole/pihole
+        image: pihole/pihole:latest
         restart_policy: unless-stopped
         volumes:
           - "{{ docker_config_dir }}/{{ service }}:/etc/pihole"

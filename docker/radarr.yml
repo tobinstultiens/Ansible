@@ -27,7 +27,7 @@
   tasks:
     - name: Start radarr
       docker_container:
-        image: linuxserver/radarr
+        image: linuxserver/radarr:latest
         name: "{{ service }}"
         env:
           PUID: "1000"

@@ -12,8 +12,6 @@
       value: "{{ service }}"
     - key: "traefik.http.routers.{{ service }}.entrypoints"
       value: "https"
-    - key: "traefik.http.routers.{{ service }}.middlewares"
-      value: "auth"
     - key: "traefik.http.routers.{{ service }}.tls"
       value: "true"
     - key: "traefik.http.routers.{{ service }}.tls.certresolver"
@@ -29,10 +27,9 @@
   tasks:
     - name: Start grafana
       docker_container:
-        image: grafana/grafana
+        image: grafana/grafana:latest
         name: "{{ service }}"
         user: "0:0"
-        state: absent
         volumes:
           - "{{ docker_config_dir }}/{{ service }}:/var/lib/grafana"
         restart_policy: unless-stopped

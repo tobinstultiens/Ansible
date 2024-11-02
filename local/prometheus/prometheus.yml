@@ -1,0 +1,36 @@
+# my global config
+global:
+  scrape_interval: 1m
+  evaluation_interval: 30s
+  body_size_limit: 15MB
+  sample_limit: 1500
+  target_limit: 30
+  label_limit: 30
+  label_name_length_limit: 200
+  label_value_length_limit: 200
+  # scrape_timeout is set to the global default (10s).
+
+runtime:
+  gogc: 75
+
+rule_files:
+  - "first.rules"
+  - "my/*.rules"
+
+scrape_configs:
+  - job_name: prometheus
+
+    honor_labels: true
+  - job_name: docker
+    docker_sd_configs:
+      - host: unix:///var/run/docker.sock
+    relabel_configs:
+      - source_labels: [__meta_docker_container_name]
+        regex: '/(.*)'
+        target_label: container_name
+        replacement: '$1'
+    # scrape_interval is defined by the configured global (15s).
+    # scrape_timeout is defined by the global default (10s).
+
+    # metrics_path defaults to '/metrics'
+    # scheme defaults to 'http'.

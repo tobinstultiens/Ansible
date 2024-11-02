@@ -27,7 +27,7 @@
   tasks:
     - name: Start grocy
       docker_container:
-        image: linuxserver/grocy
+        image: linuxserver/grocy:latest
         name: "{{ service }}"
         env:
           PUID: "1000"

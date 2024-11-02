@@ -26,8 +26,8 @@
 
   tasks:
     - name: Start Sonarr
-      docker_container:
-        image: linuxserver/sonarr
+      community.docker.docker_container:
+        image: linuxserver/sonarr:latest
         name: "{{ service }}"
         env:
           PUID: "1000"
