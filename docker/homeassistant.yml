@@ -20,6 +20,7 @@
         value: "8123"
 
   hosts: all
+  become: true
   vars_files:
     - ../vars/vars.yml
     - ../vars/vault.yml
@@ -28,7 +29,7 @@
     - name: Adding yaml files
       template:
         src: ../local/homeassistant/{{item}}
-        dest: '{{ docker_config_dir }}/{{ service }}/{{item}}'
+        dest: '{{ docker_config_dir }}/{{ service }}'
       loop:
         - configuration.yaml
 
