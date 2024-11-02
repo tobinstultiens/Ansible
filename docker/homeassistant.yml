@@ -2,29 +2,37 @@
 - vars:
     service: "homeassistant"
     labels:
-    - key: "com.centurylinklabs.watchtower.enable"
-      value: "true"
-    - key: "traefik.enable"
-      value: "true"
-    - key: "traefik.http.routers.{{ service }}.rule"
-      value: "Host(`{{ service }}.{{ DOMAIN }}`)"
-    - key: "traefik.http.routers.{{ service }}.service"
-      value: "{{ service }}"
-    - key: "traefik.http.routers.{{ service }}.entrypoints"
-      value: "https"
-    - key: "traefik.http.routers.{{ service }}.tls"
-      value: "true"
-    - key: "traefik.http.routers.{{ service }}.tls.certresolver"
-      value: "letsencrypt"
-    - key: "traefik.http.services.{{ service }}.loadbalancer.server.port"
-      value: "8123"
+      - key: "com.centurylinklabs.watchtower.enable"
+        value: "true"
+      - key: "traefik.enable"
+        value: "true"
+      - key: "traefik.http.routers.{{ service }}.rule"
+        value: "Host(`{{ service }}.{{ DOMAIN }}`)"
+      - key: "traefik.http.routers.{{ service }}.service"
+        value: "{{ service }}"
+      - key: "traefik.http.routers.{{ service }}.entrypoints"
+        value: "https"
+      - key: "traefik.http.routers.{{ service }}.tls"
+        value: "true"
+      - key: "traefik.http.routers.{{ service }}.tls.certresolver"
+        value: "letsencrypt"
+      - key: "traefik.http.services.{{ service }}.loadbalancer.server.port"
+        value: "8123"
 
   hosts: all
-  vars_files: 
+  vars_files:
     - ../vars/vars.yml
     - ../vars/vault.yml
 
   tasks:
+    - name: Adding yaml files
+      template:
+        src: ../local/homeassistant/{{item}}
+        dest: '{{ docker_config_dir }}/{{ service }}/{{item}}'
+      loop:
+        - configuration.yaml
+
+
     - name: Start homeassistant
       docker_container:
         image: "ghcr.io/home-assistant/home-assistant:stable"
