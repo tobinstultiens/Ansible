@@ -1,27 +1,26 @@
 ---
 - vars:
     service: "nextcloud"
-    database: "nextclouddb"
     labels:
-    - key: "com.centurylinklabs.watchtower.enable"
-      value: "true"
-    - key: "traefik.enable"
-      value: "true"
-    - key: "traefik.http.routers.{{ service }}.rule"
-      value: "Host(`{{ service }}.{{ DOMAIN }}`)"
-    - key: "traefik.http.routers.{{ service }}.service"
-      value: "{{ service }}"
-    - key: "traefik.http.routers.{{ service }}.entrypoints"
-      value: "https"
-    - key: "traefik.http.routers.{{ service }}.tls"
-      value: "true"
-    - key: "traefik.http.routers.{{ service }}.tls.certresolver"
-      value: "letsencrypt"
-    - key: "traefik.http.services.{{ service }}.loadbalancer.server.port"
-      value: "8080"
+      - key: "com.centurylinklabs.watchtower.enable"
+        value: "true"
+      - key: "traefik.enable"
+        value: "true"
+      - key: "traefik.http.routers.{{ service }}.rule"
+        value: "Host(`{{ service }}.{{ DOMAIN }}`)"
+      - key: "traefik.http.routers.{{ service }}.service"
+        value: "{{ service }}"
+      - key: "traefik.http.routers.{{ service }}.entrypoints"
+        value: "https"
+      - key: "traefik.http.routers.{{ service }}.tls"
+        value: "true"
+      - key: "traefik.http.routers.{{ service }}.tls.certresolver"
+        value: "letsencrypt"
+      - key: "traefik.http.services.{{ service }}.loadbalancer.server.port"
+        value: "8080"
 
   hosts: all
-  vars_files: 
+  vars_files:
     - ../vars/vars.yml
     - ../vars/vault.yml
 
@@ -35,7 +34,7 @@
         image: nextcloud/all-in-one:latest
         init: true
         hostname: "{{ service }}.{{ DOMAIN }}"
-        name: nextcloud
+        name: nextcloud-aio-mastercontainer
         env:
           APACHE_PORT: "11000"
           APACHE_IP_BINDING: "127.0.0.1"
@@ -45,7 +44,5 @@
         restart_policy: unless-stopped
         ports:
           - 8443:8080
-          - 8444:80
-          - 8445:8443
           - 11000:11000
-        # labels: "{{ labels | items2dict}}"
+        labels: "{{ labels | items2dict }}"
