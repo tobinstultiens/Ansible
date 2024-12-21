@@ -18,7 +18,7 @@
     - key: "traefik.http.routers.{{ service }}.tls.certresolver"
       value: "letsencrypt"
     - key: "traefik.http.services.{{ service }}.loadbalancer.server.port"
-      value: "80"
+      value: "8080"
 
   hosts: all
   vars_files: 
@@ -26,34 +26,26 @@
     - ../vars/vault.yml
 
   tasks:
-    - name: Start nextcloud database
-      docker_container:
-        image: mariadb:10.6:latest
-        name: "{{ database }}"
-        command: --transaction-isolation=READ-COMMITTED --log-bin=binlog --binlog-format=ROW
-        env:
-          MYSQL_ROOT_PASSWORD: "askldfaslkjd"
-          MYSQL_PASSWORD: "askldfaslkjd"
-          MYSQL_DATABASE: "nextcloud"
-          MYSQL_USER: "nextcloud"
-        volumes:
-          - /db/nextcloud:/var/lib/mysql
-        restart_policy: unless-stopped
+    - name: Create docker volume
+      community.docker.docker_volume:
+        volume_name: nextcloud_aio_mastercontainer # This line is not allowed to be changed as otherwise the built-in backup solution will not workb
 
     - name: Start nextcloud
       docker_container:
-        image: nextcloud:latest
+        image: nextcloud/all-in-one:latest
+        init: true
         hostname: "{{ service }}.{{ DOMAIN }}"
-        name: "{{ service }}"
-        links:
-          - nextclouddb
+        name: nextcloud
         env:
-          MYSQL_PASSWORD: askldfaslkjd
-          MYSQL_DATABASE: nextcloud
-          MYSQL_USER: nextcloud
-          MYSQL_HOST: nextclouddb
-          NEXTCLOUD_HOSTNAME: "{{ service }}.{{ DOMAIN }}"
+          APACHE_PORT: "11000"
+          APACHE_IP_BINDING: "127.0.0.1"
         volumes:
-          - "{{ docker_config_dir }}/{{ service }}:/var/www/html"
+          - nextcloud_aio_mastercontainer:/mnt/docker-aio-config # This line is not allowed to be changed as otherwise the built-in backup solution will not work
+          - /var/run/docker.sock:/var/run/docker.sock:ro
         restart_policy: unless-stopped
-        labels: "{{ labels | items2dict}}"
+        ports:
+          - 8443:8080
+          - 8444:80
+          - 8445:8443
+          - 11000:11000
+        # labels: "{{ labels | items2dict}}"

@@ -38,4 +38,6 @@
           - "{{ docker_nas_dir }}:/tv"
         restart_policy: unless-stopped
         network_mode: container:vpn
+        dns_opts:
+          - options: "single-request"
         labels: "{{ labels | items2dict}}"

@@ -27,7 +27,7 @@
 
     - name: Adding traefik.yml file
       template:
-        src: ../local/traefik/traefik.yml.j2
+        src: ../local/traefik/traefik.yml
         dest: "{{ traefik }}/traefik.yml"
         mode: 0600
     

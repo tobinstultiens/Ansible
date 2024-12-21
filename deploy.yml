@@ -16,7 +16,6 @@
 - ansible.builtin.import_playbook: docker/calibre.yml
 - ansible.builtin.import_playbook: docker/homeassistant.yml
 - ansible.builtin.import_playbook: docker/jellyfin.yml
-- ansible.builtin.import_playbook: docker/nextcloud.yml
 - ansible.builtin.import_playbook: docker/ombi.yml
 - ansible.builtin.import_playbook: docker/prowlarr.yml
 - ansible.builtin.import_playbook: docker/qbittorrent.yml
@@ -32,3 +31,5 @@
 - ansible.builtin.import_playbook: docker/prometheus.yml
 - ansible.builtin.import_playbook: docker/homepage.yml
 - ansible.builtin.import_playbook: docker/bazarr.yml
+- ansible.builtin.import_playbook: docker/nextcloud.yml
+
