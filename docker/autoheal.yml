@@ -1,0 +1,26 @@
+---
+- vars:
+    service: "autoheal"
+    labels:
+    - key: "com.centurylinklabs.watchtower.enable"
+      value: "true"
+    - key: "autoheal-app"
+      value: "true"
+
+  hosts: all
+  vars_files:
+    - ../vars/vars.yml
+    - ../vars/vault.yml
+
+  tasks:
+    - name: Start Autoheal
+      docker_container:
+        image: willfarrell/autoheal:latest
+        name: "{{ service }}"
+        volumes:
+          - /etc/localtime:/etc/localtime:ro
+          - /var/run/docker.sock:/var/run/docker.sock
+        restart_policy: unless-stopped
+        env:
+          AUTOHEAL_CONTAINER_LABEL: autoheal-app
+        labels: "{{ labels | items2dict}}"

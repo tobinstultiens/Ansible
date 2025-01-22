@@ -27,7 +27,7 @@
   tasks:
     - name: Start prowlarr
       docker_container:
-        image: linuxserver/prowlarr:nightly
+        image: linuxserver/prowlarr:latest
         name: "{{ service }}"
         env:
           PUID: "1000"

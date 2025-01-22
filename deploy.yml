@@ -9,6 +9,7 @@
     - vars/vault.yml
 
 - ansible.builtin.import_playbook: docker/watchtower.yml
+- ansible.builtin.import_playbook: docker/autoheal.yml
 - ansible.builtin.import_playbook: docker/vpn.yml
 - ansible.builtin.import_playbook: docker/traefik.yml
 - ansible.builtin.import_playbook: docker/cooking.yml

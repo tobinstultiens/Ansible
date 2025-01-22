@@ -72,19 +72,25 @@
           FIREWALL: "1"
         sysctls:
           # wg-quick fails to set this without --privileged, so set it here instead if needed
-          net.ipv4.conf.all.src_valid_mark: "1"
+          # net.ipv4.conf.all.src_valid_mark: "1"
           net.ipv6.conf.default.disable_ipv6: "1"
           net.ipv6.conf.all.disable_ipv6: "1"
           net.ipv6.conf.lo.disable_ipv6: "1"
         labels:
           {
-            "traefik.enable": "true"
+            "traefik.enable": "true",
+            "autoheal-app": "true"
           }
+        healthcheck:
+          test: ping -c 1 www.google.com && pidof pf.sh || exit 1
+          interval: 30s
+          timeout: 10s
+          retries: 3
       notify: Run command within the vpn container
 
-  handlers: 
+  handlers:
     - name: Run command within the vpn container
       community.docker.docker_container_exec:
         container: "{{ service }}"
         command:
-           /bin/sh -c "curl -c /mam.cookies -b 'mam_id={{ MAM_SESSION }}' https://t.myanonamouse.net/json/dynamicSeedbox.php"
+         /bin/sh -c "curl -c /mam.cookies -b 'mam_id={{ MAM_SESSION }}' https://t.myanonamouse.net/json/dynamicSeedbox.php"
