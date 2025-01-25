@@ -2,10 +2,10 @@
 - vars:
     service: "autoheal"
     labels:
-    - key: "com.centurylinklabs.watchtower.enable"
-      value: "true"
-    - key: "autoheal-app"
-      value: "true"
+      - key: "com.centurylinklabs.watchtower.enable"
+        value: "true"
+      - key: "autoheal-app"
+        value: "true"
 
   hosts: all
   vars_files:

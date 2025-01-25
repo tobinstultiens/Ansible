@@ -42,6 +42,8 @@
       value: "3579"
     - key: "traefik.docker.network"
       value: "traefik_proxy"
+    - key: "autoheal-app"
+      value: "true"
 
   hosts: all
   vars_files: 

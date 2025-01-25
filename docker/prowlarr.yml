@@ -18,6 +18,8 @@
       value: "letsencrypt"
     - key: "traefik.http.services.{{ service }}.loadbalancer.server.port"
       value: "9696"
+    - key: "autoheal-app"
+      value: "true"
 
   hosts: all
   vars_files: 
