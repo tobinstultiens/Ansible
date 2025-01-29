@@ -42,3 +42,8 @@
         network_mode: container:vpn
         restart_policy: unless-stopped
         labels: "{{ labels | items2dict}}"
+        healthcheck:
+          test: ping -c 1 www.google.com && pidof pf.sh || exit 1
+          interval: 180s
+          timeout: 10s
+          retries: 3
