@@ -1,5 +1,6 @@
 ---
-- vars:
+- name: Homeassistant
+  vars:
     service: "homeassistant"
     labels:
       - key: "com.centurylinklabs.watchtower.enable"

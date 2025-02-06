@@ -15,7 +15,8 @@
         command: --cleanup --label-enable --interval 3600
         labels:
           {
-            "com.centurylinklabs.watchtower.enable": "true"
+            "com.centurylinklabs.watchtower.enable": "true",
+            "traefik.enable": "true",
           }
         restart_policy: always
         network_mode: none

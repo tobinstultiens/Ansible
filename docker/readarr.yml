@@ -18,8 +18,6 @@
       value: "letsencrypt"
     - key: "traefik.http.services.{{ service }}.loadbalancer.server.port"
       value: "8787"
-    - key: "autoheal-app"
-      value: "true"
 
   hosts: all
   vars_files: 
@@ -42,8 +40,3 @@
         network_mode: container:vpn
         restart_policy: unless-stopped
         labels: "{{ labels | items2dict}}"
-        healthcheck:
-          test: ping -c 1 {{ service }}.{{ DOMAIN }} && pidof pf.sh || exit 1
-          interval: 180s
-          timeout: 10s
-          retries: 3

@@ -1,48 +1,56 @@
 ---
-- vars:
+- name: Traefik
+  vars:
     service: "traefik"
     labels:
-    - key: "traefik.enable"
-      value: "true"
-    - key: "traefik.http.middlewares.auth.basicauth.users"
-      value: "{{ traefik_user }}:{{ traefik_password | password_hash('blowfish','1234567890123456789012') }}"
+      - key: "traefik.enable"
+        value: "true"
+      - key: "traefik.http.middlewares.auth.basicauth.users"
+        value: "{{ traefik_user }}:{{ traefik_password | password_hash('blowfish','1234567890123456789012') }}"
+      - key: "traefik.http.routers.{{ service }}.rule"
+        value: "Host(`{{ service }}.{{ DOMAIN }}`)"
+      - key: "traefik.http.routers.{{ service }}.service"
+        value: "api@internal"
+      - key: "traefik.http.routers.{{ service }}.middlewares"
+        value: "auth"
 
   hosts: all
-  become: yes
-  vars_files: 
+  become: true
+  vars_files:
     - ../vars/vars.yml
     - ../vars/vault.yml
 
   tasks:
     - name: Ensures traefik dir exists
-      file:
+      ansible.builtin.file:
         path: "{{ traefik }}"
         state: directory
+        mode: "0644"
 
     - name: Ensures acme.json file exists
-      file:
+      ansible.builtin.file:
         path: "{{ traefik }}/acme.json"
         state: touch
-        mode: 0600
+        mode: "0600"
 
     - name: Adding traefik.yml file
-      template:
+      ansible.builtin.template:
         src: ../local/traefik/traefik.yml
         dest: "{{ traefik }}/traefik.yml"
-        mode: 0600
-    
+        mode: "0600"
+
     - name: Starting the reverse proxy.
-      docker_container:
+      community.docker.docker_container:
         name: "{{ service }}"
         image: traefik:latest
         restart_policy: always
         state: started
         recreate: true
         ports:
-        - "80:80"
-        - "443:443"
+          - "80:80"
+          - "443:443"
         volumes:
           - /var/run/docker.sock:/var/run/docker.sock
           - "{{ traefik }}/acme.json:/letsencrypt/acme.json"
           - "{{ traefik }}{{ traefik_file }}:/etc/traefik/traefik.yml"
-        labels: "{{ labels | items2dict}}"
+        labels: "{{ labels | items2dict }}"

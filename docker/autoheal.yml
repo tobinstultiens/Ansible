@@ -6,6 +6,8 @@
         value: "true"
       - key: "autoheal-app"
         value: "true"
+      - key: "traefik.enable"
+        value: "true"
 
   hosts: all
   vars_files:

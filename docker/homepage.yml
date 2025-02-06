@@ -1,45 +1,48 @@
 ---
-- vars:
+- name: Homepage
+  vars:
     service: "homepage"
     labels:
-    - key: "com.centurylinklabs.watchtower.enable"
-      value: "true"
-    - key: "traefik.enable"
-      value: "true"
-    - key: "traefik.http.routers.{{ service }}.rule"
-      value: "Host(`{{ service }}.{{ DOMAIN }}`)"
-    - key: "traefik.http.routers.{{ service }}.service"
-      value: "{{ service }}"
-    - key: "traefik.http.routers.{{ service }}.entrypoints"
-      value: "https"
-    - key: "traefik.http.routers.{{ service }}.middlewares"
-      value: "auth"
-    - key: "traefik.http.routers.{{ service }}.tls"
-      value: "true"
-    - key: "traefik.http.routers.{{ service }}.tls.certresolver"
-      value: "letsencrypt"
-    - key: "traefik.http.services.{{ service }}.loadbalancer.server.port"
-      value: "3000"
+      - key: "com.centurylinklabs.watchtower.enable"
+        value: "true"
+      - key: "traefik.enable"
+        value: "true"
+      - key: "traefik.http.routers.{{ service }}.rule"
+        value: "Host(`{{ service }}.{{ DOMAIN }}`)"
+      - key: "traefik.http.routers.{{ service }}.service"
+        value: "{{ service }}"
+      - key: "traefik.http.routers.{{ service }}.entrypoints"
+        value: "https"
+      - key: "traefik.http.routers.{{ service }}.middlewares"
+        value: "auth"
+      - key: "traefik.http.routers.{{ service }}.tls"
+        value: "true"
+      - key: "traefik.http.routers.{{ service }}.tls.certresolver"
+        value: "letsencrypt"
+      - key: "traefik.http.services.{{ service }}.loadbalancer.server.port"
+        value: "3000"
 
   hosts: all
-  become: yes
-  vars_files: 
+  become: true
+  vars_files:
     - ../vars/vars.yml
     - ../vars/vault.yml
 
   tasks:
     - name: Copy css and js files
-      copy:
-        src: ../local/homepage/{{item}}
+      ansible.builtin.copy:
+        src: ../local/homepage/{{ item }}
         dest: '{{ docker_config_dir }}/{{ service }}'
+        mode: "0644"
       loop:
         - custom.css
         - custom.js
 
     - name: Adding yaml files
-      template:
-        src: ../local/homepage/{{item}}
-        dest: '{{ docker_config_dir }}/{{ service }}/{{item}}'
+      ansible.builtin.template:
+        src: ../local/homepage/{{ item }}
+        dest: '{{ docker_config_dir }}/{{ service }}/{{ item }}'
+        mode: "0644"
       loop:
         - services.yaml
         - settings.yaml
@@ -49,7 +52,7 @@
         - widgets.yaml
 
     - name: Start homepage
-      docker_container:
+      community.docker.docker_container:
         image: ghcr.io/gethomepage/homepage:latest
         name: "{{ service }}"
         volumes:
@@ -57,4 +60,4 @@
           - /var/run/docker.sock:/var/run/docker.sock:ro # optional, for docker integrations
           - "{{ docker_nas_dir }}:/storage"
         restart_policy: unless-stopped
-        labels: "{{ labels | items2dict}}"
+        labels: "{{ labels | items2dict }}"
