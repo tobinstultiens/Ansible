@@ -1,32 +1,33 @@
 ---
-- vars:
+- name: Lidarr
+  vars:
     service: "lidarr"
     labels:
-    - key: "com.centurylinklabs.watchtower.enable"
-      value: "true"
-    - key: "traefik.enable"
-      value: "true"
-    - key: "traefik.http.routers.{{ service }}.rule"
-      value: "Host(`{{ service }}.{{ DOMAIN }}`)"
-    - key: "traefik.http.routers.{{ service }}.service"
-      value: "{{ service }}"
-    - key: "traefik.http.routers.{{ service }}.entrypoints"
-      value: "https"
-    - key: "traefik.http.routers.{{ service }}.tls"
-      value: "true"
-    - key: "traefik.http.routers.{{ service }}.tls.certresolver"
-      value: "letsencrypt"
-    - key: "traefik.http.services.{{ service }}.loadbalancer.server.port"
-      value: "8686"
+      - key: "com.centurylinklabs.watchtower.enable"
+        value: "true"
+      - key: "traefik.enable"
+        value: "true"
+      - key: "traefik.http.routers.{{ service }}.rule"
+        value: "Host(`{{ service }}.{{ DOMAIN }}`)"
+      - key: "traefik.http.routers.{{ service }}.service"
+        value: "{{ service }}"
+      - key: "traefik.http.routers.{{ service }}.entrypoints"
+        value: "https"
+      - key: "traefik.http.routers.{{ service }}.tls"
+        value: "true"
+      - key: "traefik.http.routers.{{ service }}.tls.certresolver"
+        value: "letsencrypt"
+      - key: "traefik.http.services.{{ service }}.loadbalancer.server.port"
+        value: "8686"
 
   hosts: all
-  vars_files: 
+  vars_files:
     - ../vars/vars.yml
     - ../vars/vault.yml
 
   tasks:
     - name: Start lidarr
-      docker_container:
+      community.docker.docker_container:
         image: linuxserver/lidarr:latest
         name: "{{ service }}"
         env:
@@ -39,4 +40,4 @@
           - "{{ docker_nas_dir }}/Download:/downloads"
         network_mode: container:vpn
         restart_policy: unless-stopped
-        labels: "{{ labels | items2dict}}"
+        labels: "{{ labels | items2dict }}"

@@ -1,5 +1,6 @@
 ---
-- vars:
+- name: Calibre
+  vars:
     service: "calibre"
     labels:
       - key: "com.centurylinklabs.watchtower.enable"
@@ -24,13 +25,13 @@
         value: "true"
 
   hosts: all
-  vars_files: 
+  vars_files:
     - ../vars/vars.yml
     - ../vars/vault.yml
 
   tasks:
     - name: Start calibre
-      docker_container:
+      community.docker.docker_container:
         image: linuxserver/calibre:latest
         name: "{{ service }}"
         env:
@@ -43,4 +44,4 @@
           - "{{ docker_nas_dir }}:/books"
         restart_policy: unless-stopped
         network_mode: container:vpn
-        labels: "{{ labels | items2dict}}"
+        labels: "{{ labels | items2dict }}"

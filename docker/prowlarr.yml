@@ -1,32 +1,33 @@
 ---
-- vars:
+- name: Prowlarr
+  vars:
     service: "prowlarr"
     labels:
-    - key: "com.centurylinklabs.watchtower.enable"
-      value: "true"
-    - key: "traefik.enable"
-      value: "true"
-    - key: "traefik.http.routers.{{ service }}.rule"
-      value: "Host(`{{ service }}.{{ DOMAIN }}`)"
-    - key: "traefik.http.routers.{{ service }}.service"
-      value: "{{ service }}"
-    - key: "traefik.http.routers.{{ service }}.entrypoints"
-      value: "https"
-    - key: "traefik.http.routers.{{ service }}.tls"
-      value: "true"
-    - key: "traefik.http.routers.{{ service }}.tls.certresolver"
-      value: "letsencrypt"
-    - key: "traefik.http.services.{{ service }}.loadbalancer.server.port"
-      value: "9696"
+      - key: "com.centurylinklabs.watchtower.enable"
+        value: "true"
+      - key: "traefik.enable"
+        value: "true"
+      - key: "traefik.http.routers.{{ service }}.rule"
+        value: "Host(`{{ service }}.{{ DOMAIN }}`)"
+      - key: "traefik.http.routers.{{ service }}.service"
+        value: "{{ service }}"
+      - key: "traefik.http.routers.{{ service }}.entrypoints"
+        value: "https"
+      - key: "traefik.http.routers.{{ service }}.tls"
+        value: "true"
+      - key: "traefik.http.routers.{{ service }}.tls.certresolver"
+        value: "letsencrypt"
+      - key: "traefik.http.services.{{ service }}.loadbalancer.server.port"
+        value: "9696"
 
   hosts: all
-  vars_files: 
+  vars_files:
     - ../vars/vars.yml
     - ../vars/vault.yml
 
   tasks:
     - name: Start prowlarr
-      docker_container:
+      community.docker.docker_container:
         image: linuxserver/prowlarr:latest
         name: "{{ service }}"
         env:
@@ -40,4 +41,4 @@
         network_mode: container:vpn
         dns_opts:
           - options: "single-request"
-        labels: "{{ labels | items2dict}}"
+        labels: "{{ labels | items2dict }}"

@@ -28,15 +28,16 @@
 
   tasks:
     - name: Adding yaml files
-      template:
-        src: ../local/homeassistant/{{item}}
+      ansible.builtin.template:
+        src: ../local/homeassistant/{{ item }}
         dest: '{{ docker_config_dir }}/{{ service }}'
+        mode: "0644"
       loop:
         - configuration.yaml
 
 
     - name: Start homeassistant
-      docker_container:
+      community.docker.docker_container:
         image: "ghcr.io/home-assistant/home-assistant:stable"
         name: "{{ service }}"
         volumes:
@@ -46,4 +47,4 @@
         privileged: true
         ports:
           - 8123:8123
-        labels: "{{ labels | items2dict}}"
+        labels: "{{ labels | items2dict }}"

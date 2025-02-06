@@ -1,40 +1,41 @@
 ---
-- vars:
+- name: Pihole
+  vars:
     service: "pihole"
     labels:
-    - key: com.centurylinklabs.watchtower.enable
-      value: "true"
-    - key: traefik.enable
-      value: "true"
-    - key: traefik.http.routers.pihole.entrypoints
-      value: "https"
-    - key: traefik.http.routers.pihole.rule
-      value: "Host(`pihole.{{ DOMAIN }}`)"
-      #traefik.http.routers.pihole.middlewares: "pihole-admin",
-    - key: traefik.http.routers.pihole.service
-      value: "pihole"
-    - key: traefik.http.routers.pihole.tls
-      value: "true"
-    - key: traefik.http.routers.pihole.tls.certresolver
-      value: "letsencrypt"
-      #traefik.http.middlewares.pihole-admin.addprefix.prefix: "/admin",
-    - key: traefik.http.routers.pihole_http.entrypoints
-      value: "https"
-    - key: traefik.http.routers.pihole_http.rule
-      value: "Host(`pihole.{{ DOMAIN }}`)"
-    - key: traefik.http.routers.pihole_http.middlewares
-      value: "redirect-to-https"
-    - key: traefik.http.services.pihole.loadBalancer.server.port
-      value: "80"
+      - key: com.centurylinklabs.watchtower.enable
+        value: "true"
+      - key: traefik.enable
+        value: "true"
+      - key: traefik.http.routers.pihole.entrypoints
+        value: "https"
+      - key: traefik.http.routers.pihole.rule
+        value: "Host(`pihole.{{ DOMAIN }}`)"
+        # traefik.http.routers.pihole.middlewares: "pihole-admin",
+      - key: traefik.http.routers.pihole.service
+        value: "pihole"
+      - key: traefik.http.routers.pihole.tls
+        value: "true"
+      - key: traefik.http.routers.pihole.tls.certresolver
+        value: "letsencrypt"
+        # traefik.http.middlewares.pihole-admin.addprefix.prefix: "/admin",
+      - key: traefik.http.routers.pihole_http.entrypoints
+        value: "https"
+      - key: traefik.http.routers.pihole_http.rule
+        value: "Host(`pihole.{{ DOMAIN }}`)"
+      - key: traefik.http.routers.pihole_http.middlewares
+        value: "redirect-to-https"
+      - key: traefik.http.services.pihole.loadBalancer.server.port
+        value: "80"
 
   hosts: all
-  vars_files: 
+  vars_files:
     - ../vars/vars.yml
     - ../vars/vault.yml
 
   tasks:
     - name: Start pihole
-      docker_container:
+      community.docker.docker_container:
         name: "{{ service }}"
         image: pihole/pihole:latest
         restart_policy: unless-stopped
@@ -42,4 +43,4 @@
           - "{{ docker_config_dir }}/{{ service }}:/etc/pihole"
           - "{{ docker_config_dir }}/dnsmasq.d:/etc/dnsmasq.d"
         network_mode: service:vpn
-        labels: "{{ labels | items2dict}}"
+        labels: "{{ labels | items2dict }}"

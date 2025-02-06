@@ -1,32 +1,35 @@
 ---
-- vars:
+- name: Bazarr
+  vars:
     service: "bazarr"
     labels:
-    - key: "com.centurylinklabs.watchtower.enable"
-      value: "true"
-    - key: "traefik.enable"
-      value: "true"
-    - key: "traefik.http.routers.{{ service }}.rule"
-      value: "Host(`{{ service }}.{{ DOMAIN }}`)"
-    - key: "traefik.http.routers.{{ service }}.service"
-      value: "{{ service }}"
-    - key: "traefik.http.routers.{{ service }}.entrypoints"
-      value: "https"
-    - key: "traefik.http.routers.{{ service }}.tls"
-      value: "true"
-    - key: "traefik.http.routers.{{ service }}.tls.certresolver"
-      value: "letsencrypt"
-    - key: "traefik.http.services.{{ service }}.loadbalancer.server.port"
-      value: "6767"
+      - key: "com.centurylinklabs.watchtower.enable"
+        value: "true"
+      - key: "traefik.enable"
+        value: "true"
+      - key: "traefik.http.routers.{{ service }}.rule"
+        value: "Host(`{{ service }}.{{ DOMAIN }}`)"
+      - key: "traefik.http.routers.{{ service }}.service"
+        value: "{{ service }}"
+      - key: "traefik.http.routers.{{ service }}.entrypoints"
+        value: "https"
+      - key: "traefik.http.routers.{{ service }}.tls"
+        value: "true"
+      - key: "traefik.http.routers.{{ service }}.tls.certresolver"
+        value: "letsencrypt"
+      - key: "traefik.http.services.{{ service }}.loadbalancer.server.port"
+        value: "6767"
+      - key: "autoheal-app"
+        value: "true"
 
   hosts: all
-  vars_files: 
+  vars_files:
     - ../vars/vars.yml
     - ../vars/vault.yml
 
   tasks:
     - name: Start Bazarr
-      docker_container:
+      community.docker.docker_container:
         image: linuxserver/bazarr:latest
         name: "{{ service }}"
         env:
@@ -38,9 +41,4 @@
           - "{{ docker_nas_dir }}:/storage"
         network_mode: container:vpn
         restart_policy: unless-stopped
-        labels: "{{ labels | items2dict}}"
-        healthcheck:
-          test: ping -c 1 {{ service }}.{{ DOMAIN }} && pidof pf.sh || exit 1
-          interval: 180s
-          timeout: 10s
-          retries: 3
+        labels: "{{ labels | items2dict }}"

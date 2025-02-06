@@ -1,5 +1,6 @@
 ---
-- vars:
+- name: Qbittorrent
+  vars:
     service: "qbittorrent"
     labels:
       - key: "com.centurylinklabs.watchtower.enable"
@@ -28,7 +29,7 @@
 
   tasks:
     - name: Start qbittorrent
-      docker_container:
+      community.docker.docker_container:
         image: linuxserver/qbittorrent:latest
         name: "{{ service }}"
         env:

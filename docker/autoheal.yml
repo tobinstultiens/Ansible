@@ -1,5 +1,6 @@
 ---
-- vars:
+- name: Autoheal
+  vars:
     service: "autoheal"
     labels:
       - key: "com.centurylinklabs.watchtower.enable"
@@ -16,7 +17,7 @@
 
   tasks:
     - name: Start Autoheal
-      docker_container:
+      community.docker.docker_container:
         image: willfarrell/autoheal:latest
         name: "{{ service }}"
         volumes:
@@ -25,4 +26,4 @@
         restart_policy: unless-stopped
         env:
           AUTOHEAL_CONTAINER_LABEL: autoheal-app
-        labels: "{{ labels | items2dict}}"
+        labels: "{{ labels | items2dict }}"

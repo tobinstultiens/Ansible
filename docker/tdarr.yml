@@ -1,32 +1,33 @@
 ---
-- vars:
+- name: Tdarr
+  vars:
     service: "tdarr"
     labels:
-    - key: "com.centurylinklabs.watchtower.enable"
-      value: "true"
-    - key: "traefik.enable"
-      value: "true"
-    - key: "traefik.http.routers.{{ service }}.rule"
-      value: "Host(`{{ service }}.{{ DOMAIN }}`)"
-    - key: "traefik.http.routers.{{ service }}.service"
-      value: "{{ service }}"
-    - key: "traefik.http.routers.{{ service }}.entrypoints"
-      value: "https"
-    - key: "traefik.http.routers.{{ service }}.tls"
-      value: "true"
-    - key: "traefik.http.routers.{{ service }}.tls.certresolver"
-      value: "letsencrypt"
-    - key: "traefik.http.services.{{ service }}.loadbalancer.server.port"
-      value: "8265"
+      - key: "com.centurylinklabs.watchtower.enable"
+        value: "true"
+      - key: "traefik.enable"
+        value: "true"
+      - key: "traefik.http.routers.{{ service }}.rule"
+        value: "Host(`{{ service }}.{{ DOMAIN }}`)"
+      - key: "traefik.http.routers.{{ service }}.service"
+        value: "{{ service }}"
+      - key: "traefik.http.routers.{{ service }}.entrypoints"
+        value: "https"
+      - key: "traefik.http.routers.{{ service }}.tls"
+        value: "true"
+      - key: "traefik.http.routers.{{ service }}.tls.certresolver"
+        value: "letsencrypt"
+      - key: "traefik.http.services.{{ service }}.loadbalancer.server.port"
+        value: "8265"
 
   hosts: all
-  vars_files: 
+  vars_files:
     - ../vars/vars.yml
     - ../vars/vault.yml
 
   tasks:
     - name: Start tdarr
-      docker_container:
+      community.docker.docker_container:
         image: ghcr.io/haveagitgat/tdarr:2.11.01
         name: "{{ service }}"
         env:
@@ -49,10 +50,10 @@
           - "{{ docker_nas_dir }}:/media"
           - "{{ home }}/tmp/tdarr:/temp"
         restart_policy: unless-stopped
-        labels: "{{ labels | items2dict}}"
+        labels: "{{ labels | items2dict }}"
 
     - name: Start tdarr node.
-      docker_container:
+      community.docker.docker_container:
         name: "{{ service }}-node"
         image: ghcr.io/haveagitgat/tdarr_node:2.11.01
         network_mode: "container:{{ service }}"
@@ -75,4 +76,3 @@
         restart_policy: unless-stopped
         labels:
           com.centurylinklabs.watchtower.enable: "true"
-

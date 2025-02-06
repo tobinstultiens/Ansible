@@ -1,5 +1,6 @@
 ---
-- hosts: all
+- name: Setup
+  hosts: all
   become: true
   roles:
     - docker
@@ -32,9 +33,12 @@
       ansible.builtin.lineinfile:
         state: present
         path: "/etc/fstab"
-        line: "{{ nas_user }}@{{ nas_ip }}:/ {{ docker_nas }} fuse.sshfs noauto,x-systemd.automount,_netdev,reconnect,identityfile=/home/tobins/.ssh/id_ed25519,allow_other,default_permissions 0 0"
+        line: >-
+          {{ nas_user }}@{{ nas_ip }}:/ {{ docker_nas }}
+          fuse.sshfs noauto,x-systemd.automount,_netdev,reconnect,identityfile=/home/tobins/.ssh/id_ed25519,allow_other,default_permissions
+          0 0
       when: check.found == 0
 
     - name: Reboot if nas mount was undefined
-      reboot:
+      ansible.builtin.reboot:
       when: check.found == 0

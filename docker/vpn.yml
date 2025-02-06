@@ -1,10 +1,11 @@
 ---
-- vars:
+- name: Vpn
+  vars:
     service: "vpn"
 
-  become: yes
+  become: true
   hosts: all
-  vars_files: 
+  vars_files:
     - ../vars/vars.yml
     - ../vars/vault.yml
 
@@ -13,20 +14,21 @@
       ansible.builtin.copy:
         src: ../local/WireGuard
         dest: "{{ home }}"
+        mode: "0644"
 
     - name: Changing permissions of WireGuard script with +x
-      file:
+      ansible.builtin.file:
         dest: "{{ home }}/WireGuard/updateport.sh"
         mode: "a+x"
 
     - name: Set sysctl
-      sysctl:
+      ansible.posix.sysctl:
         name: net.ipv4.conf.all.src_valid_mark
         value: "1"
         state: present
 
     - name: Start vpn
-      docker_container:
+      community.docker.docker_container:
         image: thrnz/docker-wireguard-pia:latest
         name: "{{ service }}"
         restart_policy: unless-stopped
@@ -43,11 +45,11 @@
           - "7878:7878"
           # Bazarr
           - "6767:6767"
-          # "Readarr  
+          # "Readarr
           - "8787:8787"
-          # "Prowlarr 
+          # "Prowlarr
           - "9696:9696"
-          # "Calibre  
+          # "Calibre
           - "8081:8081"
           - "8083:8083"
           - "8181:8181"
@@ -56,7 +58,7 @@
           - "6881:6881/udp"
           - "8080:8080"
           - "4343:4343"
-          # "Ombi     
+          # "Ombi
           - "3579:3579"
         env:
           LOC: poland
@@ -93,4 +95,4 @@
       community.docker.docker_container_exec:
         container: "{{ service }}"
         command:
-         /bin/sh -c "curl -c /mam.cookies -b 'mam_id={{ MAM_SESSION }}' https://t.myanonamouse.net/json/dynamicSeedbox.php"
+          /bin/sh -c "curl -c /mam.cookies -b 'mam_id={{ MAM_SESSION }}' https://t.myanonamouse.net/json/dynamicSeedbox.php"

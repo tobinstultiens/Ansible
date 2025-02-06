@@ -1,5 +1,6 @@
 ---
-- vars:
+- name: Nextcloud
+  vars:
     service: "nextcloud"
     labels:
       - key: "com.centurylinklabs.watchtower.enable"
@@ -30,7 +31,7 @@
         volume_name: nextcloud_aio_mastercontainer # This line is not allowed to be changed as otherwise the built-in backup solution will not workb
 
     - name: Start nextcloud
-      docker_container:
+      community.docker.docker_container:
         image: nextcloud/all-in-one:latest
         init: true
         hostname: "{{ service }}.{{ DOMAIN }}"
@@ -39,7 +40,8 @@
           APACHE_PORT: "11000"
           APACHE_IP_BINDING: "127.0.0.1"
         volumes:
-          - nextcloud_aio_mastercontainer:/mnt/docker-aio-config # This line is not allowed to be changed as otherwise the built-in backup solution will not work
+          # This line is not allowed to be changed as otherwise the built-in backup solution will not work
+          - nextcloud_aio_mastercontainer:/mnt/docker-aio-config
           - /var/run/docker.sock:/var/run/docker.sock:ro
         restart_policy: unless-stopped
         ports:

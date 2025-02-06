@@ -1,32 +1,33 @@
 ---
-- vars:
+- name: Jellyfin
+  vars:
     service: "jellyfin"
     labels:
-    - key: "com.centurylinklabs.watchtower.enable"
-      value: "true"
-    - key: "traefik.enable"
-      value: "true"
-    - key: "traefik.http.routers.{{ service }}.rule"
-      value: "Host(`{{ service }}.{{ DOMAIN }}`)"
-    - key: "traefik.http.routers.{{ service }}.service"
-      value: "{{ service }}"
-    - key: "traefik.http.routers.{{ service }}.entrypoints"
-      value: "https"
-    - key: "traefik.http.routers.{{ service }}.tls"
-      value: "true"
-    - key: "traefik.http.routers.{{ service }}.tls.certresolver"
-      value: "letsencrypt"
-    - key: "traefik.http.services.{{ service }}.loadbalancer.server.port"
-      value: "8096"
+      - key: "com.centurylinklabs.watchtower.enable"
+        value: "true"
+      - key: "traefik.enable"
+        value: "true"
+      - key: "traefik.http.routers.{{ service }}.rule"
+        value: "Host(`{{ service }}.{{ DOMAIN }}`)"
+      - key: "traefik.http.routers.{{ service }}.service"
+        value: "{{ service }}"
+      - key: "traefik.http.routers.{{ service }}.entrypoints"
+        value: "https"
+      - key: "traefik.http.routers.{{ service }}.tls"
+        value: "true"
+      - key: "traefik.http.routers.{{ service }}.tls.certresolver"
+        value: "letsencrypt"
+      - key: "traefik.http.services.{{ service }}.loadbalancer.server.port"
+        value: "8096"
 
   hosts: all
-  vars_files: 
+  vars_files:
     - ../vars/vars.yml
     - ../vars/vault.yml
 
   tasks:
     - name: Start Jellyfin
-      docker_container:
+      community.docker.docker_container:
         image: lscr.io/linuxserver/jellyfin:latest
         name: "{{ service }}"
         env:
@@ -36,7 +37,7 @@
         devices:
           - "/dev/dri:/dev/dri"
         volumes:
-          #- '{{ docker_nas_dir }}/Jellyfin/dist:/usr/share/jellyfin/web:ro'
+          # - '{{ docker_nas_dir }}/Jellyfin/dist:/usr/share/jellyfin/web:ro'
           - "{{ docker_config_dir }}/{{ service }}:/config"
           - "{{ docker_nas_dir }}:/storage"
         ports:
@@ -44,4 +45,4 @@
           - 7359:7359/udp # optional
           - 1900:1900/udp # optional
         restart_policy: unless-stopped
-        labels: "{{ labels | items2dict}}"
+        labels: "{{ labels | items2dict }}"
