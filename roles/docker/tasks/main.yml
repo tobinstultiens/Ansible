@@ -1,49 +1,37 @@
 ---
-    - name: Ensure python-requests is installed.
-      package:
-        name: python-requests
-        state: present
+- name: Ensure python-requests is installed.
+  ansible.builtin.package:
+    name: python-requests
+    state: present
 
-    - name: Ensure python-docker is installed.
-      package:
-        name: python-docker
-        state: present
+- name: Ensure python-docker is installed.
+  ansible.builtin.package:
+    name: python-docker
+    state: present
 
-    - name: Ensure docker is installed.
-      package:
-        name: docker
-        state: present
+- name: Ensure docker is installed.
+  ansible.builtin.package:
+    name: docker
+    state: present
 
-    - name: Ensure docker-compose is installed.
-      package:
-        name: docker-compose
-        state: present
+- name: Ensure docker-compose is installed.
+  ansible.builtin.package:
+    name: docker-compose
+    state: present
 
-    # - name: Create docker directory if it does not exist
-    #   ansible.builtin.file:
-    #     path: /home/docker
-    #     state: directory
-    #     mode: '700'
-    #   notify:
-    #     - Rsync copy docker var
-    #     - Stop docker
-    #     - Recursively remove docker directory
-    #     - Create a symbolic link
-    #     - Start docker
+- name: Ensure docker is running.
+  ansible.builtin.service:
+    name: docker
+    state: started
+    enabled: true
 
-    - name: Ensure docker is running.
-      service:
-        name: docker
-        state: started
-        enabled: true
+- name: Add user to docker group
+  ansible.builtin.user:
+    name: "{{ ansible_user }}"
+    groups: docker
+    append: true
+  register: add_to_docker_group_result
 
-    - name: Add user to docker group
-      ansible.builtin.user:
-        name: "{{ ansible_user }}"
-        groups: docker
-        append: true
-      register: add_to_docker_group_result
-
-    - name: Reset ssh connection to allow user changes to affect ansible user
-      ansible.builtin.meta: reset_connection
-      when: add_to_docker_group_result
+- name: Reset ssh connection to allow user changes to affect ansible user
+  ansible.builtin.meta: reset_connection
+  when: add_to_docker_group_result

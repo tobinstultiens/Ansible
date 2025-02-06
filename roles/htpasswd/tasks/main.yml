@@ -1,6 +1,5 @@
 ---
-    - name: Ensure apache is installed.
-      package:
-        name: apache
-        state: present
-
+- name: Ensure apache is installed.
+  ansible.builtin.package:
+    name: apache
+    state: present
