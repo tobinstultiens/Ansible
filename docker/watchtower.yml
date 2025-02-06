@@ -1,15 +1,16 @@
 ---
-- vars:
+- name: Watchtower
+  vars:
     service: "watchtower"
 
   hosts: all
-  vars_files: 
+  vars_files:
     - ../vars/vars.yml
     - ../vars/vault.yml
 
   tasks:
     - name: Start watchtower
-      docker_container:
+      community.docker.docker_container:
         image: containrrr/watchtower:latest
         name: "{{ service }}"
         command: --cleanup --label-enable --interval 3600

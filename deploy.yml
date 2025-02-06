@@ -1,5 +1,6 @@
 ---
-- hosts: all
+- name: Deploy all docker applications
+  hosts: all
   become: true
   roles:
     - docker
@@ -33,4 +34,3 @@
 - ansible.builtin.import_playbook: docker/homepage.yml
 - ansible.builtin.import_playbook: docker/bazarr.yml
 - ansible.builtin.import_playbook: docker/nextcloud.yml
-
