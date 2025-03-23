@@ -55,6 +55,8 @@
       community.docker.docker_container:
         image: ghcr.io/gethomepage/homepage:latest
         name: "{{ service }}"
+        env:
+          HOMEPAGE_ALLOWED_HOSTS: "{{ service }}.{{ DOMAIN }}"
         volumes:
           - "{{ docker_config_dir }}/{{ service }}:/app/config"
           - /var/run/docker.sock:/var/run/docker.sock:ro # optional, for docker integrations

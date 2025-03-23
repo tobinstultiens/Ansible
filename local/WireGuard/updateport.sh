@@ -2,6 +2,8 @@
 
 port="$1"
 
+echo $1
+
 echo "Setting qBittorrent port settings ($port)..."
 # Very basic retry logic so we don't fail if qBittorrent isn't running yet
  while ! curl --silent --retry 10 --retry-delay 15 --max-time 10 \

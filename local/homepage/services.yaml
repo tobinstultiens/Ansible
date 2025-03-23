@@ -63,17 +63,27 @@
     - Readarr:
         icon: readarr.png
         href: https://readarr.tstultiens.com/
-        description: Movie management
+        description: Book management
         siteMonitor: https://readarr.tstultiens.com/
         widget:
           type: readarr
           url: https://readarr.tstultiens.com
           key: {{readarr_apikey}}
+    - Speakarr:
+        icon: readarr.png
+        href: https://speakarr.tstultiens.com/
+        description: Audio book management
+        siteMonitor: https://speakarr.tstultiens.com/
+        widget:
+          type: readarr
+          url: https://readarr.tstultiens.com
+          key: {{speakarr_apikey}}
+
 
     - Prowlarr:
         icon: prowlarr.png
         href: https://prowlarr.tstultiens.com/
-        description: Movie management
+        description: Trackers
         siteMonitor: https://prowlarr.tstultiens.com/
         widget:
           type: prowlarr
@@ -83,7 +93,7 @@
     - Lidarr:
         icon: lidarr.png
         href: https://lidarr.tstultiens.com/
-        description: Movie management
+        description: Music management
         siteMonitor: https://lidarr.tstultiens.com/
         widget:
           type: lidarr
@@ -93,7 +103,7 @@
     - Bazarr:
         icon: bazarr.png
         href: https://bazarr.tstultiens.com/
-        description: Movie management
+        description: Subtitles management
         siteMonitor: https://bazarr.tstultiens.com/
         widget:
           type: bazarr
@@ -103,7 +113,7 @@
     - Tdarr:
         icon: tdarr.png
         href: https://tdarr.tstultiens.com/
-        description: Movie management
+        description: Video processor
         siteMonitor: https://tdarr.tstultiens.com/
         widget:
           type: tdarr
