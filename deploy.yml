@@ -9,11 +9,6 @@
     - vars/vars.yml
     - vars/vault.yml
 
-- name: Stop all containers
-  tags: clean
-- name: Remove all containers
-  tags: clean
-
 - name: Watchtower
   ansible.builtin.import_playbook: docker/watchtower.yml
 - name: Autoheal
@@ -44,6 +39,8 @@
   ansible.builtin.import_playbook: docker/grocy.yml
 - name: Readarr
   ansible.builtin.import_playbook: docker/readarr.yml
+# - name: Speakarr
+# ansible.builtin.import_playbook: docker/speakarr.yml
 - name: Lidarr
   ansible.builtin.import_playbook: docker/lidarr.yml
 - name: Reddit
