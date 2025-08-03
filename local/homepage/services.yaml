@@ -69,16 +69,6 @@
           type: readarr
           url: https://readarr.tstultiens.com
           key: {{readarr_apikey}}
-    - Speakarr:
-        icon: readarr.png
-        href: https://speakarr.tstultiens.com/
-        description: Audio book management
-        siteMonitor: https://speakarr.tstultiens.com/
-        widget:
-          type: readarr
-          url: https://readarr.tstultiens.com
-          key: {{speakarr_apikey}}
-
 
     - Prowlarr:
         icon: prowlarr.png

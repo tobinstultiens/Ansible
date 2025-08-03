@@ -1,7 +1,7 @@
 ---
-- name: Speakarr
+- name: Flaresolverr
   vars:
-    service: "speakarr"
+    service: "flaresolverr"
     labels:
       - key: "com.centurylinklabs.watchtower.enable"
         value: "true"
@@ -18,7 +18,7 @@
       - key: "traefik.http.routers.{{ service }}.tls.certresolver"
         value: "letsencrypt"
       - key: "traefik.http.services.{{ service }}.loadbalancer.server.port"
-        value: "8789"
+        value: "8191"
 
   hosts: all
   vars_files:
@@ -26,18 +26,12 @@
     - ../vars/vault.yml
 
   tasks:
-    - name: Start speakarr
+    - name: Start Flaresolverr
       community.docker.docker_container:
-        image: linuxserver/readarr:nightly
+        image: ghcr.io/flaresolverr/flaresolverr:latest
         name: "{{ service }}"
         env:
-          PUID: "1000"
-          PGID: "1000"
           TZ: Europe/Amsterdam
-        volumes:
-          - "{{ docker_config_dir }}/{{ service }}:/config"
-          - "{{ docker_nas_dir }}:/books"
-          - "{{ docker_nas_dir }}/Download:/downloads"
         network_mode: container:vpn
         restart_policy: unless-stopped
         labels: "{{ labels | items2dict }}"

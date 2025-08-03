@@ -39,8 +39,8 @@
   ansible.builtin.import_playbook: docker/grocy.yml
 - name: Readarr
   ansible.builtin.import_playbook: docker/readarr.yml
-# - name: Speakarr
-# ansible.builtin.import_playbook: docker/speakarr.yml
+- name: Flaresolverr
+  ansible.builtin.import_playbook: docker/flaresolverr.yml
 - name: Lidarr
   ansible.builtin.import_playbook: docker/lidarr.yml
 - name: Reddit
