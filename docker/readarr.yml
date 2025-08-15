@@ -39,5 +39,10 @@
           - "{{ docker_nas_dir }}:/books"
           - "{{ docker_nas_dir }}/Download:/downloads"
         network_mode: container:vpn
+        state: healthy
         restart_policy: unless-stopped
         labels: "{{ labels | items2dict }}"
+        healthcheck:
+          test: curl -f http://localhost:8787
+          interval: 30s
+          timeout: 10s

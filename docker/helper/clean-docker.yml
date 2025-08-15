@@ -1,13 +1,13 @@
+---
 - name: Stop and remove all Docker containers
   hosts: all
   become: true
   gather_facts: false
 
   tasks:
-    - name: Get list of all containers
+    - name: Retrieve info
       community.docker.docker_container_info:
-        gather_subset:
-          - all
+        gather_subset: all
       register: docker_info
 
     - name: Stop containers
