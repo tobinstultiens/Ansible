@@ -44,6 +44,6 @@
           - options: "single-request"
         labels: "{{ labels | items2dict }}"
         healthcheck:
-          test: curl -f http://localhost:9696
+          test: curl -f {{ service }}.{{ DOMAIN }}
           interval: 30s
           timeout: 10s

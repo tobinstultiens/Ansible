@@ -24,6 +24,7 @@
           - /etc/localtime:/etc/localtime:ro
           - /var/run/docker.sock:/var/run/docker.sock
         restart_policy: unless-stopped
+        state: absent
         env:
           AUTOHEAL_CONTAINER_LABEL: autoheal-app
         labels: "{{ labels | items2dict }}"
