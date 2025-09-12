@@ -5,106 +5,106 @@
 - Media:
     - Jellyfin:
         icon: jellyfin.png
-        href: https://jellyfin.tstultiens.com/
+        href: https://jellyfin.{{DOMAIN}}/
         description: Series management
-        siteMonitor: https://jellyfin.tstultiens.com/
+        siteMonitor: https://jellyfin.{{DOMAIN}}/
         widget:
           type: jellyfin
-          url: https://jellyfin.tstultiens.com
+          url: https://jellyfin.{{DOMAIN}}
           key: {{jellyfin_apikey}}
           enableBlocks: true # optional, defaults to false
           enableNowPlaying: true # optional, defaults to true
     - Ombi:
         icon: ombi.png
-        href: https://ombi.tstultiens.com/
+        href: https://ombi.{{DOMAIN}}/
         description: Series management
-        siteMonitor: https://ombi.tstultiens.com/
+        siteMonitor: https://ombi.{{DOMAIN}}/
         widget:
           type: ombi
-          url: https://ombi.tstultiens.com
+          url: https://ombi.{{DOMAIN}}
           key: {{ombi_apikey}}
     - Calibre:
         icon: calibre.png
-        href: https://calibre.tstultiens.com/
+        href: https://calibre.{{DOMAIN}}/
         description: Series management
-        siteMonitor: https://calibre.tstultiens.com/
+        siteMonitor: https://calibre.{{DOMAIN}}/
     - Calibre-Web:
         icon: calibre-web.png
-        href: https://calibre-web.tstultiens.com/
+        href: https://calibre-web.{{DOMAIN}}/
         description: Series management
-        siteMonitor: https://calibre-web.tstultiens.com/
+        siteMonitor: https://calibre-web.{{DOMAIN}}/
         widget:
           type: calibreweb
-          url: https://calibre-web.tstultiens.com
+          url: https://calibre-web.{{DOMAIN}}
           username: {{calibreweb_username}}
           password: {{calibreweb_password}}
 
 - Sourcers:
     - Sonarr:
         icon: sonarr.png
-        href: https://sonarr.tstultiens.com/
+        href: https://sonarr.{{DOMAIN}}/
         description: Series management
-        siteMonitor: https://sonarr.tstultiens.com/
+        siteMonitor: https://sonarr.{{DOMAIN}}/
         widget:
           type: sonarr
-          url: https://sonarr.tstultiens.com
+          url: https://sonarr.{{DOMAIN}}
           key: {{sonarr_apikey}}
           enableQueue: true # optional, defaults to false
     - Radarr:
         icon: radarr.png
-        href: https://radarr.tstultiens.com/
+        href: https://radarr.{{DOMAIN}}/
         description: Movie management
-        siteMonitor: https://radarr.tstultiens.com/
+        siteMonitor: https://radarr.{{DOMAIN}}/
         widget:
           type: radarr
-          url: https://radarr.tstultiens.com
+          url: https://radarr.{{DOMAIN}}
           key: {{radarr_apikey}}
           enableQueue: true # optional, defaults to false
     - Readarr:
         icon: readarr.png
-        href: https://readarr.tstultiens.com/
+        href: https://readarr.{{DOMAIN}}/
         description: Book management
-        siteMonitor: https://readarr.tstultiens.com/
+        siteMonitor: https://readarr.{{DOMAIN}}/
         widget:
           type: readarr
-          url: https://readarr.tstultiens.com
+          url: https://readarr.{{DOMAIN}}
           key: {{readarr_apikey}}
 
     - Prowlarr:
         icon: prowlarr.png
-        href: https://prowlarr.tstultiens.com/
+        href: https://prowlarr.{{DOMAIN}}/
         description: Trackers
-        siteMonitor: https://prowlarr.tstultiens.com/
+        siteMonitor: https://prowlarr.{{DOMAIN}}/
         widget:
           type: prowlarr
-          url: https://prowlarr.tstultiens.com
+          url: https://prowlarr.{{DOMAIN}}
           key: {{prowlarr_apikey}}
 
     - Lidarr:
         icon: lidarr.png
-        href: https://lidarr.tstultiens.com/
+        href: https://lidarr.{{DOMAIN}}/
         description: Music management
-        siteMonitor: https://lidarr.tstultiens.com/
+        siteMonitor: https://lidarr.{{DOMAIN}}/
         widget:
           type: lidarr
-          url: https://lidarr.tstultiens.com
+          url: https://lidarr.{{DOMAIN}}
           key: {{lidarr_apikey}}
 
     - Bazarr:
         icon: bazarr.png
-        href: https://bazarr.tstultiens.com/
+        href: https://bazarr.{{DOMAIN}}/
         description: Subtitles management
-        siteMonitor: https://bazarr.tstultiens.com/
+        siteMonitor: https://bazarr.{{DOMAIN}}/
         widget:
           type: bazarr
-          url: https://bazarr.tstultiens.com
+          url: https://bazarr.{{DOMAIN}}
           key: {{bazarr_apikey}}
 
     - Tdarr:
         icon: tdarr.png
-        href: https://tdarr.tstultiens.com/
+        href: https://tdarr.{{DOMAIN}}/
         description: Video processor
-        siteMonitor: https://tdarr.tstultiens.com/
+        siteMonitor: https://tdarr.{{DOMAIN}}/
         widget:
           type: tdarr
-          url: https://tdarr.tstultiens.com
+          url: https://tdarr.{{DOMAIN}}

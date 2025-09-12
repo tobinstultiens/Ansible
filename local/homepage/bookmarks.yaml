@@ -6,7 +6,7 @@
     - Personal Cooking:
         - abbr: CO
           icon: https://cdn-icons-png.flaticon.com/512/3448/3448102.png
-          href: https://cooking.tstultiens.com/
+          href: https://cooking.{{DOMAIN}}/
 
 - Developer:
     - Github:
