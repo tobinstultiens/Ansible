@@ -30,8 +30,8 @@
     name: "{{ ansible_user }}"
     groups: docker
     append: true
-  register: add_to_docker_group_result
+  register: docker_add_to_docker_group_result
 
 - name: Reset ssh connection to allow user changes to affect ansible user
   ansible.builtin.meta: reset_connection
-  when: add_to_docker_group_result
+  when: docker_add_to_docker_group_result
