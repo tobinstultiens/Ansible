@@ -31,7 +31,9 @@
         image: ghcr.io/steveharsant/purgarr:latest
         name: "{{ service }}"
         env:
-          QBIT_URL: "https://qbittorrent.{{ DOMAIN }}"
+          PUID: "1000"
+          PGID: "1000"
+          QBIT_URL: "qbittorrent:4343"
           QBIT_PASSWORD: "{{ QBT_PASS }}"
           SONARR_URL: "https://sonarr.{{ DOMAIN }}"
           SONARR_API_KEY: "{{ sonarr_apikey }}"
@@ -39,6 +41,7 @@
           RADARR_API_KEY: "{{ radarr_apikey }}"
         state: started
         restart_policy: unless-stopped
+        links: vpn:qbittorrent
         volumes:
           - "{{ docker_config_dir }}/{{ service }}:/config"
           - "{{ docker_nas_dir }}:/storage"
