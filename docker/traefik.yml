@@ -6,7 +6,7 @@
       - key: "traefik.enable"
         value: "true"
       - key: "traefik.http.middlewares.auth.basicauth.users"
-        value: "{{ traefik_user }}:{{ traefik_password | password_hash('blowfish','1234567890123456789012') }}"
+        value: "{{ traefik_basic_auth }}"
       - key: "traefik.http.routers.{{ service }}.rule"
         value: "Host(`{{ service }}.{{ DOMAIN }}`)"
       - key: "traefik.http.routers.{{ service }}.service"
@@ -21,6 +21,17 @@
     - ../vars/vault.yml
 
   tasks:
+
+    - name: Show traefik_password details
+      debug:
+        msg:
+          - "VALUE={{ traefik_password }}"
+          - "LEN={{ traefik_password | string | length }}"
+
+    - name: Generate Traefik basic auth hash
+      set_fact:
+        traefik_basic_auth: "{{ traefik_user }}:{{ traefik_password | password_hash('sha512_crypt') }}"
+
     - name: Ensures traefik dir exists
       ansible.builtin.file:
         path: "{{ traefik }}"
