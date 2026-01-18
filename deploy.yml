@@ -63,3 +63,5 @@
   ansible.builtin.import_playbook: docker/nextcloud.yml
 - name: Purgarr
   ansible.builtin.import_playbook: docker/purgarr.yml
+- name: Recyclarr
+  ansible.builtin.import_playbook: docker/recyclarr.yml

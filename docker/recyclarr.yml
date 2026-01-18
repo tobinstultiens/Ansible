@@ -1,0 +1,34 @@
+---
+- name: Recyclarr
+  vars:
+    service: "recyclarr"
+    labels:
+      - key: "com.centurylinklabs.watchtower.enable"
+        value: "true"
+
+  hosts: all
+  vars_files:
+    - ../vars/vars.yml
+    - ../vars/vault.yml
+
+  tasks:
+    - name: Adding yaml files
+      ansible.builtin.template:
+        src: ../local/recyclarr/{{ item }}
+        dest: '{{ docker_config_dir }}/{{ service }}/configs/{{ item }}'
+      loop:
+        - anime-sonarr-v4.yml
+        - hd-bluray-web.yml
+
+    - name: Start Recyclarr
+      community.docker.docker_container:
+        image: ghcr.io/recyclarr/recyclarr
+        name: "{{ service }}"
+        user: 1000:1000
+        env:
+          TZ: Europe/Amsterdam
+        volumes:
+          - "{{ docker_config_dir }}/{{ service }}:/config"
+        network_mode: container:vpn
+        state: started
+        labels: "{{ labels | items2dict }}"

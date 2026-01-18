@@ -33,7 +33,7 @@
         env:
           PUID: "1000"
           PGID: "1000"
-          TZ: Europe/London
+          TZ: Europe/Amsterdam
         volumes:
           - "{{ docker_config_dir }}/{{ service }}:/config"
           - "{{ docker_nas_dir }}:/tv"
