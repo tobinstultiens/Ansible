@@ -41,6 +41,8 @@
           internalNode: "true"
           inContainer: "true"
           nodeName: "MyInternalNode"
+          auth: "true"
+          apiKey: "{{ tdarr_apikey }}"
         devices:
           - "/dev/dri:/dev/dri"
         volumes:
@@ -50,6 +52,7 @@
           - "{{ docker_nas_dir }}:/media"
           - "{{ home }}/tmp/tdarr:/temp"
         restart_policy: unless-stopped
+        ports: 8266:8266
         labels: "{{ labels | items2dict }}"
 
     - name: Start tdarr node.
@@ -66,6 +69,7 @@
           serverIP: "0.0.0.0"
           serverPort: "8266"
           inContainer: "true"
+          apiKey: "{{ tdarr_apikey }}"
         devices:
           - "/dev/dri:/dev/dri"
         volumes:
