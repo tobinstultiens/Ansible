@@ -34,7 +34,7 @@
       no_log: true
 
     - name: Store Traefik basic auth hash
-      set_fact:
+      ansible.builtin.set_fact:
         # Traefik basic auth expects htpasswd-compatible hashes (MD5, SHA1, or bcrypt).
         traefik_basic_auth: "{{ traefik_basic_auth_command.stdout | trim }}"
       no_log: true

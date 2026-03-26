@@ -16,6 +16,7 @@
       ansible.builtin.template:
         src: ../local/recyclarr/{{ item }}
         dest: '{{ docker_config_dir }}/{{ service }}/configs/{{ item }}'
+        mode: "0600"
       loop:
         - anime-sonarr-v4.yml
         - hd-bluray-web.yml
