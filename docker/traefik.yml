@@ -22,8 +22,22 @@
 
   tasks:
     - name: Generate Traefik basic auth hash
+      ansible.builtin.command:
+        argv:
+          - htpasswd
+          - -nbi
+          - -m
+          - "{{ traefik_user }}"
+        stdin: "{{ traefik_password }}"
+      register: traefik_basic_auth_command
+      changed_when: false
+      no_log: true
+
+    - name: Store Traefik basic auth hash
       set_fact:
-        traefik_basic_auth: "{{ traefik_user }}:{{ traefik_password | password_hash('sha512_crypt') }}"
+        # Traefik basic auth expects htpasswd-compatible hashes (MD5, SHA1, or bcrypt).
+        traefik_basic_auth: "{{ traefik_basic_auth_command.stdout | trim }}"
+      no_log: true
 
     - name: Ensures traefik dir exists
       ansible.builtin.file:
