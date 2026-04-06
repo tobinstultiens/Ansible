@@ -41,8 +41,10 @@
         value: "true"
       - key: "traefik.http.services.{{ service }}.loadbalancer.server.port"
         value: "3579"
+      - key: "traefik.http.routers.{{ service }}.middlewares"
+        value: "{{ service }}"
       - key: "traefik.docker.network"
-        value: "traefik_proxy"
+        value: "proxy"
       - key: "autoheal-app"
         value: "true"
 

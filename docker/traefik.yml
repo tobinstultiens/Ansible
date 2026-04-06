@@ -57,10 +57,15 @@
         dest: "{{ traefik }}/traefik.yml"
         mode: "0600"
 
+    - name: Create proxy network
+      community.docker.docker_network:
+        name: proxy
+        state: present
+
     - name: Starting the reverse proxy.
       community.docker.docker_container:
         name: "{{ service }}"
-        image: traefik:latest
+        image: traefik:v3.3
         restart_policy: always
         state: started
         recreate: true

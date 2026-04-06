@@ -80,7 +80,6 @@
           net.ipv6.conf.lo.disable_ipv6: "1"
         labels:
           {
-            "traefik.enable": "true",
             "autoheal-app": "true"
           }
         healthcheck:

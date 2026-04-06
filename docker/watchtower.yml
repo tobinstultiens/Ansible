@@ -17,7 +17,6 @@
         labels:
           {
             "com.centurylinklabs.watchtower.enable": "true",
-            "traefik.enable": "true",
           }
         restart_policy: always
         network_mode: none
