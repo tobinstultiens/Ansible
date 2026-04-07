@@ -35,7 +35,13 @@ VPN_USER: ""
 VPN_PASS: ""
 home: "/home/user"
 
-# Services
+# Services (auto-extracted from config files by homepage playbook where possible)
+sonarr_apikey: ""
+radarr_apikey: ""
+lidarr_apikey: ""
+readarr_apikey: ""
+prowlarr_apikey: ""
+bazarr_apikey: ""
 jellyfin_apikey: ""
 ombi_apikey: ""
 tdarr_apikey: ""
