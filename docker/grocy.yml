@@ -17,6 +17,8 @@
         value: "true"
       - key: "traefik.http.routers.{{ service }}.tls.certresolver"
         value: "letsencrypt"
+      - key: "traefik.http.routers.{{ service }}.middlewares"
+        value: "authelia"
       - key: "traefik.http.services.{{ service }}.loadbalancer.server.port"
         value: "80"
 

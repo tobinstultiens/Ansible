@@ -14,7 +14,7 @@
       - key: "traefik.http.routers.{{ service }}.entrypoints"
         value: "https"
       - key: "traefik.http.routers.{{ service }}.middlewares"
-        value: "auth"
+        value: "authelia"
       - key: "traefik.http.routers.{{ service }}.tls"
         value: "true"
       - key: "traefik.http.routers.{{ service }}.tls.certresolver"

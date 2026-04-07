@@ -1,7 +1,7 @@
 ---
-- name: Prometheus
+- name: Authelia
   vars:
-    service: "prometheus"
+    service: "authelia"
     labels:
       - key: "com.centurylinklabs.watchtower.enable"
         value: "true"
@@ -17,10 +17,8 @@
         value: "true"
       - key: "traefik.http.routers.{{ service }}.tls.certresolver"
         value: "letsencrypt"
-      - key: "traefik.http.routers.{{ service }}.middlewares"
-        value: "authelia"
       - key: "traefik.http.services.{{ service }}.loadbalancer.server.port"
-        value: "9090"
+        value: "9091"
 
   hosts: all
   become: true
@@ -29,23 +27,33 @@
     - ../vars/vault.yml
 
   tasks:
-    - name: Adding yaml files
-      ansible.builtin.template:
-        src: ../local/prometheus/{{ item }}
-        dest: '{{ docker_config_dir }}/prometheus-etc/{{ item }}'
-        mode: "0644"
-      loop:
-        - prometheus.yml
+    - name: Ensure authelia config dir exists
+      ansible.builtin.file:
+        path: "{{ docker_config_dir }}/{{ service }}"
+        state: directory
+        mode: "0700"
 
-    - name: Start prometheus
+    - name: Deploy authelia configuration
+      ansible.builtin.template:
+        src: ../local/authelia/configuration.yml
+        dest: "{{ docker_config_dir }}/{{ service }}/configuration.yml"
+        mode: "0600"
+
+    - name: Deploy authelia users database
+      ansible.builtin.template:
+        src: ../local/authelia/users_database.yml
+        dest: "{{ docker_config_dir }}/{{ service }}/users_database.yml"
+        mode: "0600"
+
+    - name: Start authelia
       community.docker.docker_container:
-        image: prom/prometheus:latest
+        image: authelia/authelia:latest
         name: "{{ service }}"
-        user: root
+        env:
+          TZ: Europe/Amsterdam
         volumes:
-          - "{{ docker_config_dir }}/{{ service }}:/prometheus"
-          - "{{ docker_config_dir }}/prometheus-etc:/etc/prometheus"
-          - /var/run/docker.sock:/var/run/docker.sock
+          - "{{ docker_config_dir }}/{{ service }}:/config"
         restart_policy: unless-stopped
-        network_mode: container:vpn
+        networks:
+          - name: proxy
         labels: "{{ labels | items2dict }}"
