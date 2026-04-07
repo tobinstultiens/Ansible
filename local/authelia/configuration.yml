@@ -34,8 +34,9 @@ session:
       domain: '{{ DOMAIN }}'
       authelia_url: 'https://authelia.{{ DOMAIN }}'
       default_redirection_url: 'https://{{ DOMAIN }}'
-      expiration: 1h
-      inactivity: 5m
+      expiration: 30d
+      inactivity: 7d
+      remember_me: 90d
 
 storage:
   encryption_key: '{{ authelia_storage_key }}'
