@@ -1,7 +1,7 @@
 ---
-- name: Calibre
+- name: WUD (What's Up Docker)
   vars:
-    service: "calibre"
+    service: "wud"
     labels:
       - key: "traefik.enable"
         value: "true"
@@ -18,9 +18,7 @@
       - key: "traefik.http.routers.{{ service }}.tls.certresolver"
         value: "letsencrypt"
       - key: "traefik.http.services.{{ service }}.loadbalancer.server.port"
-        value: "8080"
-      - key: "autoheal-app"
-        value: "true"
+        value: "3000"
 
   hosts: all
   vars_files:
@@ -28,18 +26,14 @@
     - ../vars/vault.yml
 
   tasks:
-    - name: Start calibre
+    - name: Start wud
       community.docker.docker_container:
-        image: linuxserver/calibre:latest
+        image: getwud/wud:latest
         name: "{{ service }}"
-        env:
-          PUID: "1000"
-          PGID: "1000"
-          TZ: Europe/Amsterdam
-          CUSTOM_HTTPS_PORT: "8213"
         volumes:
-          - "{{ docker_config_dir }}/{{ service }}:/config"
-          - "{{ docker_nas_dir }}:/books"
+          - /var/run/docker.sock:/var/run/docker.sock
+          - "{{ docker_config_dir }}/{{ service }}:/store"
         restart_policy: unless-stopped
-        network_mode: container:vpn
+        networks:
+          - name: proxy
         labels: "{{ labels | items2dict }}"

@@ -2,9 +2,6 @@
 - name: Recyclarr
   vars:
     service: "recyclarr"
-    labels:
-      - key: "com.centurylinklabs.watchtower.enable"
-        value: "true"
 
   hosts: all
   vars_files:
@@ -32,4 +29,3 @@
           - "{{ docker_config_dir }}/{{ service }}:/config"
         network_mode: container:vpn
         state: started
-        labels: "{{ labels | items2dict }}"

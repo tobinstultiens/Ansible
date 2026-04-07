@@ -3,8 +3,6 @@
   vars:
     service: "bazarr"
     labels:
-      - key: "com.centurylinklabs.watchtower.enable"
-        value: "true"
       - key: "traefik.enable"
         value: "true"
       - key: "traefik.http.routers.{{ service }}.rule"
