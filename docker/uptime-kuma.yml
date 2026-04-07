@@ -36,4 +36,6 @@
           - "{{ docker_config_dir }}/{{ service }}:/app/data"
           - /var/run/docker.sock:/var/run/docker.sock
         restart_policy: unless-stopped
+        networks:
+          - name: proxy
         labels: "{{ labels | items2dict }}"

@@ -49,4 +49,6 @@
         privileged: true
         ports:
           - 8123:8123
+        networks:
+          - name: proxy
         labels: "{{ labels | items2dict }}"

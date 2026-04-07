@@ -39,4 +39,6 @@
         volumes:
           - "{{ docker_config_dir }}/{{ service }}:/config"
         restart_policy: unless-stopped
+        networks:
+          - name: proxy
         labels: "{{ labels | items2dict }}"

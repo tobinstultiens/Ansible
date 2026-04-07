@@ -82,6 +82,8 @@
           {
             "autoheal-app": "true"
           }
+        networks:
+          - name: proxy
         healthcheck:
           test: ping -c 1 www.google.com && pidof pf.sh || exit 1
           interval: 30s

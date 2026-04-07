@@ -97,4 +97,6 @@
           - /var/run/docker.sock:/var/run/docker.sock:ro # optional, for docker integrations
           - "{{ docker_nas_dir }}:/storage"
         restart_policy: unless-stopped
+        networks:
+          - name: proxy
         labels: "{{ labels | items2dict }}"
