@@ -31,4 +31,6 @@
         image: kick1999/cooking:latest
         name: "{{ service }}"
         restart_policy: "always"
+        networks:
+          - name: proxy
         labels: "{{ labels | items2dict }}"

@@ -14,7 +14,7 @@
       - key: "traefik.http.routers.{{ service }}.entrypoints"
         value: "https"
       - key: "traefik.http.routers.{{ service }}.middlewares"
-        value: "auth"
+        value: "authelia"
       - key: "traefik.http.routers.{{ service }}.tls"
         value: "true"
       - key: "traefik.http.routers.{{ service }}.tls.certresolver"
@@ -36,4 +36,6 @@
           - "{{ docker_config_dir }}/{{ service }}:/app/data"
           - /var/run/docker.sock:/var/run/docker.sock
         restart_policy: unless-stopped
+        networks:
+          - name: proxy
         labels: "{{ labels | items2dict }}"

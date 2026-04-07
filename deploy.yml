@@ -17,6 +17,8 @@
   ansible.builtin.import_playbook: docker/vpn.yml
 - name: Treafik
   ansible.builtin.import_playbook: docker/traefik.yml
+- name: Authelia
+  ansible.builtin.import_playbook: docker/authelia.yml
 - name: Cooking
   ansible.builtin.import_playbook: docker/cooking.yml
 - name: Calibre web
@@ -43,8 +45,6 @@
   ansible.builtin.import_playbook: docker/flaresolverr.yml
 - name: Lidarr
   ansible.builtin.import_playbook: docker/lidarr.yml
-- name: Reddit
-  ansible.builtin.import_playbook: docker/reddit-top-rss.yml
 - name: Sonarr
   ansible.builtin.import_playbook: docker/sonarr.yml
 - name: Tdarr
@@ -59,8 +59,6 @@
   ansible.builtin.import_playbook: docker/homepage.yml
 - name: Bazarr
   ansible.builtin.import_playbook: docker/bazarr.yml
-- name: Nextcloud
-  ansible.builtin.import_playbook: docker/nextcloud.yml
 - name: Purgarr
   ansible.builtin.import_playbook: docker/purgarr.yml
 - name: Recyclarr

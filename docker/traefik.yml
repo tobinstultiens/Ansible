@@ -5,14 +5,18 @@
     labels:
       - key: "traefik.enable"
         value: "true"
-      - key: "traefik.http.middlewares.auth.basicauth.users"
-        value: "{{ traefik_basic_auth }}"
+      - key: "traefik.http.middlewares.authelia.forwardauth.address"
+        value: "http://authelia:9091/api/authz/forward-auth"
+      - key: "traefik.http.middlewares.authelia.forwardauth.trustForwardHeader"
+        value: "true"
+      - key: "traefik.http.middlewares.authelia.forwardauth.authResponseHeaders"
+        value: "Remote-User,Remote-Groups,Remote-Name,Remote-Email"
       - key: "traefik.http.routers.{{ service }}.rule"
         value: "Host(`{{ service }}.{{ DOMAIN }}`)"
       - key: "traefik.http.routers.{{ service }}.service"
         value: "api@internal"
       - key: "traefik.http.routers.{{ service }}.middlewares"
-        value: "auth"
+        value: "authelia"
 
   hosts: all
   become: true
@@ -21,24 +25,6 @@
     - ../vars/vault.yml
 
   tasks:
-    - name: Generate Traefik basic auth hash
-      ansible.builtin.command:
-        argv:
-          - htpasswd
-          - -nbi
-          - -m
-          - "{{ traefik_user }}"
-        stdin: "{{ traefik_password }}"
-      register: traefik_basic_auth_command
-      changed_when: false
-      no_log: true
-
-    - name: Store Traefik basic auth hash
-      ansible.builtin.set_fact:
-        # Traefik basic auth expects htpasswd-compatible hashes (MD5, SHA1, or bcrypt).
-        traefik_basic_auth: "{{ traefik_basic_auth_command.stdout | trim }}"
-      no_log: true
-
     - name: Ensures traefik dir exists
       ansible.builtin.file:
         path: "{{ traefik }}"
@@ -76,4 +62,6 @@
           - /var/run/docker.sock:/var/run/docker.sock
           - "{{ traefik }}/acme.json:/letsencrypt/acme.json"
           - "{{ traefik }}{{ traefik_file }}:/etc/traefik/traefik.yml"
+        networks:
+          - name: proxy
         labels: "{{ labels | items2dict }}"

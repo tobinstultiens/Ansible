@@ -17,6 +17,8 @@
         value: "true"
       - key: "traefik.http.routers.{{ service }}.tls.certresolver"
         value: "letsencrypt"
+      - key: "traefik.http.routers.{{ service }}.middlewares"
+        value: "authelia"
       - key: "traefik.http.services.{{ service }}.loadbalancer.server.port"
         value: "8083"
 
@@ -40,4 +42,6 @@
           - "{{ docker_config_dir }}/{{ service }}:/config"
           - "{{ docker_nas_dir }}:/books"
         restart_policy: unless-stopped
+        networks:
+          - name: proxy
         labels: "{{ labels | items2dict }}"

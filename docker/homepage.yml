@@ -14,7 +14,7 @@
       - key: "traefik.http.routers.{{ service }}.entrypoints"
         value: "https"
       - key: "traefik.http.routers.{{ service }}.middlewares"
-        value: "auth"
+        value: "authelia"
       - key: "traefik.http.routers.{{ service }}.tls"
         value: "true"
       - key: "traefik.http.routers.{{ service }}.tls.certresolver"
@@ -29,6 +29,41 @@
     - ../vars/vault.yml
 
   tasks:
+    - name: Read *arr service configs to extract API keys
+      ansible.builtin.slurp:
+        src: "{{ docker_config_dir }}/{{ item }}/config.xml"
+      register: arr_configs
+      ignore_errors: true
+      loop:
+        - sonarr
+        - radarr
+        - lidarr
+        - readarr
+        - prowlarr
+
+    - name: Extract *arr API keys from config files
+      ansible.builtin.set_fact:
+        "{{ item.item }}_apikey": >-
+          {{ item.content | b64decode | regex_search('<ApiKey>(.*?)</ApiKey>', '\1') | first }}
+      when: item.content is defined
+      loop: "{{ arr_configs.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+      no_log: true
+
+    - name: Read Bazarr config to extract API key
+      ansible.builtin.slurp:
+        src: "{{ docker_config_dir }}/bazarr/config/config.yaml"
+      register: bazarr_config
+      ignore_errors: true
+
+    - name: Extract Bazarr API key
+      ansible.builtin.set_fact:
+        bazarr_apikey: >-
+          {{ bazarr_config.content | b64decode | regex_search('apikey:\s+(\S+)', '\1') | first }}
+      when: bazarr_config.content is defined
+      no_log: true
+
     - name: Copy css and js files
       ansible.builtin.copy:
         src: ../local/homepage/{{ item }}
@@ -62,4 +97,6 @@
           - /var/run/docker.sock:/var/run/docker.sock:ro # optional, for docker integrations
           - "{{ docker_nas_dir }}:/storage"
         restart_policy: unless-stopped
+        networks:
+          - name: proxy
         labels: "{{ labels | items2dict }}"

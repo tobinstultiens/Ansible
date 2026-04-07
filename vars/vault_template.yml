@@ -1,17 +1,19 @@
 ---
-# Reddit rss service
-reddit_rss_user: ""
-reddit_client_id: ""
-reddit_client_secret: ""
-
 # Email for traefik and letsencrypt
 email: ""
 DOMAIN: ""
 traefik: "/home/user/traefik/"
 traefik_file: "traefik.yml"
-# traefik basic auth
-traefik_user: "traefik_user"
-traefik_password: ""
+
+# Authelia SSO + 2FA
+# Generate secrets with: openssl rand -hex 64
+authelia_jwt_secret: ""
+authelia_session_secret: ""
+authelia_storage_key: ""
+# Authelia user credentials
+authelia_username: ""
+authelia_displayname: ""
+authelia_password: ""
 
 # Qbittorrent setup and for the script
 QBT_USER: ""
@@ -32,17 +34,17 @@ docker_nas_dir: "/mnt/nas/Location"
 VPN_USER: ""
 VPN_PASS: ""
 home: "/home/user"
-MAM_SESSION: ""
 
-# Services
-sonarr_apikey: apikey
-radarr_apikey: apikey
-jellyfin_apikey: apikey
-ombi_apikey: apikey
-readarr_apikey: apikey
-prowlarr_apikey: apikey
-lidarr_apikey: apikey
-bazarr_apikey: apikey
+# Services (auto-extracted from config files by homepage playbook where possible)
+sonarr_apikey: ""
+radarr_apikey: ""
+lidarr_apikey: ""
+readarr_apikey: ""
+prowlarr_apikey: ""
+bazarr_apikey: ""
+jellyfin_apikey: ""
+ombi_apikey: ""
+tdarr_apikey: ""
 
 # Calibre-web
 calibreweb_username: ""

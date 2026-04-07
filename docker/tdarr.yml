@@ -17,6 +17,8 @@
         value: "true"
       - key: "traefik.http.routers.{{ service }}.tls.certresolver"
         value: "letsencrypt"
+      - key: "traefik.http.routers.{{ service }}.middlewares"
+        value: "authelia"
       - key: "traefik.http.services.{{ service }}.loadbalancer.server.port"
         value: "8265"
 
@@ -42,7 +44,7 @@
           inContainer: "true"
           nodeName: "MyInternalNode"
           auth: "true"
-          apiKey: "{{ tdarr_apikey }}"
+          # apiKey: "{{ tdarr_apikey }}"
         devices:
           - "/dev/dri:/dev/dri"
         volumes:
@@ -53,6 +55,8 @@
           - "{{ home }}/tmp/tdarr:/temp"
         restart_policy: unless-stopped
         ports: 8266:8266
+        networks:
+          - name: proxy
         labels: "{{ labels | items2dict }}"
 
     - name: Start tdarr node.
@@ -69,7 +73,7 @@
           serverIP: "0.0.0.0"
           serverPort: "8266"
           inContainer: "true"
-          apiKey: "{{ tdarr_apikey }}"
+          # apiKey: "{{ tdarr_apikey }}"
         devices:
           - "/dev/dri:/dev/dri"
         volumes:
