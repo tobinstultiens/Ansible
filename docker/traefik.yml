@@ -62,4 +62,6 @@
           - /var/run/docker.sock:/var/run/docker.sock
           - "{{ traefik }}/acme.json:/letsencrypt/acme.json"
           - "{{ traefik }}{{ traefik_file }}:/etc/traefik/traefik.yml"
+        networks:
+          - name: proxy
         labels: "{{ labels | items2dict }}"

@@ -27,6 +27,30 @@
     - ../vars/vault.yml
 
   tasks:
+    - name: Generate Authelia password hash
+      ansible.builtin.command:
+        argv:
+          - docker
+          - run
+          - --rm
+          - authelia/authelia:latest
+          - authelia
+          - crypto
+          - hash
+          - generate
+          - argon2
+          - --password
+          - "{{ authelia_password }}"
+      register: authelia_hash_output
+      changed_when: false
+      no_log: true
+
+    - name: Store Authelia password hash
+      ansible.builtin.set_fact:
+        authelia_password_hash: >-
+          {{ authelia_hash_output.stdout | regex_search('Digest: (\S+)', '\1') | first }}
+      no_log: true
+
     - name: Ensure authelia config dir exists
       ansible.builtin.file:
         path: "{{ docker_config_dir }}/{{ service }}"
@@ -38,12 +62,14 @@
         src: ../local/authelia/configuration.yml
         dest: "{{ docker_config_dir }}/{{ service }}/configuration.yml"
         mode: "0600"
+      notify: Restart authelia
 
     - name: Deploy authelia users database
       ansible.builtin.template:
         src: ../local/authelia/users_database.yml
         dest: "{{ docker_config_dir }}/{{ service }}/users_database.yml"
         mode: "0600"
+      notify: Restart authelia
 
     - name: Start authelia
       community.docker.docker_container:
@@ -57,3 +83,10 @@
         networks:
           - name: proxy
         labels: "{{ labels | items2dict }}"
+
+  handlers:
+    - name: Restart authelia
+      community.docker.docker_container:
+        name: "{{ service }}"
+        restart: true
+        state: started

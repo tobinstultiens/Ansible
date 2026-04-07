@@ -87,11 +87,3 @@
           interval: 30s
           timeout: 10s
           retries: 3
-      notify: Run command within the vpn container
-
-  handlers:
-    - name: Run command within the vpn container
-      community.docker.docker_container_exec:
-        container: "{{ service }}"
-        command:
-          /bin/sh -c "curl -c /mam.cookies -b 'mam_id={{ MAM_SESSION }}' https://t.myanonamouse.net/json/dynamicSeedbox.php"
