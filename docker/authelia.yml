@@ -25,6 +25,14 @@
     - ../vars/vault.yml
 
   tasks:
+    - name: Ensure homelab secrets directory exists
+      ansible.builtin.file:
+        path: "{{ lookup('env', 'HOME') }}/.ansible/homelab-secrets"
+        state: directory
+        mode: "0700"
+      delegate_to: localhost
+      become: false
+
     - name: Load LLDAP admin password
       ansible.builtin.set_fact:
         lldap_admin_password: >-
@@ -46,7 +54,14 @@
              '/.ansible/homelab-secrets/authelia_oidc_wud_secret chars=ascii_letters,digits length=32') }}
       no_log: true
 
-    - name: Derive WUD client secret bcrypt hash
+    - name: Check if WUD bcrypt hash is cached
+      ansible.builtin.stat:
+        path: "{{ lookup('env', 'HOME') }}/.ansible/homelab-secrets/authelia_oidc_wud_secret_hash"
+      register: wud_hash_stat
+      delegate_to: localhost
+      become: false
+
+    - name: Generate WUD client secret bcrypt hash
       ansible.builtin.command:
         argv:
           - docker
@@ -63,11 +78,23 @@
       register: wud_hash_output
       changed_when: false
       no_log: true
+      when: not wud_hash_stat.stat.exists
 
-    - name: Store WUD client secret hash
+    - name: Save WUD bcrypt hash to cache
+      ansible.builtin.copy:
+        content: "{{ wud_hash_output.stdout | regex_search('Digest: (\\S+)', '\\1') | first }}"
+        dest: "{{ lookup('env', 'HOME') }}/.ansible/homelab-secrets/authelia_oidc_wud_secret_hash"
+        mode: "0600"
+      no_log: true
+      when: not wud_hash_stat.stat.exists
+      delegate_to: localhost
+      become: false
+
+    - name: Load WUD client secret hash
       ansible.builtin.set_fact:
         authelia_oidc_wud_secret_hash: >-
-          {{ wud_hash_output.stdout | regex_search('Digest: (\S+)', '\1') | first }}
+          {{ lookup('file', lookup('env', 'HOME') +
+             '/.ansible/homelab-secrets/authelia_oidc_wud_secret_hash') }}
       no_log: true
 
     - name: Ensure authelia config dir exists

@@ -14,12 +14,11 @@
       ansible.builtin.copy:
         src: ../local/WireGuard
         dest: "{{ home }}"
-        mode: "0644"
 
-    - name: Changing permissions of WireGuard script with +x
+    - name: Ensure WireGuard script is executable
       ansible.builtin.file:
         dest: "{{ home }}/WireGuard/updateport.sh"
-        mode: "a+x"
+        mode: "0755"
 
     - name: Set sysctl
       ansible.posix.sysctl:

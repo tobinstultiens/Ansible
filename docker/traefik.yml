@@ -32,10 +32,11 @@
         mode: "0644"
 
     - name: Ensures acme.json file exists
-      ansible.builtin.file:
-        path: "{{ traefik }}/acme.json"
-        state: touch
+      ansible.builtin.copy:
+        content: ""
+        dest: "{{ traefik }}/acme.json"
         mode: "0600"
+        force: false
 
     - name: Adding traefik.yml file
       ansible.builtin.template:
@@ -54,7 +55,6 @@
         image: traefik:v3.3
         restart_policy: always
         state: started
-        recreate: true
         ports:
           - "80:80"
           - "443:443"
