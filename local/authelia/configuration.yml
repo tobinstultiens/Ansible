@@ -15,14 +15,12 @@ identity_validation:
     jwt_secret: '{{ authelia_jwt_secret }}'
 
 authentication_backend:
-  file:
-    path: /config/users_database.yml
-    password:
-      algorithm: argon2id
-      argon2:
-        iterations: 3
-        memory: 65536
-        parallelism: 4
+  ldap:
+    implementation: lldap
+    address: 'ldap://lldap:3890'
+    base_dn: 'dc={{ DOMAIN | replace(".", ",dc=") }}'
+    user: 'uid=admin,ou=people,dc={{ DOMAIN | replace(".", ",dc=") }}'
+    password: '{{ lldap_admin_password }}'
 
 access_control:
   default_policy: two_factor

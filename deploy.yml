@@ -17,6 +17,8 @@
   ansible.builtin.import_playbook: docker/vpn.yml
 - name: Treafik
   ansible.builtin.import_playbook: docker/traefik.yml
+- name: LLDAP
+  ansible.builtin.import_playbook: docker/lldap.yml
 - name: Authelia
   ansible.builtin.import_playbook: docker/authelia.yml
 - name: Cooking

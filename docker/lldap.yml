@@ -1,7 +1,7 @@
 ---
-- name: Grafana
+- name: LLDAP
   vars:
-    service: "grafana"
+    service: "lldap"
     labels:
       - key: "traefik.enable"
         value: "true"
@@ -18,30 +18,37 @@
       - key: "traefik.http.routers.{{ service }}.middlewares"
         value: "authelia"
       - key: "traefik.http.services.{{ service }}.loadbalancer.server.port"
-        value: "3000"
+        value: "17170"
 
   hosts: all
+  become: true
   vars_files:
     - ../vars/vars.yml
     - ../vars/vault.yml
 
   tasks:
-    - name: Start grafana
+    - name: Generate LLDAP JWT secret
+      ansible.builtin.set_fact:
+        lldap_jwt_secret: "{{ lookup('password', lookup('env', 'HOME') + '/.ansible/homelab-secrets/lldap_jwt_secret chars=ascii_letters,digits length=64') }}"
+      no_log: true
+
+    - name: Generate LLDAP admin password
+      ansible.builtin.set_fact:
+        lldap_admin_password: "{{ lookup('password', lookup('env', 'HOME') + '/.ansible/homelab-secrets/lldap_admin_password chars=ascii_letters,digits length=32') }}"
+      no_log: true
+
+    - name: Start lldap
       community.docker.docker_container:
-        image: grafana/grafana:latest
+        image: lldap/lldap:stable
         name: "{{ service }}"
-        user: "0:0"
         env:
-          GF_AUTH_PROXY_ENABLED: "true"
-          GF_AUTH_PROXY_HEADER_NAME: "Remote-User"
-          GF_AUTH_PROXY_HEADER_PROPERTY: "username"
-          GF_AUTH_PROXY_AUTO_SIGN_UP: "true"
-          GF_AUTH_PROXY_SYNC_TTL: "60"
-          GF_AUTH_PROXY_HEADERS: "Name:Remote-Name Email:Remote-Email"
-          GF_AUTH_DISABLE_LOGIN_FORM: "true"
-          GF_USERS_ALLOW_SIGN_UP: "false"
+          TZ: Europe/Amsterdam
+          LLDAP_JWT_SECRET: "{{ lldap_jwt_secret }}"
+          LLDAP_LDAP_BASE_DN: "dc={{ DOMAIN | replace('.', ',dc=') }}"
+          LLDAP_LDAP_USER_PASS: "{{ lldap_admin_password }}"
+          LLDAP_HTTP_URL: "https://{{ service }}.{{ DOMAIN }}"
         volumes:
-          - "{{ docker_config_dir }}/{{ service }}:/var/lib/grafana"
+          - "{{ docker_config_dir }}/{{ service }}:/data"
         restart_policy: unless-stopped
         networks:
           - name: proxy

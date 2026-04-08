@@ -25,28 +25,9 @@
     - ../vars/vault.yml
 
   tasks:
-    - name: Generate Authelia password hash
-      ansible.builtin.command:
-        argv:
-          - docker
-          - run
-          - --rm
-          - authelia/authelia:latest
-          - authelia
-          - crypto
-          - hash
-          - generate
-          - argon2
-          - --password
-          - "{{ authelia_password }}"
-      register: authelia_hash_output
-      changed_when: false
-      no_log: true
-
-    - name: Store Authelia password hash
+    - name: Load LLDAP admin password
       ansible.builtin.set_fact:
-        authelia_password_hash: >-
-          {{ authelia_hash_output.stdout | regex_search('Digest: (\S+)', '\1') | first }}
+        lldap_admin_password: "{{ lookup('password', lookup('env', 'HOME') + '/.ansible/homelab-secrets/lldap_admin_password chars=ascii_letters,digits length=32') }}"
       no_log: true
 
     - name: Generate OIDC HMAC secret
@@ -111,13 +92,6 @@
       ansible.builtin.template:
         src: ../local/authelia/configuration.yml
         dest: "{{ docker_config_dir }}/{{ service }}/configuration.yml"
-        mode: "0600"
-      notify: Restart authelia
-
-    - name: Deploy authelia users database
-      ansible.builtin.template:
-        src: ../local/authelia/users_database.yml
-        dest: "{{ docker_config_dir }}/{{ service }}/users_database.yml"
         mode: "0600"
       notify: Restart authelia
 
