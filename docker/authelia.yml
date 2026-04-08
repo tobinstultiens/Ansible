@@ -27,17 +27,23 @@
   tasks:
     - name: Load LLDAP admin password
       ansible.builtin.set_fact:
-        lldap_admin_password: "{{ lookup('password', lookup('env', 'HOME') + '/.ansible/homelab-secrets/lldap_admin_password chars=ascii_letters,digits length=32') }}"
+        lldap_admin_password: >-
+          {{ lookup('password', lookup('env', 'HOME') +
+             '/.ansible/homelab-secrets/lldap_admin_password chars=ascii_letters,digits length=32') }}
       no_log: true
 
     - name: Generate OIDC HMAC secret
       ansible.builtin.set_fact:
-        authelia_oidc_hmac: "{{ lookup('password', lookup('env', 'HOME') + '/.ansible/homelab-secrets/authelia_oidc_hmac chars=ascii_letters,digits length=64') }}"
+        authelia_oidc_hmac: >-
+          {{ lookup('password', lookup('env', 'HOME') +
+             '/.ansible/homelab-secrets/authelia_oidc_hmac chars=ascii_letters,digits length=64') }}
       no_log: true
 
     - name: Generate WUD OIDC client secret
       ansible.builtin.set_fact:
-        authelia_oidc_wud_secret: "{{ lookup('password', lookup('env', 'HOME') + '/.ansible/homelab-secrets/authelia_oidc_wud_secret chars=ascii_letters,digits length=32') }}"
+        authelia_oidc_wud_secret: >-
+          {{ lookup('password', lookup('env', 'HOME') +
+             '/.ansible/homelab-secrets/authelia_oidc_wud_secret chars=ascii_letters,digits length=32') }}
       no_log: true
 
     - name: Derive WUD client secret bcrypt hash

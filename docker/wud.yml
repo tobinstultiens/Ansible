@@ -26,7 +26,9 @@
   tasks:
     - name: Load WUD OIDC client secret
       ansible.builtin.set_fact:
-        authelia_oidc_wud_secret: "{{ lookup('password', lookup('env', 'HOME') + '/.ansible/homelab-secrets/authelia_oidc_wud_secret chars=ascii_letters,digits length=32') }}"
+        authelia_oidc_wud_secret: >-
+          {{ lookup('password', lookup('env', 'HOME') +
+             '/.ansible/homelab-secrets/authelia_oidc_wud_secret chars=ascii_letters,digits length=32') }}
       no_log: true
 
     - name: Start wud

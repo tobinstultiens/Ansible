@@ -34,7 +34,9 @@
 
     - name: Generate LLDAP admin password
       ansible.builtin.set_fact:
-        lldap_admin_password: "{{ lookup('password', lookup('env', 'HOME') + '/.ansible/homelab-secrets/lldap_admin_password chars=ascii_letters,digits length=32') }}"
+        lldap_admin_password: >-
+          {{ lookup('password', lookup('env', 'HOME') +
+             '/.ansible/homelab-secrets/lldap_admin_password chars=ascii_letters,digits length=32') }}
       no_log: true
 
     - name: Start lldap

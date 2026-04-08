@@ -24,6 +24,28 @@ authentication_backend:
 
 access_control:
   default_policy: two_factor
+  rules:
+    - domain:
+        - 'sonarr.{{ DOMAIN }}'
+        - 'radarr.{{ DOMAIN }}'
+        - 'lidarr.{{ DOMAIN }}'
+        - 'readarr.{{ DOMAIN }}'
+        - 'prowlarr.{{ DOMAIN }}'
+        - 'bazarr.{{ DOMAIN }}'
+        - 'tdarr.{{ DOMAIN }}'
+      subject:
+        - 'group:admins'
+        - 'group:media'
+      policy: two_factor
+    - domain:
+        - 'sonarr.{{ DOMAIN }}'
+        - 'radarr.{{ DOMAIN }}'
+        - 'lidarr.{{ DOMAIN }}'
+        - 'readarr.{{ DOMAIN }}'
+        - 'prowlarr.{{ DOMAIN }}'
+        - 'bazarr.{{ DOMAIN }}'
+        - 'tdarr.{{ DOMAIN }}'
+      policy: deny
 
 session:
   secret: '{{ authelia_session_secret }}'
@@ -42,8 +64,11 @@ storage:
     path: /config/db.sqlite3
 
 notifier:
-  filesystem:
-    filename: /config/notification.txt
+  smtp:
+    address: 'smtp://{{ authelia_smtp_host }}:{{ authelia_smtp_port }}'
+    username: '{{ authelia_smtp_username }}'
+    password: '{{ authelia_smtp_password }}'
+    sender: 'Authelia <{{ authelia_smtp_username }}>'
 
 identity_providers:
   oidc:

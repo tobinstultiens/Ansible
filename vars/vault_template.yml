@@ -10,6 +10,11 @@ traefik_file: "traefik.yml"
 authelia_jwt_secret: ""
 authelia_session_secret: ""
 authelia_storage_key: ""
+# Authelia SMTP notifier (Gmail: use an app password from myaccount.google.com/apppasswords)
+authelia_smtp_host: "smtp.gmail.com"
+authelia_smtp_port: "587"
+authelia_smtp_username: ""
+authelia_smtp_password: ""
 
 # Qbittorrent setup and for the script
 QBT_USER: ""

@@ -46,3 +46,17 @@
           test: curl -f {{ service }}.{{ DOMAIN }}
           interval: 30s
           timeout: 10s
+
+    - name: Set readarr authentication to external
+      ansible.builtin.replace:
+        path: "{{ docker_config_dir }}/{{ service }}/config.xml"
+        regexp: '<AuthenticationMethod>.*</AuthenticationMethod>'
+        replace: '<AuthenticationMethod>External</AuthenticationMethod>'
+      notify: Restart readarr
+
+  handlers:
+    - name: Restart readarr
+      community.docker.docker_container:
+        name: "{{ service }}"
+        restart: true
+        state: started
