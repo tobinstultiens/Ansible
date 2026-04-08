@@ -14,11 +14,8 @@
       ansible.builtin.copy:
         src: ../local/WireGuard
         dest: "{{ home }}"
-
-    - name: Ensure WireGuard script is executable
-      ansible.builtin.file:
-        dest: "{{ home }}/WireGuard/updateport.sh"
         mode: "0755"
+        directory_mode: "0755"
 
     - name: Set sysctl
       ansible.posix.sysctl:
