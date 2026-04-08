@@ -1,6 +1,8 @@
 api:
   dashboard: true
 
+ping: {}
+
 entryPoints:
   http:
     address: ":80"
