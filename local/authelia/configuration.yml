@@ -46,3 +46,26 @@ storage:
 notifier:
   filesystem:
     filename: /config/notification.txt
+
+identity_providers:
+  oidc:
+    hmac_secret: '{{ authelia_oidc_hmac }}'
+    jwks:
+      - key_id: 'default'
+        algorithm: 'RS256'
+        use: 'sig'
+        key: |
+          {{ authelia_oidc_private_key | indent(10) }}
+    clients:
+      - client_id: wud
+        client_name: "What's Up Docker"
+        client_secret: '{{ authelia_oidc_wud_secret_hash }}'
+        public: false
+        authorization_policy: two_factor
+        redirect_uris:
+          - 'https://wud.{{ DOMAIN }}/auth/oidc/authelia/cb'
+        scopes:
+          - openid
+          - profile
+          - email
+        userinfo_signed_response_alg: none

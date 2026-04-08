@@ -1,0 +1,52 @@
+---
+- name: WUD (What's Up Docker)
+  vars:
+    service: "wud"
+    labels:
+      - key: "traefik.enable"
+        value: "true"
+      - key: "traefik.http.routers.{{ service }}.rule"
+        value: "Host(`{{ service }}.{{ DOMAIN }}`)"
+      - key: "traefik.http.routers.{{ service }}.service"
+        value: "{{ service }}"
+      - key: "traefik.http.routers.{{ service }}.entrypoints"
+        value: "https"
+      - key: "traefik.http.routers.{{ service }}.tls"
+        value: "true"
+      - key: "traefik.http.routers.{{ service }}.tls.certresolver"
+        value: "letsencrypt"
+      - key: "traefik.http.services.{{ service }}.loadbalancer.server.port"
+        value: "3000"
+
+  hosts: all
+  vars_files:
+    - ../vars/vars.yml
+    - ../vars/vault.yml
+
+  tasks:
+    - name: Load WUD OIDC client secret
+      ansible.builtin.set_fact:
+        authelia_oidc_wud_secret: "{{ lookup('password', lookup('env', 'HOME') + '/.ansible/homelab-secrets/authelia_oidc_wud_secret chars=ascii_letters,digits length=32') }}"
+      no_log: true
+
+    - name: Start wud
+      community.docker.docker_container:
+        image: getwud/wud:latest
+        name: "{{ service }}"
+        env:
+          WUD_BASE_URL: "https://{{ service }}.{{ DOMAIN }}"
+          WUD_WATCHER_LOCAL_CRON: "0 2 * * *"
+          WUD_AUTH_OIDC_AUTHELIA_DISCOVERY: "https://authelia.{{ DOMAIN }}/.well-known/openid-configuration"
+          WUD_AUTH_OIDC_AUTHELIA_CLIENTID: "wud"
+          WUD_AUTH_OIDC_AUTHELIA_CLIENTSECRET: "{{ authelia_oidc_wud_secret }}"
+          WUD_TRIGGER_DISCORD_HOMELAB_WEBHOOKURL: "{{ discord_wud_webhook }}"
+          WUD_TRIGGER_DISCORD_HOMELAB_MODE: "batch"
+          WUD_REGISTRY_HUB_LOGIN: "{{ dockerhub_username }}"
+          WUD_REGISTRY_HUB_PASSWORD: "{{ dockerhub_token }}"
+        volumes:
+          - /var/run/docker.sock:/var/run/docker.sock
+          - "{{ docker_config_dir }}/{{ service }}:/store"
+        restart_policy: unless-stopped
+        networks:
+          - name: proxy
+        labels: "{{ labels | items2dict }}"

@@ -3,8 +3,6 @@
   vars:
     service: "tdarr"
     labels:
-      - key: "com.centurylinklabs.watchtower.enable"
-        value: "true"
       - key: "traefik.enable"
         value: "true"
       - key: "traefik.http.routers.{{ service }}.rule"
@@ -82,5 +80,3 @@
           - "{{ docker_nas_dir }}:/media"
           - "{{ home }}/tmp/tdarr:/temp"
         restart_policy: unless-stopped
-        labels:
-          com.centurylinklabs.watchtower.enable: "true"
