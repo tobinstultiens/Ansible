@@ -17,17 +17,17 @@ endpoints:
   # Infrastructure
   - name: Authelia
     group: Infrastructure
-    url: http://authelia:9091
-    interval: 1m
+    url: http://authelia:9091/api/health
+    interval: 2m
     conditions:
-      - "[STATUS] < 300"
+      - "[STATUS] == 200"
     alerts:
       - type: discord
 
   - name: LLDAP
     group: Infrastructure
     url: http://lldap:17170
-    interval: 1m
+    interval: 2m
     conditions:
       - "[STATUS] < 300"
     alerts:
@@ -36,7 +36,7 @@ endpoints:
   - name: Traefik
     group: Infrastructure
     url: http://traefik:8080/ping
-    interval: 1m
+    interval: 2m
     conditions:
       - "[STATUS] == 200"
     alerts:
@@ -45,7 +45,7 @@ endpoints:
   - name: Grafana
     group: Infrastructure
     url: http://grafana:3000
-    interval: 1m
+    interval: 2m
     conditions:
       - "[STATUS] < 300"
     alerts:
@@ -54,7 +54,7 @@ endpoints:
   - name: Prometheus
     group: Infrastructure
     url: http://vpn:9090
-    interval: 1m
+    interval: 2m
     conditions:
       - "[STATUS] == 200"
     alerts:
@@ -63,7 +63,7 @@ endpoints:
   - name: Homepage
     group: Infrastructure
     url: http://homepage:3000
-    interval: 1m
+    interval: 2m
     conditions:
       - "[STATUS] == 200"
     alerts:
@@ -72,7 +72,7 @@ endpoints:
   - name: WUD
     group: Infrastructure
     url: http://wud:3000
-    interval: 1m
+    interval: 2m
     conditions:
       - "[STATUS] < 300"
     alerts:
@@ -81,9 +81,59 @@ endpoints:
   - name: Flaresolverr
     group: Infrastructure
     url: http://vpn:8191
-    interval: 1m
+    interval: 2m
     conditions:
       - "[STATUS] == 200"
+    alerts:
+      - type: discord
+
+  # Connectivity
+  - name: Internet
+    group: Connectivity
+    url: https://1.1.1.1
+    interval: 2m
+    conditions:
+      - "[STATUS] == 200"
+    alerts:
+      - type: discord
+
+  - name: NAS
+    group: Connectivity
+    url: tcp://{{ nas_ip }}:445
+    interval: 2m
+    conditions:
+      - "[CONNECTED] == true"
+    alerts:
+      - type: discord
+
+  # Certificates
+  - name: Authelia TLS
+    group: Certificates
+    url: https://authelia.{{ DOMAIN }}
+    interval: 1h
+    conditions:
+      - "[STATUS] < 400"
+      - "[CERTIFICATE_EXPIRATION] > 14d"
+    alerts:
+      - type: discord
+
+  - name: Jellyfin TLS
+    group: Certificates
+    url: https://jellyfin.{{ DOMAIN }}
+    interval: 1h
+    conditions:
+      - "[STATUS] < 400"
+      - "[CERTIFICATE_EXPIRATION] > 14d"
+    alerts:
+      - type: discord
+
+  - name: Grafana TLS
+    group: Certificates
+    url: https://grafana.{{ DOMAIN }}
+    interval: 1h
+    conditions:
+      - "[STATUS] < 400"
+      - "[CERTIFICATE_EXPIRATION] > 14d"
     alerts:
       - type: discord
 
@@ -91,7 +141,7 @@ endpoints:
   - name: Jellyfin
     group: Media
     url: http://jellyfin:8096
-    interval: 1m
+    interval: 2m
     conditions:
       - "[STATUS] < 300"
     alerts:
@@ -100,7 +150,7 @@ endpoints:
   - name: Sonarr
     group: Media
     url: http://vpn:8989
-    interval: 1m
+    interval: 2m
     conditions:
       - "[STATUS] < 300"
     alerts:
@@ -109,7 +159,7 @@ endpoints:
   - name: Radarr
     group: Media
     url: http://vpn:7878
-    interval: 1m
+    interval: 2m
     conditions:
       - "[STATUS] < 300"
     alerts:
@@ -118,7 +168,7 @@ endpoints:
   - name: Lidarr
     group: Media
     url: http://vpn:8686
-    interval: 1m
+    interval: 2m
     conditions:
       - "[STATUS] < 300"
     alerts:
@@ -127,7 +177,7 @@ endpoints:
   - name: Readarr
     group: Media
     url: http://vpn:8787
-    interval: 1m
+    interval: 2m
     conditions:
       - "[STATUS] < 300"
     alerts:
@@ -136,7 +186,7 @@ endpoints:
   - name: Prowlarr
     group: Media
     url: http://vpn:9696
-    interval: 1m
+    interval: 2m
     conditions:
       - "[STATUS] < 300"
     alerts:
@@ -145,7 +195,7 @@ endpoints:
   - name: Bazarr
     group: Media
     url: http://vpn:6767
-    interval: 1m
+    interval: 2m
     conditions:
       - "[STATUS] < 300"
     alerts:
@@ -154,7 +204,7 @@ endpoints:
   - name: qBittorrent
     group: Media
     url: http://vpn:4343
-    interval: 1m
+    interval: 2m
     conditions:
       - "[STATUS] < 300"
     alerts:
@@ -163,7 +213,7 @@ endpoints:
   - name: Tdarr
     group: Media
     url: http://tdarr:8265
-    interval: 1m
+    interval: 2m
     conditions:
       - "[STATUS] < 300"
     alerts:
@@ -172,7 +222,7 @@ endpoints:
   - name: Calibre
     group: Media
     url: http://vpn:8080
-    interval: 1m
+    interval: 2m
     conditions:
       - "[STATUS] < 300"
     alerts:
@@ -181,7 +231,7 @@ endpoints:
   - name: Calibre Web
     group: Media
     url: http://calibre-web:8083
-    interval: 1m
+    interval: 2m
     conditions:
       - "[STATUS] < 300"
     alerts:
@@ -190,7 +240,7 @@ endpoints:
   - name: Ombi
     group: Media
     url: http://vpn:3579
-    interval: 1m
+    interval: 2m
     conditions:
       - "[STATUS] < 300"
     alerts:
@@ -199,7 +249,7 @@ endpoints:
   - name: Purgarr
     group: Media
     url: http://purgarr:9891
-    interval: 1m
+    interval: 2m
     conditions:
       - "[STATUS] < 300"
     alerts:
@@ -209,7 +259,7 @@ endpoints:
   - name: Home Assistant
     group: Home
     url: http://homeassistant:8123
-    interval: 1m
+    interval: 2m
     conditions:
       - "[STATUS] < 300"
     alerts:
@@ -218,7 +268,7 @@ endpoints:
   - name: Grocy
     group: Home
     url: http://grocy:80
-    interval: 1m
+    interval: 2m
     conditions:
       - "[STATUS] < 300"
     alerts:
@@ -227,7 +277,7 @@ endpoints:
   - name: Cooking
     group: Home
     url: http://cooking:80
-    interval: 1m
+    interval: 2m
     conditions:
       - "[STATUS] == 200"
     alerts:

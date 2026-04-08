@@ -108,3 +108,4 @@
         widget:
           type: tdarr
           url: http://tdarr:8265
+          key: {{tdarr_apikey}}
