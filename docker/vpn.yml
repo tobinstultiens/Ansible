@@ -4,7 +4,7 @@
     service: "vpn"
 
   become: true
-  hosts: all
+  hosts: home
   vars_files:
     - ../vars/vars.yml
     - ../vars/vault.yml

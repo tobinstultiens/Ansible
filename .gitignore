@@ -1,2 +1,3 @@
 .vagrant
 /vars/vault.yml
+/vars/wireguard_keys.yml

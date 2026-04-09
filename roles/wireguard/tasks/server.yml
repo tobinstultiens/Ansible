@@ -1,0 +1,27 @@
+---
+- name: Ensure wireguard-tools is installed
+  ansible.builtin.package:
+    name: wireguard-tools
+    state: present
+    update_cache: true
+
+- name: Ensure /etc/wireguard directory exists
+  ansible.builtin.file:
+    path: /etc/wireguard
+    state: directory
+    mode: "0700"
+
+- name: Template WireGuard server config
+  ansible.builtin.template:
+    src: wg0_server.conf.j2
+    dest: /etc/wireguard/wg0.conf
+    owner: root
+    group: root
+    mode: "0600"
+  notify: Restart wg-quick
+
+- name: Enable and start wg-quick@wg0
+  ansible.builtin.systemd:
+    name: wg-quick@wg0
+    state: started
+    enabled: true

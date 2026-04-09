@@ -1,11 +1,71 @@
 ---
+- name: Generate WireGuard keys
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  tasks:
+    - name: Check if WireGuard keys already exist
+      ansible.builtin.stat:
+        path: "{{ playbook_dir }}/vars/wireguard_keys.yml"
+      register: keys_file
+
+    - name: Generate server private key
+      ansible.builtin.command: wg genkey
+      register: server_private
+      changed_when: false
+      when: not keys_file.stat.exists
+
+    - name: Derive server public key
+      ansible.builtin.shell:
+        cmd: echo "{{ server_private.stdout }}" | wg pubkey
+      register: server_public
+      changed_when: false
+      when: not keys_file.stat.exists
+
+    - name: Generate NAS private key
+      ansible.builtin.command: wg genkey
+      register: nas_private
+      changed_when: false
+      when: not keys_file.stat.exists
+
+    - name: Derive NAS public key
+      ansible.builtin.shell:
+        cmd: echo "{{ nas_private.stdout }}" | wg pubkey
+      register: nas_public
+      changed_when: false
+      when: not keys_file.stat.exists
+
+    - name: Generate preshared key
+      ansible.builtin.command: wg genpsk
+      register: preshared
+      changed_when: false
+      when: not keys_file.stat.exists
+
+    - name: Write WireGuard keys to vars file
+      ansible.builtin.copy:
+        dest: "{{ playbook_dir }}/vars/wireguard_keys.yml"
+        content: |
+          ---
+          wireguard_server_private_key: "{{ server_private.stdout }}"
+          wireguard_server_public_key: "{{ server_public.stdout }}"
+          wireguard_nas_private_key: "{{ nas_private.stdout }}"
+          wireguard_nas_public_key: "{{ nas_public.stdout }}"
+          wireguard_preshared_key: "{{ preshared.stdout }}"
+        mode: "0600"
+      when: not keys_file.stat.exists
+
 - name: Setup
-  hosts: all
+  hosts: home
   become: true
+  gather_facts: true
   roles:
     - docker
+    - wireguard
 
-  vars_files: vars/vault.yml
+  vars_files:
+    - vars/vault.yml
+    - vars/wireguard_keys.yml
 
   tasks:
     - name: Run the equivalent of "pacman -Sy" as a separate step
@@ -17,23 +77,29 @@
         name: sshfs
         state: present
 
-    - name: Check if nas is already defined in the fstab
+    - name: Remove old fstab NAS entry using LAN IP if present
       ansible.builtin.lineinfile:
         state: absent
         path: "/etc/fstab"
         regexp: "^{{ nas_user }}@{{ nas_ip }}"
+
+    - name: Check if nas is already defined in the fstab (via WireGuard IP)
+      ansible.builtin.lineinfile:
+        state: absent
+        path: "/etc/fstab"
+        regexp: "^{{ nas_user }}@10\\.0\\.0\\.2"
       check_mode: true
       changed_when: false # This just makes things look prettier in the logs
       register: check
 
       # Run sshfs locally on the machine TODO: Look into doing this automatically
 
-    - name: Define nas mount if undefined
+    - name: Define nas mount via WireGuard tunnel if undefined
       ansible.builtin.lineinfile:
         state: present
         path: "/etc/fstab"
         line: >-
-          {{ nas_user }}@{{ nas_ip }}:/ {{ docker_nas }}
+          {{ nas_user }}@10.0.0.2:/ {{ docker_nas }}
           fuse.sshfs noauto,x-systemd.automount,_netdev,reconnect,identityfile=/home/tobins/.ssh/id_ed25519,allow_other,default_permissions
           0 0
       when: check.found == 0
@@ -41,3 +107,15 @@
     - name: Reboot if nas mount was undefined
       ansible.builtin.reboot:
       when: check.found == 0
+
+- name: Configure WireGuard on NAS
+  hosts: nas
+  become: true
+  gather_facts: false
+  vars_files:
+    - vars/vault.yml
+    - vars/wireguard_keys.yml
+  vars:
+    ansible_become_password: "{{ nas_become_password }}"
+  roles:
+    - wireguard

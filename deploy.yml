@@ -1,6 +1,6 @@
 ---
 - name: Deploy all docker applications
-  hosts: all
+  hosts: home
   become: true
   roles:
     - docker

@@ -1,0 +1,10 @@
+#!/bin/sh
+# Synology init.d startup script for WireGuard
+case "$1" in
+  start)
+    wg-quick up wg0
+    ;;
+  stop)
+    wg-quick down wg0
+    ;;
+esac

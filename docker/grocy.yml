@@ -20,7 +20,7 @@
       - key: "traefik.http.services.{{ service }}.loadbalancer.server.port"
         value: "80"
 
-  hosts: all
+  hosts: home
   vars_files:
     - ../vars/vars.yml
     - ../vars/vault.yml

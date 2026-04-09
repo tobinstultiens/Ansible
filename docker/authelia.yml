@@ -18,7 +18,7 @@
       - key: "traefik.http.services.{{ service }}.loadbalancer.server.port"
         value: "9091"
 
-  hosts: all
+  hosts: home
   become: true
   vars_files:
     - ../vars/vars.yml

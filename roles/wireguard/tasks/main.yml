@@ -1,0 +1,8 @@
+---
+- name: Configure WireGuard on server
+  ansible.builtin.import_tasks: server.yml
+  when: inventory_hostname in groups['home']
+
+- name: Configure WireGuard on NAS
+  ansible.builtin.import_tasks: nas.yml
+  when: inventory_hostname in groups['nas']

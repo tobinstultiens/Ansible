@@ -24,6 +24,7 @@ QBT_HOST: "IP:PORT"
 # The nas information
 nas_ip: ""
 nas_user: ""
+nas_become_password: ""
 
 # Configuration location of the docker containers
 docker_config_dir: "/home/user/config"

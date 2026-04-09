@@ -1,6 +1,9 @@
 [home]
 nucserver
 
+[nas]
+synology
+
 [multi:children]
 home
 

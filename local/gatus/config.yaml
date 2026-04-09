@@ -132,7 +132,7 @@ endpoints:
     url: https://grafana.{{ DOMAIN }}
     interval: 1h
     conditions:
-      - "[STATUS] < 400"
+      - "[STATUS] < 500"
       - "[CERTIFICATE_EXPIRATION] > 14d"
     alerts:
       - type: discord

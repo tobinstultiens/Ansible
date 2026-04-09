@@ -1,6 +1,6 @@
 ---
 - name: Cooking
-  hosts: all
+  hosts: home
   vars:
     service: "cooking"
     labels:

@@ -1,0 +1,9 @@
+---
+- name: Restart wg-quick
+  ansible.builtin.systemd:
+    name: wg-quick@wg0
+    state: restarted
+
+- name: Restart wg-quick nas
+  ansible.builtin.raw: wg-quick down wg0; wg-quick up wg0; exit 0
+  changed_when: false

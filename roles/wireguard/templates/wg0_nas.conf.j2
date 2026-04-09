@@ -1,0 +1,11 @@
+[Interface]
+Address = 10.0.0.2/24
+PrivateKey = {{ wireguard_nas_private_key }}
+
+[Peer]
+# nucserver
+PublicKey = {{ wireguard_server_public_key }}
+PresharedKey = {{ wireguard_preshared_key }}
+AllowedIPs = 10.0.0.1/32
+Endpoint = {{ hostvars['nucserver']['ansible_default_ipv4']['address'] }}:51820
+PersistentKeepalive = 25

@@ -1,0 +1,43 @@
+---
+- name: Create /etc/wireguard directory on NAS
+  ansible.builtin.raw: mkdir -p /etc/wireguard && chmod 700 /etc/wireguard
+  changed_when: false
+
+- name: Write WireGuard NAS config
+  ansible.builtin.raw: |
+    cat > /etc/wireguard/wg0.conf << 'WGEOF'
+    [Interface]
+    Address = 10.0.0.2/24
+    PrivateKey = {{ wireguard_nas_private_key }}
+
+    [Peer]
+    # nucserver
+    PublicKey = {{ wireguard_server_public_key }}
+    PresharedKey = {{ wireguard_preshared_key }}
+    AllowedIPs = 10.0.0.1/32
+    Endpoint = {{ hostvars['nucserver']['ansible_default_ipv4']['address'] }}:51820
+    PersistentKeepalive = 25
+    WGEOF
+    chmod 600 /etc/wireguard/wg0.conf
+  changed_when: false
+
+- name: Install WireGuard startup script for Synology
+  ansible.builtin.raw: |
+    cat > /usr/local/etc/rc.d/wireguard.sh << 'RCEOF'
+    #!/bin/sh
+    case "$1" in
+      start)
+        wg-quick up wg0
+        ;;
+      stop)
+        wg-quick down wg0
+        ;;
+    esac
+    RCEOF
+    chmod 755 /usr/local/etc/rc.d/wireguard.sh
+  changed_when: false
+
+- name: Bring up WireGuard interface on NAS
+  ansible.builtin.raw: wg-quick up wg0 2>&1; exit 0
+  register: wg_up_result
+  changed_when: "'already exists' not in wg_up_result.stdout"
