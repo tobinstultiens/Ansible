@@ -28,7 +28,7 @@
   tasks:
     - name: Start qbittorrent
       community.docker.docker_container:
-        image: linuxserver/qbittorrent:latest
+        image: linuxserver/qbittorrent:5.1.4-r2-ls448
         name: "{{ service }}"
         env:
           PUID: "1000"

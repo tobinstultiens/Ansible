@@ -28,7 +28,7 @@
   tasks:
     - name: Start radarr
       community.docker.docker_container:
-        image: linuxserver/radarr:latest
+        image: linuxserver/radarr:6.1.1.10360-ls298
         name: "{{ service }}"
         env:
           PUID: "1000"

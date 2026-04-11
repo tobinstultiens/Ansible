@@ -26,7 +26,7 @@
   tasks:
     - name: Start Jellyfin
       community.docker.docker_container:
-        image: lscr.io/linuxserver/jellyfin:latest
+        image: lscr.io/linuxserver/jellyfin:10.11.8ubu2404-ls27
         name: "{{ service }}"
         env:
           PUID: "1000"

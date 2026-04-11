@@ -41,8 +41,6 @@
   ansible.builtin.import_playbook: docker/radarr.yml
 - name: Grocy
   ansible.builtin.import_playbook: docker/grocy.yml
-- name: Readarr
-  ansible.builtin.import_playbook: docker/readarr.yml
 - name: Flaresolverr
   ansible.builtin.import_playbook: docker/flaresolverr.yml
 - name: Lidarr

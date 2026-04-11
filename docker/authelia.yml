@@ -130,7 +130,7 @@
 
     - name: Start authelia
       community.docker.docker_container:
-        image: authelia/authelia:latest
+        image: authelia/authelia:4.39.16
         name: "{{ service }}"
         env:
           TZ: Europe/Amsterdam

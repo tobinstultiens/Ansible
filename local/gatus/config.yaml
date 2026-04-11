@@ -174,14 +174,6 @@ endpoints:
     alerts:
       - type: discord
 
-  - name: Readarr
-    group: Media
-    url: http://vpn:8787
-    interval: 2m
-    conditions:
-      - "[STATUS] < 300"
-    alerts:
-      - type: discord
 
   - name: Prowlarr
     group: Media

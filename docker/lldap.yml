@@ -41,7 +41,7 @@
 
     - name: Start lldap
       community.docker.docker_container:
-        image: lldap/lldap:stable
+        image: lldap/lldap:v0.6.2
         name: "{{ service }}"
         env:
           TZ: Europe/Amsterdam

@@ -28,7 +28,7 @@
   tasks:
     - name: Start lidarr
       community.docker.docker_container:
-        image: linuxserver/lidarr:latest
+        image: linuxserver/lidarr:3.1.0.4875-ls23
         name: "{{ service }}"
         env:
           PUID: "1000"

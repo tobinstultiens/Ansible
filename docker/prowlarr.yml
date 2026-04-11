@@ -28,7 +28,7 @@
   tasks:
     - name: Start prowlarr
       community.docker.docker_container:
-        image: linuxserver/prowlarr:latest
+        image: linuxserver/prowlarr:2.3.5.5327-ls141
         name: "{{ service }}"
         env:
           PUID: "1000"

@@ -30,7 +30,7 @@
   tasks:
     - name: Start calibre
       community.docker.docker_container:
-        image: linuxserver/calibre:latest
+        image: linuxserver/calibre:v9.6.0-ls394
         name: "{{ service }}"
         env:
           PUID: "1000"

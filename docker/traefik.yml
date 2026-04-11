@@ -52,7 +52,7 @@
     - name: Starting the reverse proxy.
       community.docker.docker_container:
         name: "{{ service }}"
-        image: traefik:v3.3
+        image: traefik:v3.3.7
         restart_policy: always
         state: started
         ports:

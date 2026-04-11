@@ -30,7 +30,7 @@
   tasks:
     - name: Start Bazarr
       community.docker.docker_container:
-        image: linuxserver/bazarr:latest
+        image: linuxserver/bazarr:v1.5.6-ls343
         name: "{{ service }}"
         env:
           PUID: "1000"

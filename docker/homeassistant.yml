@@ -38,7 +38,7 @@
 
     - name: Start homeassistant
       community.docker.docker_container:
-        image: "ghcr.io/home-assistant/home-assistant:stable"
+        image: "ghcr.io/home-assistant/home-assistant:2026.4.1"
         name: "{{ service }}"
         volumes:
           - "{{ docker_config_dir }}/{{ service }}:/config"

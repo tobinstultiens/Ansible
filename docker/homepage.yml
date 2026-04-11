@@ -36,7 +36,6 @@
         - sonarr
         - radarr
         - lidarr
-        - readarr
         - prowlarr
 
     - name: Extract *arr API keys from config files
@@ -86,7 +85,7 @@
 
     - name: Start homepage
       community.docker.docker_container:
-        image: ghcr.io/gethomepage/homepage:latest
+        image: ghcr.io/gethomepage/homepage:v1.12.3
         name: "{{ service }}"
         env:
           HOMEPAGE_ALLOWED_HOSTS: "{{ service }}.{{ DOMAIN }}"

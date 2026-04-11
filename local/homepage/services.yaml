@@ -60,16 +60,6 @@
           url: http://vpn:7878
           key: {{radarr_apikey}}
           enableQueue: true # optional, defaults to false
-    - Readarr:
-        icon: readarr.png
-        href: https://readarr.{{DOMAIN}}/
-        description: Book management
-        siteMonitor: https://readarr.{{DOMAIN}}/
-        widget:
-          type: readarr
-          url: http://vpn:8787
-          key: {{readarr_apikey}}
-
     - Prowlarr:
         icon: prowlarr.png
         href: https://prowlarr.{{DOMAIN}}/

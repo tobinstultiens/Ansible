@@ -17,27 +17,30 @@
         name: sshfs
         state: present
 
-    - name: Check if nas is already defined in the fstab
-      ansible.builtin.lineinfile:
-        state: absent
-        path: "/etc/fstab"
-        regexp: "^{{ nas_user }}@{{ nas_ip }}"
-      check_mode: true
-      changed_when: false # This just makes things look prettier in the logs
-      register: check
+    - name: Ensure NAS mount point directory exists
+      ansible.builtin.file:
+        path: "{{ docker_nas }}"
+        state: directory
+        mode: "0755"
 
       # Run sshfs locally on the machine TODO: Look into doing this automatically
 
-    - name: Define nas mount if undefined
-      ansible.builtin.lineinfile:
+    - name: Configure NAS SSHFS mount in fstab
+      ansible.posix.mount:
+        path: "{{ docker_nas }}"
+        src: "{{ nas_user }}@{{ nas_ip }}:/"
+        fstype: fuse.sshfs
+        opts: "noauto,x-systemd.automount,_netdev,reconnect,identityfile=/home/tobins/.ssh/id_ed25519,allow_other,default_permissions"
+        boot: false
         state: present
-        path: "/etc/fstab"
-        line: >-
-          {{ nas_user }}@{{ nas_ip }}:/ {{ docker_nas }}
-          fuse.sshfs noauto,x-systemd.automount,_netdev,reconnect,identityfile=/home/tobins/.ssh/id_ed25519,allow_other,default_permissions
-          0 0
-      when: check.found == 0
+      notify: Reload systemd daemon
+      register: nas_mount
 
-    - name: Reboot if nas mount was undefined
+    - name: Reboot if NAS mount changed
       ansible.builtin.reboot:
-      when: check.found == 0
+      when: nas_mount.changed
+
+  handlers:
+    - name: Reload systemd daemon
+      ansible.builtin.systemd:
+        daemon_reload: true

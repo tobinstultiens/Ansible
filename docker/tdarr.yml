@@ -28,7 +28,7 @@
   tasks:
     - name: Start tdarr
       community.docker.docker_container:
-        image: ghcr.io/haveagitgat/tdarr:latest
+        image: ghcr.io/haveagitgat/tdarr:2.68.01
         name: "{{ service }}"
         env:
           PUID: "1000"
@@ -60,7 +60,7 @@
     - name: Start tdarr node.
       community.docker.docker_container:
         name: "{{ service }}-node"
-        image: ghcr.io/haveagitgat/tdarr_node:latest
+        image: ghcr.io/haveagitgat/tdarr_node:2.68.01
         network_mode: "container:{{ service }}"
         env:
           PUID: "1000"

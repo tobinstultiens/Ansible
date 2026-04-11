@@ -54,7 +54,7 @@
   tasks:
     - name: Start ombi
       community.docker.docker_container:
-        image: lscr.io/linuxserver/ombi:latest
+        image: lscr.io/linuxserver/ombi:v4.53.4-ls249
         name: "{{ service }}"
         env:
           PUID: "1000"

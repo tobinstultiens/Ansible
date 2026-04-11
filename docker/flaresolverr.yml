@@ -28,7 +28,7 @@
   tasks:
     - name: Start Flaresolverr
       community.docker.docker_container:
-        image: ghcr.io/flaresolverr/flaresolverr:latest
+        image: ghcr.io/flaresolverr/flaresolverr:v3.4.6
         name: "{{ service }}"
         env:
           TZ: Europe/Amsterdam
