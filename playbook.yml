@@ -33,14 +33,8 @@
         opts: "noauto,x-systemd.automount,_netdev,reconnect,identityfile=/home/tobins/.ssh/id_ed25519,allow_other,default_permissions"
         boot: false
         state: present
-      notify: Reload systemd daemon
-      register: nas_mount
-
-    - name: Reboot if NAS mount changed
-      ansible.builtin.reboot:
-      when: nas_mount.changed
+      notify: Reboot for NAS mount
 
   handlers:
-    - name: Reload systemd daemon
-      ansible.builtin.systemd:
-        daemon_reload: true
+    - name: Reboot for NAS mount
+      ansible.builtin.reboot:
