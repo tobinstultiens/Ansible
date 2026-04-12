@@ -14,7 +14,7 @@
   tasks:
     - name: Start Autoheal
       community.docker.docker_container:
-        image: willfarrell/autoheal:latest
+        image: willfarrell/autoheal:1.2.0
         name: "{{ service }}"
         volumes:
           - /etc/localtime:/etc/localtime:ro

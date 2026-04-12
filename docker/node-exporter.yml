@@ -1,0 +1,31 @@
+---
+- name: Node Exporter
+  vars:
+    service: "node-exporter"
+
+  hosts: all
+  become: true
+  vars_files:
+    - ../vars/vars.yml
+    - ../vars/vault.yml
+
+  tasks:
+    - name: Start node-exporter
+      community.docker.docker_container:
+        image: prom/node-exporter:v1.8.2
+        name: "{{ service }}"
+        pid_mode: host
+        volumes:
+          - /proc:/host/proc:ro
+          - /sys:/host/sys:ro
+          - /:/rootfs:ro
+        command:
+          - "--path.procfs=/host/proc"
+          - "--path.rootfs=/rootfs"
+          - "--path.sysfs=/host/sys"
+          - "--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($|/)"
+        restart_policy: unless-stopped
+        networks:
+          - name: proxy
+        labels:
+          prometheus.scrape: "true"

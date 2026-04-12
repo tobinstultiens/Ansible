@@ -28,7 +28,7 @@
   tasks:
     - name: Start grafana
       community.docker.docker_container:
-        image: grafana/grafana:latest
+        image: grafana/grafana:11.3.0
         name: "{{ service }}"
         user: "0:0"
         env:
@@ -38,7 +38,8 @@
           GF_AUTH_PROXY_AUTO_SIGN_UP: "true"
           GF_AUTH_PROXY_SYNC_TTL: "60"
           GF_AUTH_PROXY_HEADERS: "Name:Remote-Name Email:Remote-Email"
-          GF_AUTH_DISABLE_LOGIN_FORM: "true"
+          GF_AUTH_DISABLE_LOGIN_FORM: "false"
+          GF_AUTH_PROXY_ENABLE_LOGIN_TOKEN: "true"
           GF_USERS_ALLOW_SIGN_UP: "false"
         volumes:
           - "{{ docker_config_dir }}/{{ service }}:/var/lib/grafana"

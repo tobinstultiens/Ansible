@@ -42,7 +42,7 @@
 
     - name: Start gatus
       community.docker.docker_container:
-        image: twinproduction/gatus:latest
+        image: twinproduction/gatus:v5.12.0
         name: "{{ service }}"
         env:
           TZ: Europe/Amsterdam

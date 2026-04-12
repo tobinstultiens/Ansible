@@ -1,0 +1,30 @@
+---
+- name: CAdvisor
+  vars:
+    service: "cadvisor"
+
+  hosts: all
+  become: true
+  vars_files:
+    - ../vars/vars.yml
+    - ../vars/vault.yml
+
+  tasks:
+    - name: Start cadvisor
+      community.docker.docker_container:
+        image: gcr.io/cadvisor/cadvisor:v0.49.1
+        name: "{{ service }}"
+        privileged: true
+        volumes:
+          - /:/rootfs:ro
+          - /var/run:/var/run:ro
+          - /sys:/sys:ro
+          - /var/lib/docker:/var/lib/docker:ro
+          - /dev/disk:/dev/disk:ro
+        devices:
+          - /dev/kmsg
+        restart_policy: unless-stopped
+        networks:
+          - name: proxy
+        labels:
+          prometheus.scrape: "true"

@@ -1,7 +1,7 @@
 ---
-- name: Prometheus
+- name: Loki
   vars:
-    service: "prometheus"
+    service: "loki"
     labels:
       - key: "traefik.enable"
         value: "true"
@@ -18,7 +18,11 @@
       - key: "traefik.http.routers.{{ service }}.middlewares"
         value: "authelia"
       - key: "traefik.http.services.{{ service }}.loadbalancer.server.port"
-        value: "9090"
+        value: "3100"
+      - key: "prometheus.scrape"
+        value: "true"
+      - key: "prometheus.port"
+        value: "3100"
 
   hosts: all
   become: true
@@ -27,35 +31,34 @@
     - ../vars/vault.yml
 
   tasks:
-    - name: Adding yaml files
-      ansible.builtin.template:
-        src: ../local/prometheus/{{ item }}
-        dest: '{{ docker_config_dir }}/prometheus-etc/{{ item }}'
-        mode: "0644"
-      loop:
-        - prometheus.yml
-      notify: Restart prometheus
+    - name: Ensure loki config dir exists
+      ansible.builtin.file:
+        path: "{{ docker_config_dir }}/{{ service }}"
+        state: directory
+        mode: "0755"
 
-    - name: Start prometheus
+    - name: Deploy loki configuration
+      ansible.builtin.template:
+        src: ../local/loki/config.yaml
+        dest: "{{ docker_config_dir }}/{{ service }}/config.yaml"
+        mode: "0644"
+      notify: Restart loki
+
+    - name: Start loki
       community.docker.docker_container:
-        image: prom/prometheus:v2.54.1
+        image: grafana/loki:3.1.0
         name: "{{ service }}"
         user: root
         volumes:
-          - "{{ docker_config_dir }}/{{ service }}:/prometheus"
-          - "{{ docker_config_dir }}/prometheus-etc:/etc/prometheus"
-          - /var/run/docker.sock:/var/run/docker.sock
-        command:
-          - "--config.file=/etc/prometheus/prometheus.yml"
-          - "--storage.tsdb.path=/prometheus"
-          - "--storage.tsdb.retention.time=30d"
-          - "--storage.tsdb.retention.size=5GB"
+          - "{{ docker_config_dir }}/{{ service }}:/loki"
+        command: -config.file=/loki/config.yaml
         restart_policy: unless-stopped
-        network_mode: container:vpn
+        networks:
+          - name: proxy
         labels: "{{ labels | items2dict }}"
 
   handlers:
-    - name: Restart prometheus
+    - name: Restart loki
       community.docker.docker_container:
         name: "{{ service }}"
         restart: true

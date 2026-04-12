@@ -53,6 +53,14 @@
   ansible.builtin.import_playbook: docker/gatus.yml
 - name: Grafana
   ansible.builtin.import_playbook: docker/grafana.yml
+- name: Loki
+  ansible.builtin.import_playbook: docker/loki.yml
+- name: Promtail
+  ansible.builtin.import_playbook: docker/promtail.yml
+- name: Node Exporter
+  ansible.builtin.import_playbook: docker/node-exporter.yml
+- name: CAdvisor
+  ansible.builtin.import_playbook: docker/cadvisor.yml
 - name: Prometheus
   ansible.builtin.import_playbook: docker/prometheus.yml
 - name: Homepage

@@ -3,6 +3,12 @@ api:
 
 ping: {}
 
+metrics:
+  prometheus:
+    addEntryPointsLabels: true
+    addRoutersLabels: true
+    addServicesLabels: true
+
 entryPoints:
   http:
     address: ":80"

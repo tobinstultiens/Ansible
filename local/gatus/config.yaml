@@ -78,6 +78,33 @@ endpoints:
     alerts:
       - type: discord
 
+  - name: Node Exporter
+    group: Infrastructure
+    url: http://node-exporter:9100/metrics
+    interval: 2m
+    conditions:
+      - "[STATUS] == 200"
+    alerts:
+      - type: discord
+
+  - name: cAdvisor
+    group: Infrastructure
+    url: http://cadvisor:8080/healthz
+    interval: 2m
+    conditions:
+      - "[STATUS] == 200"
+    alerts:
+      - type: discord
+
+  - name: Loki
+    group: Infrastructure
+    url: http://loki:3100/ready
+    interval: 2m
+    conditions:
+      - "[STATUS] == 200"
+    alerts:
+      - type: discord
+
   - name: Flaresolverr
     group: Infrastructure
     url: http://vpn:8191

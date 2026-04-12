@@ -1,0 +1,47 @@
+---
+- name: Promtail
+  vars:
+    service: "promtail"
+
+  hosts: all
+  become: true
+  vars_files:
+    - ../vars/vars.yml
+    - ../vars/vault.yml
+
+  tasks:
+    - name: Ensure promtail config dir exists
+      ansible.builtin.file:
+        path: "{{ docker_config_dir }}/{{ service }}"
+        state: directory
+        mode: "0755"
+
+    - name: Deploy promtail configuration
+      ansible.builtin.template:
+        src: ../local/promtail/config.yaml
+        dest: "{{ docker_config_dir }}/{{ service }}/config.yaml"
+        mode: "0644"
+      notify: Restart promtail
+
+    - name: Start promtail
+      community.docker.docker_container:
+        image: grafana/promtail:3.1.0
+        name: "{{ service }}"
+        volumes:
+          - "{{ docker_config_dir }}/{{ service }}:/etc/promtail"
+          - /var/log:/var/log:ro
+          - /var/lib/docker/containers:/var/lib/docker/containers:ro
+        command: -config.file=/etc/promtail/config.yaml
+        restart_policy: unless-stopped
+        networks:
+          - name: proxy
+        labels:
+          prometheus.scrape: "true"
+          prometheus.port: "9080"
+
+  handlers:
+    - name: Restart promtail
+      community.docker.docker_container:
+        name: "{{ service }}"
+        restart: true
+        state: started
