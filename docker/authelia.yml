@@ -17,6 +17,12 @@
         value: "letsencrypt"
       - key: "traefik.http.services.{{ service }}.loadbalancer.server.port"
         value: "9091"
+      - key: "traefik.http.middlewares.authelia-cors.headers.customResponseHeaders.Access-Control-Allow-Origin"
+        value: "https://homepage.{{ DOMAIN }}"
+      - key: "traefik.http.middlewares.authelia-cors.headers.customResponseHeaders.Access-Control-Allow-Credentials"
+        value: "true"
+      - key: "traefik.http.routers.{{ service }}.middlewares"
+        value: "authelia-cors"
 
   hosts: all
   become: true

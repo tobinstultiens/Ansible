@@ -1,0 +1,21 @@
+#_auth_toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: rgba(20, 20, 20, 0.92);
+  color: #e5e5e5;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.5;
+  z-index: 99999;
+  pointer-events: none;
+  transition: opacity 0.6s ease;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+#_auth_toast small {
+  color: #a0a0a0;
+  font-size: 11px;
+}

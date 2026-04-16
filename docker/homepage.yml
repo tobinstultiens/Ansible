@@ -62,9 +62,9 @@
       no_log: true
 
     - name: Copy css and js files
-      ansible.builtin.copy:
+      ansible.builtin.template:
         src: ../local/homepage/{{ item }}
-        dest: '{{ docker_config_dir }}/{{ service }}'
+        dest: '{{ docker_config_dir }}/{{ service }}/{{ item }}'
         mode: "0644"
       loop:
         - custom.css
