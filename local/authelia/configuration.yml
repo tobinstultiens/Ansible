@@ -23,8 +23,15 @@ authentication_backend:
     password: '{{ lldap_admin_password }}'
 
 access_control:
+  networks:
+    - name: docker
+      networks: '172.16.0.0/12'
   default_policy: two_factor
   rules:
+    - domain: '*.{{ DOMAIN }}'
+      networks:
+        - docker
+      policy: bypass
     - domain:
         - 'sonarr.{{ DOMAIN }}'
         - 'radarr.{{ DOMAIN }}'

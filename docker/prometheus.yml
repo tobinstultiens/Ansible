@@ -19,6 +19,8 @@
         value: "authelia"
       - key: "traefik.http.services.{{ service }}.loadbalancer.server.port"
         value: "9090"
+      - key: "autoheal-app"
+        value: "true"
 
   hosts: all
   become: true
@@ -52,7 +54,13 @@
           - "--storage.tsdb.retention.size=5GB"
         restart_policy: unless-stopped
         network_mode: container:vpn
+        state: healthy
         labels: "{{ labels | items2dict }}"
+        healthcheck:
+          test: wget -q --spider http://localhost:9090/-/healthy
+          interval: 30s
+          timeout: 10s
+          start_period: 60s
 
   handlers:
     - name: Restart prometheus

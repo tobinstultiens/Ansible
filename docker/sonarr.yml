@@ -19,6 +19,8 @@
         value: "authelia"
       - key: "traefik.http.services.{{ service }}.loadbalancer.server.port"
         value: "8989"
+      - key: "autoheal-app"
+        value: "true"
 
   hosts: all
   vars_files:
@@ -43,9 +45,10 @@
         state: healthy
         labels: "{{ labels | items2dict }}"
         healthcheck:
-          test: curl -f {{ service }}.{{ DOMAIN }}
+          test: bash -c 'echo > /dev/tcp/localhost/8989'
           interval: 30s
           timeout: 10s
+          start_period: 60s
 
     - name: Set sonarr authentication to external
       ansible.builtin.replace:

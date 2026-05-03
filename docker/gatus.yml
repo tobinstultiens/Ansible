@@ -51,6 +51,17 @@
         restart_policy: unless-stopped
         networks:
           - name: proxy
+        etc_hosts: "{{ {
+          'sonarr.' + DOMAIN: 'host-gateway',
+          'radarr.' + DOMAIN: 'host-gateway',
+          'lidarr.' + DOMAIN: 'host-gateway',
+          'prowlarr.' + DOMAIN: 'host-gateway',
+          'bazarr.' + DOMAIN: 'host-gateway',
+          'ombi.' + DOMAIN: 'host-gateway',
+          'qbittorrent.' + DOMAIN: 'host-gateway',
+          'calibre.' + DOMAIN: 'host-gateway',
+          'prometheus.' + DOMAIN: 'host-gateway'
+          } }}"
         labels: "{{ labels | items2dict }}"
 
   handlers:

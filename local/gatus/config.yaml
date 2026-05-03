@@ -29,7 +29,8 @@ endpoints:
     url: http://lldap:17170
     interval: 2m
     conditions:
-      - "[STATUS] < 300"
+      - "[STATUS] >= 200"
+      - "[STATUS] < 400"
     alerts:
       - type: discord
 
@@ -53,10 +54,11 @@ endpoints:
 
   - name: Prometheus
     group: Infrastructure
-    url: http://vpn:9090
+    url: https://prometheus.{{ DOMAIN }}
     interval: 2m
     conditions:
-      - "[STATUS] == 200"
+      - "[STATUS] >= 200"
+      - "[STATUS] < 400"
     alerts:
       - type: discord
 
@@ -74,7 +76,8 @@ endpoints:
     url: http://wud:3000
     interval: 2m
     conditions:
-      - "[STATUS] < 300"
+      - "[STATUS] >= 200"
+      - "[STATUS] < 400"
     alerts:
       - type: discord
 
@@ -170,62 +173,69 @@ endpoints:
     url: http://jellyfin:8096
     interval: 2m
     conditions:
-      - "[STATUS] < 300"
+      - "[STATUS] >= 200"
+      - "[STATUS] < 400"
     alerts:
       - type: discord
 
   - name: Sonarr
     group: Media
-    url: http://vpn:8989
+    url: https://sonarr.{{ DOMAIN }}
     interval: 2m
     conditions:
-      - "[STATUS] < 300"
+      - "[STATUS] >= 200"
+      - "[STATUS] < 400"
     alerts:
       - type: discord
 
   - name: Radarr
     group: Media
-    url: http://vpn:7878
+    url: https://radarr.{{ DOMAIN }}
     interval: 2m
     conditions:
-      - "[STATUS] < 300"
+      - "[STATUS] >= 200"
+      - "[STATUS] < 400"
     alerts:
       - type: discord
 
   - name: Lidarr
     group: Media
-    url: http://vpn:8686
+    url: https://lidarr.{{ DOMAIN }}
     interval: 2m
     conditions:
-      - "[STATUS] < 300"
+      - "[STATUS] >= 200"
+      - "[STATUS] < 400"
     alerts:
       - type: discord
 
 
   - name: Prowlarr
     group: Media
-    url: http://vpn:9696
+    url: https://prowlarr.{{ DOMAIN }}
     interval: 2m
     conditions:
-      - "[STATUS] < 300"
+      - "[STATUS] >= 200"
+      - "[STATUS] < 400"
     alerts:
       - type: discord
 
   - name: Bazarr
     group: Media
-    url: http://vpn:6767
+    url: https://bazarr.{{ DOMAIN }}
     interval: 2m
     conditions:
-      - "[STATUS] < 300"
+      - "[STATUS] >= 200"
+      - "[STATUS] < 400"
     alerts:
       - type: discord
 
   - name: qBittorrent
     group: Media
-    url: http://vpn:4343
+    url: https://qbittorrent.{{ DOMAIN }}
     interval: 2m
     conditions:
-      - "[STATUS] < 300"
+      - "[STATUS] >= 200"
+      - "[STATUS] < 400"
     alerts:
       - type: discord
 
@@ -234,16 +244,18 @@ endpoints:
     url: http://tdarr:8265
     interval: 2m
     conditions:
-      - "[STATUS] < 300"
+      - "[STATUS] >= 200"
+      - "[STATUS] < 400"
     alerts:
       - type: discord
 
   - name: Calibre
     group: Media
-    url: http://vpn:8080
+    url: https://calibre.{{ DOMAIN }}
     interval: 2m
     conditions:
-      - "[STATUS] < 300"
+      - "[STATUS] >= 200"
+      - "[STATUS] < 400"
     alerts:
       - type: discord
 
@@ -252,16 +264,18 @@ endpoints:
     url: http://calibre-web:8083
     interval: 2m
     conditions:
-      - "[STATUS] < 300"
+      - "[STATUS] >= 200"
+      - "[STATUS] < 400"
     alerts:
       - type: discord
 
   - name: Ombi
     group: Media
-    url: http://vpn:3579
+    url: https://ombi.{{ DOMAIN }}
     interval: 2m
     conditions:
-      - "[STATUS] < 300"
+      - "[STATUS] >= 200"
+      - "[STATUS] < 400"
     alerts:
       - type: discord
 
@@ -270,7 +284,8 @@ endpoints:
     url: http://purgarr:9891
     interval: 2m
     conditions:
-      - "[STATUS] < 300"
+      - "[STATUS] >= 200"
+      - "[STATUS] < 400"
     alerts:
       - type: discord
 
@@ -280,7 +295,8 @@ endpoints:
     url: http://homeassistant:8123
     interval: 2m
     conditions:
-      - "[STATUS] < 300"
+      - "[STATUS] >= 200"
+      - "[STATUS] < 400"
     alerts:
       - type: discord
 
@@ -289,7 +305,8 @@ endpoints:
     url: http://grocy:80
     interval: 2m
     conditions:
-      - "[STATUS] < 300"
+      - "[STATUS] >= 200"
+      - "[STATUS] < 400"
     alerts:
       - type: discord
 

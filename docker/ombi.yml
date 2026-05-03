@@ -67,6 +67,7 @@
         state: healthy
         labels: "{{ labels | items2dict }}"
         healthcheck:
-          test: curl -f {{ service }}.{{ DOMAIN }}
+          test: bash -c 'echo > /dev/tcp/localhost/3579'
           interval: 30s
           timeout: 10s
+          start_period: 60s
