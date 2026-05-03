@@ -1,0 +1,376 @@
+{
+  "_id": "hevcMoviesV1",
+  "name": "HEVC Movies",
+  "description": "HEVC Movies with AAC audio for Jellyfin direct play compatibility",
+  "tags": "movies",
+  "flowPlugins": [
+    {
+      "name": "Input File",
+      "sourceRepo": "Community",
+      "pluginName": "inputFile",
+      "version": "1.0.0",
+      "id": "y4lqcdrho",
+      "position": { "x": 550.0, "y": -577.0 },
+      "inputsDB": { "fileAccessChecks": "true" },
+      "fpEnabled": true
+    },
+    {
+      "name": "Run Classic Transcode Plugin: Tdarr_Plugin_lmg1_Reorder_Streams",
+      "sourceRepo": "Community",
+      "pluginName": "runClassicTranscodePlugin",
+      "version": "2.0.0",
+      "inputsDB": { "pluginSourceId": "Community:Tdarr_Plugin_lmg1_Reorder_Streams" },
+      "id": "NYnExKUZZ",
+      "position": { "x": 548.0, "y": -501.0 },
+      "fpEnabled": true
+    },
+    {
+      "name": "Run Classic Transcode Plugin: Tdarr_Plugin_MC93_Migz1Remux",
+      "sourceRepo": "Community",
+      "pluginName": "runClassicTranscodePlugin",
+      "version": "2.0.0",
+      "inputsDB": { "pluginSourceId": "Community:Tdarr_Plugin_MC93_Migz1Remux" },
+      "id": "ZowHb1rVt",
+      "position": { "x": 547.0, "y": -386.0 },
+      "fpEnabled": true
+    },
+    {
+      "name": "Run Classic Transcode Plugin: Tdarr_Plugin_MC93_Migz2CleanTitle",
+      "sourceRepo": "Community",
+      "pluginName": "runClassicTranscodePlugin",
+      "version": "2.0.0",
+      "inputsDB": { "pluginSourceId": "Community:Tdarr_Plugin_MC93_Migz2CleanTitle" },
+      "id": "3vlfc2BWu",
+      "position": { "x": 547.0, "y": -268.0 },
+      "fpEnabled": true
+    },
+    {
+      "name": "Run Classic Transcode Plugin: Tdarr_Plugin_MC93_MigzImageRemoval",
+      "sourceRepo": "Community",
+      "pluginName": "runClassicTranscodePlugin",
+      "version": "2.0.0",
+      "inputsDB": { "pluginSourceId": "Community:Tdarr_Plugin_MC93_MigzImageRemoval" },
+      "id": "t6doemo2u",
+      "position": { "x": 546.0, "y": -152.0 },
+      "fpEnabled": true
+    },
+    {
+      "name": "Run Classic Transcode Plugin: Tdarr_Plugin_MC93_Migz3CleanAudio",
+      "sourceRepo": "Community",
+      "pluginName": "runClassicTranscodePlugin",
+      "version": "2.0.0",
+      "inputsDB": {
+        "pluginSourceId": "Community:Tdarr_Plugin_MC93_Migz3CleanAudio",
+        "language": "eng,und",
+        "commentary": "true"
+      },
+      "id": "_1BtcYyIE",
+      "position": { "x": 545.0, "y": -33.0 },
+      "fpEnabled": true
+    },
+    {
+      "name": "Replace Original File",
+      "sourceRepo": "Community",
+      "pluginName": "replaceOriginalFile",
+      "version": "1.0.0",
+      "id": "xG56Of7cp",
+      "position": { "x": 547.0, "y": 205.0 },
+      "fpEnabled": true
+    },
+    {
+      "name": "Check Video Codec",
+      "sourceRepo": "Community",
+      "pluginName": "checkVideoCodec",
+      "version": "1.0.0",
+      "inputsDB": { "codec": "hevc" },
+      "id": "x4UqtuCK9",
+      "position": { "x": 547.0, "y": 274.0 },
+      "fpEnabled": true
+    },
+    {
+      "name": "Check Audio Stream Codec",
+      "sourceRepo": "Community",
+      "pluginName": "checkAudioStreamCodec",
+      "version": "1.0.0",
+      "inputsDB": { "codec": "aac" },
+      "id": "aAudChk1",
+      "position": { "x": 280.0, "y": 274.0 },
+      "fpEnabled": true
+    },
+    {
+      "name": "Begin Command (Audio Fix)",
+      "sourceRepo": "Community",
+      "pluginName": "ffmpegCommandStart",
+      "version": "1.0.0",
+      "id": "aFfBgn01",
+      "position": { "x": 280.0, "y": 370.0 },
+      "fpEnabled": true
+    },
+    {
+      "name": "Custom Arguments (Audio Fix)",
+      "sourceRepo": "Community",
+      "pluginName": "ffmpegCommandCustomArguments",
+      "version": "1.0.0",
+      "inputsDB": {
+        "outputArguments": "-max_muxing_queue_size 9999 -c:v copy -c:a aac -ac 2 -b:a 256k",
+        "inputArguments": ""
+      },
+      "id": "aCstArg1",
+      "position": { "x": 280.0, "y": 440.0 },
+      "fpEnabled": true
+    },
+    {
+      "name": "Set Container (Audio Fix)",
+      "sourceRepo": "Community",
+      "pluginName": "ffmpegCommandSetContainer",
+      "version": "1.0.0",
+      "inputsDB": { "forceConform": "false" },
+      "id": "aSetCnt1",
+      "position": { "x": 280.0, "y": 510.0 },
+      "fpEnabled": true
+    },
+    {
+      "name": "Execute (Audio Fix)",
+      "sourceRepo": "Community",
+      "pluginName": "ffmpegCommandExecute",
+      "version": "1.0.0",
+      "id": "aExeCmd1",
+      "position": { "x": 280.0, "y": 580.0 },
+      "fpEnabled": true
+    },
+    {
+      "name": "Compare File Size (Audio Fix)",
+      "sourceRepo": "Community",
+      "pluginName": "compareFileSize",
+      "version": "1.0.0",
+      "id": "aCmpSz01",
+      "position": { "x": 280.0, "y": 660.0 },
+      "fpEnabled": true
+    },
+    {
+      "name": "Replace Original File (Audio Fix)",
+      "sourceRepo": "Community",
+      "pluginName": "replaceOriginalFile",
+      "version": "1.0.0",
+      "id": "aReplc01",
+      "position": { "x": 280.0, "y": 740.0 },
+      "fpEnabled": true
+    },
+    {
+      "name": "Begin Command",
+      "sourceRepo": "Community",
+      "pluginName": "ffmpegCommandStart",
+      "version": "1.0.0",
+      "id": "6a0HyfVUa",
+      "position": { "x": 864.0, "y": 263.0 },
+      "fpEnabled": true
+    },
+    {
+      "name": "Check Video Resolution",
+      "sourceRepo": "Community",
+      "pluginName": "checkVideoResolution",
+      "version": "1.0.0",
+      "id": "Fipyujmi9",
+      "position": { "x": 863.0, "y": 395.0 },
+      "fpEnabled": true
+    },
+    {
+      "name": "Set Video Encoder (<=1440p)",
+      "sourceRepo": "Community",
+      "pluginName": "ffmpegCommandSetVideoEncoder",
+      "version": "1.0.0",
+      "inputsDB": {
+        "outputCodec": "hevc",
+        "ffmpegPreset": "veryslow",
+        "hardwareType": "qsv",
+        "ffmpegQuality": "18",
+        "hardwareEncoding": "true",
+        "hardwareDecoding": "false",
+        "forceEncoding": "true",
+        "ffmpegPresetEnabled": "true",
+        "ffmpegQualityEnabled": "true"
+      },
+      "id": "nvhiecc42",
+      "position": { "x": 721.0, "y": 480.0 },
+      "fpEnabled": true
+    },
+    {
+      "name": "Custom Arguments",
+      "sourceRepo": "Community",
+      "pluginName": "ffmpegCommandCustomArguments",
+      "version": "1.0.0",
+      "inputsDB": {
+        "outputArguments": "-max_muxing_queue_size 9999 -g 150 -c:a aac -ac 2 -b:a 256k",
+        "inputArguments": "-hwaccel qsv"
+      },
+      "id": "2mA1B19I3",
+      "position": { "x": 721.0, "y": 545.0 },
+      "fpEnabled": true
+    },
+    {
+      "name": "Set Container",
+      "sourceRepo": "Community",
+      "pluginName": "ffmpegCommandSetContainer",
+      "version": "1.0.0",
+      "id": "5sziHU00e",
+      "position": { "x": 721.0, "y": 610.0 },
+      "fpEnabled": true
+    },
+    {
+      "name": "Reorder Streams",
+      "sourceRepo": "Community",
+      "pluginName": "ffmpegCommandRorderStreams",
+      "version": "1.0.0",
+      "inputsDB": { "languages": "eng" },
+      "id": "JGSpkpZJZ",
+      "position": { "x": 721.0, "y": 675.0 },
+      "fpEnabled": true
+    },
+    {
+      "name": "Set Video Encoder (4K+)",
+      "sourceRepo": "Community",
+      "pluginName": "ffmpegCommandSetVideoEncoder",
+      "version": "1.0.0",
+      "inputsDB": {
+        "outputCodec": "hevc",
+        "ffmpegPreset": "veryslow",
+        "hardwareType": "qsv",
+        "ffmpegQuality": "20",
+        "hardwareEncoding": "true",
+        "hardwareDecoding": "false",
+        "forceEncoding": "true",
+        "ffmpegPresetEnabled": "true",
+        "ffmpegQualityEnabled": "true"
+      },
+      "id": "AAKi8flZe",
+      "position": { "x": 964.0, "y": 480.0 },
+      "fpEnabled": true
+    },
+    {
+      "name": "Custom Arguments",
+      "sourceRepo": "Community",
+      "pluginName": "ffmpegCommandCustomArguments",
+      "version": "1.0.0",
+      "inputsDB": {
+        "outputArguments": "-max_muxing_queue_size 9999 -g 150 -c:a aac -ac 2 -b:a 256k",
+        "inputArguments": "-hwaccel qsv"
+      },
+      "id": "PMCe3RdQg",
+      "position": { "x": 965.0, "y": 545.0 },
+      "fpEnabled": true
+    },
+    {
+      "name": "Set Container",
+      "sourceRepo": "Community",
+      "pluginName": "ffmpegCommandSetContainer",
+      "version": "1.0.0",
+      "inputsDB": { "forceConform": "false" },
+      "id": "BreCEkl7p",
+      "position": { "x": 965.0, "y": 610.0 },
+      "fpEnabled": true
+    },
+    {
+      "name": "Reorder Streams",
+      "sourceRepo": "Community",
+      "pluginName": "ffmpegCommandRorderStreams",
+      "version": "1.0.0",
+      "inputsDB": { "languages": "eng" },
+      "id": "6WCLwU69g",
+      "position": { "x": 965.0, "y": 675.0 },
+      "fpEnabled": true
+    },
+    {
+      "name": "Execute",
+      "sourceRepo": "Community",
+      "pluginName": "ffmpegCommandExecute",
+      "version": "1.0.0",
+      "id": "OBbLCZ8SO",
+      "position": { "x": 875.0, "y": 760.0 },
+      "fpEnabled": true
+    },
+    {
+      "name": "Compare File Size",
+      "sourceRepo": "Community",
+      "pluginName": "compareFileSize",
+      "version": "1.0.0",
+      "id": "abUXrdfpu",
+      "position": { "x": 877.0, "y": 830.0 },
+      "fpEnabled": true
+    },
+    {
+      "name": "Replace Original File",
+      "sourceRepo": "Community",
+      "pluginName": "replaceOriginalFile",
+      "version": "1.0.0",
+      "id": "PAbAGvohu",
+      "position": { "x": 822.0, "y": 950.0 },
+      "fpEnabled": true
+    },
+    {
+      "name": "Set Original File",
+      "sourceRepo": "Community",
+      "pluginName": "setOriginalFile",
+      "version": "1.0.0",
+      "id": "7RnyzgilZ",
+      "position": { "x": 1049.0, "y": 900.0 },
+      "fpEnabled": true
+    },
+    {
+      "name": "Run Classic Transcode Plugin",
+      "sourceRepo": "Community",
+      "pluginName": "runClassicTranscodePlugin",
+      "version": "2.0.0",
+      "inputsDB": { "pluginSourceId": "Local:R3fSMRhSH" },
+      "id": "EalEBIJDE",
+      "position": { "x": 1051.0, "y": 970.0 },
+      "fpEnabled": true
+    }
+  ],
+  "flowEdges": [
+    { "source": "y4lqcdrho",  "sourceHandle": "1", "target": "NYnExKUZZ",  "targetHandle": null, "id": "ywzmIu9nX" },
+    { "source": "NYnExKUZZ",  "sourceHandle": "1", "target": "ZowHb1rVt",  "targetHandle": null, "id": "a72uNTk5T" },
+    { "source": "NYnExKUZZ",  "sourceHandle": "2", "target": "ZowHb1rVt",  "targetHandle": null, "id": "dZyju_3Sf" },
+    { "source": "ZowHb1rVt",  "sourceHandle": "1", "target": "3vlfc2BWu",  "targetHandle": null, "id": "r8eNIFvJg" },
+    { "source": "ZowHb1rVt",  "sourceHandle": "2", "target": "3vlfc2BWu",  "targetHandle": null, "id": "bE5m5XmKC" },
+    { "source": "3vlfc2BWu",  "sourceHandle": "1", "target": "t6doemo2u",  "targetHandle": null, "id": "Dd1jpO9Zn" },
+    { "source": "3vlfc2BWu",  "sourceHandle": "2", "target": "t6doemo2u",  "targetHandle": null, "id": "M0Jyi1zCG" },
+    { "source": "t6doemo2u",  "sourceHandle": "1", "target": "_1BtcYyIE",  "targetHandle": null, "id": "TyIwniY7Q" },
+    { "source": "t6doemo2u",  "sourceHandle": "2", "target": "_1BtcYyIE",  "targetHandle": null, "id": "HPMeFxMHK" },
+    { "source": "_1BtcYyIE",  "sourceHandle": "1", "target": "xG56Of7cp",  "targetHandle": null, "id": "r0-PkTEwZ" },
+    { "source": "_1BtcYyIE",  "sourceHandle": "2", "target": "xG56Of7cp",  "targetHandle": null, "id": "HedoT-AG1" },
+    { "source": "xG56Of7cp",  "sourceHandle": "1", "target": "x4UqtuCK9",  "targetHandle": null, "id": "eViz4KRwl" },
+    { "source": "x4UqtuCK9",  "sourceHandle": "1", "target": "aAudChk1",   "targetHandle": null, "id": "hevcToAudChk" },
+    { "source": "x4UqtuCK9",  "sourceHandle": "2", "target": "6a0HyfVUa",  "targetHandle": null, "id": "2tY9KQodP" },
+    { "source": "aAudChk1",   "sourceHandle": "2", "target": "aFfBgn01",   "targetHandle": null, "id": "audChkToBegin" },
+    { "source": "aFfBgn01",   "sourceHandle": "1", "target": "aCstArg1",   "targetHandle": null, "id": "beginToArgs" },
+    { "source": "aCstArg1",   "sourceHandle": "1", "target": "aSetCnt1",   "targetHandle": null, "id": "argsToContainer" },
+    { "source": "aSetCnt1",   "sourceHandle": "1", "target": "aExeCmd1",   "targetHandle": null, "id": "containerToExec" },
+    { "source": "aExeCmd1",   "sourceHandle": "1", "target": "aCmpSz01",   "targetHandle": null, "id": "execToCompare" },
+    { "source": "aCmpSz01",   "sourceHandle": "1", "target": "aReplc01",   "targetHandle": null, "id": "cmpToReplace1" },
+    { "source": "aCmpSz01",   "sourceHandle": "2", "target": "aReplc01",   "targetHandle": null, "id": "cmpToReplace2" },
+    { "source": "aCmpSz01",   "sourceHandle": "3", "target": "aReplc01",   "targetHandle": null, "id": "cmpToReplace3" },
+    { "source": "6a0HyfVUa",  "sourceHandle": "1", "target": "Fipyujmi9",  "targetHandle": null, "id": "4GAVgfzgA" },
+    { "source": "Fipyujmi9",  "sourceHandle": "1", "target": "nvhiecc42",  "targetHandle": null, "id": "ucXVq0CzD" },
+    { "source": "Fipyujmi9",  "sourceHandle": "2", "target": "nvhiecc42",  "targetHandle": null, "id": "xqz1Iqwj_" },
+    { "source": "Fipyujmi9",  "sourceHandle": "3", "target": "nvhiecc42",  "targetHandle": null, "id": "RXG4RvlVF" },
+    { "source": "Fipyujmi9",  "sourceHandle": "4", "target": "nvhiecc42",  "targetHandle": null, "id": "T4RZJUEid" },
+    { "source": "Fipyujmi9",  "sourceHandle": "5", "target": "AAKi8flZe",  "targetHandle": null, "id": "cbEV5d_Iz" },
+    { "source": "Fipyujmi9",  "sourceHandle": "6", "target": "AAKi8flZe",  "targetHandle": null, "id": "cvBIL86Hw" },
+    { "source": "Fipyujmi9",  "sourceHandle": "7", "target": "AAKi8flZe",  "targetHandle": null, "id": "Hd5nKEj66" },
+    { "source": "Fipyujmi9",  "sourceHandle": "8", "target": "AAKi8flZe",  "targetHandle": null, "id": "4Aql240zU" },
+    { "source": "Fipyujmi9",  "sourceHandle": "9", "target": "AAKi8flZe",  "targetHandle": null, "id": "Z74hXNB0o" },
+    { "source": "nvhiecc42",  "sourceHandle": "1", "target": "2mA1B19I3",  "targetHandle": null, "id": "6iDzYQozd" },
+    { "source": "2mA1B19I3",  "sourceHandle": "1", "target": "5sziHU00e",  "targetHandle": null, "id": "XWXHFS4_s" },
+    { "source": "5sziHU00e",  "sourceHandle": "1", "target": "JGSpkpZJZ",  "targetHandle": null, "id": "c0KV-6y1i" },
+    { "source": "JGSpkpZJZ",  "sourceHandle": "1", "target": "OBbLCZ8SO",  "targetHandle": null, "id": "FKFIiJuWU" },
+    { "source": "AAKi8flZe",  "sourceHandle": "1", "target": "PMCe3RdQg",  "targetHandle": null, "id": "yCQzUMWEm" },
+    { "source": "PMCe3RdQg",  "sourceHandle": "1", "target": "BreCEkl7p",  "targetHandle": null, "id": "yK89A2rhd" },
+    { "source": "BreCEkl7p",  "sourceHandle": "1", "target": "6WCLwU69g",  "targetHandle": null, "id": "dj_zrMUlO" },
+    { "source": "6WCLwU69g",  "sourceHandle": "1", "target": "OBbLCZ8SO",  "targetHandle": null, "id": "uQNUt725H" },
+    { "source": "OBbLCZ8SO",  "sourceHandle": "1", "target": "abUXrdfpu",  "targetHandle": null, "id": "g2yPKEkmj" },
+    { "source": "abUXrdfpu",  "sourceHandle": "1", "target": "PAbAGvohu",  "targetHandle": null, "id": "i9M4AnRdC" },
+    { "source": "abUXrdfpu",  "sourceHandle": "2", "target": "PAbAGvohu",  "targetHandle": null, "id": "uN3TiehN-" },
+    { "source": "abUXrdfpu",  "sourceHandle": "3", "target": "7RnyzgilZ",  "targetHandle": null, "id": "F00RThYmv" },
+    { "source": "7RnyzgilZ",  "sourceHandle": "1", "target": "EalEBIJDE",  "targetHandle": null, "id": "JnaokyYV0" }
+  ]
+}
