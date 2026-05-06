@@ -45,6 +45,8 @@
         value: "proxy"
       - key: "autoheal-app"
         value: "true"
+      - key: "wud.tag.include"
+        value: '^v?\d+\.\d+\.\d+(\.\d+)?(-r\d+)?-ls\d+$'
 
   hosts: all
   vars_files:

@@ -28,3 +28,4 @@
           - name: proxy
         labels:
           prometheus.scrape: "true"
+          wud.tag.semver: "true"

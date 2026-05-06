@@ -21,6 +21,8 @@
         value: "8191"
       - key: "autoheal-app"
         value: "true"
+      - key: "wud.tag.semver"
+        value: "true"
 
   hosts: all
   vars_files:

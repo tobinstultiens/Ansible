@@ -23,6 +23,8 @@
         value: "true"
       - key: "prometheus.port"
         value: "3100"
+      - key: "wud.tag.semver"
+        value: "true"
 
   hosts: all
   become: true

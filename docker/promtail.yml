@@ -38,6 +38,7 @@
         labels:
           prometheus.scrape: "true"
           prometheus.port: "9080"
+          wud.tag.semver: "true"
 
   handlers:
     - name: Restart promtail

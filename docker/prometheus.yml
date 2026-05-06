@@ -21,6 +21,8 @@
         value: "9090"
       - key: "autoheal-app"
         value: "true"
+      - key: "wud.tag.semver"
+        value: "true"
 
   hosts: all
   become: true
@@ -40,7 +42,7 @@
 
     - name: Start prometheus
       community.docker.docker_container:
-        image: prom/prometheus:v2.54.1
+        image: prom/prometheus:v3.11.3
         name: "{{ service }}"
         user: root
         volumes:

@@ -17,6 +17,8 @@
         value: "letsencrypt"
       - key: "traefik.http.services.{{ service }}.loadbalancer.server.port"
         value: "3000"
+      - key: "wud.tag.semver"
+        value: "true"
 
   hosts: all
   vars_files:
@@ -38,8 +40,6 @@
         env:
           WUD_BASE_URL: "https://{{ service }}.{{ DOMAIN }}"
           WUD_WATCHER_LOCAL_CRON: "0 2 * * *"
-          WUD_WATCHER_LOCAL_WATCHBYDIGEST: "true"
-          WUD_WATCHER_LOCAL_TAG_INCLUDE: ".*"
           WUD_AUTH_OIDC_AUTHELIA_DISCOVERY: "https://authelia.{{ DOMAIN }}/.well-known/openid-configuration"
           WUD_AUTH_OIDC_AUTHELIA_CLIENTID: "wud"
           WUD_AUTH_OIDC_AUTHELIA_CLIENTSECRET: "{{ authelia_oidc_wud_secret }}"
@@ -47,6 +47,11 @@
           WUD_TRIGGER_DISCORD_HOMELAB_MODE: "batch"
           WUD_REGISTRY_HUB_MAIN_LOGIN: "{{ dockerhub_username }}"
           WUD_REGISTRY_HUB_MAIN_PASSWORD: "{{ dockerhub_token }}"
+          WUD_REGISTRY_GHCR_MAIN_USERNAME: "{{ github_username }}"
+          WUD_REGISTRY_GHCR_MAIN_TOKEN: "{{ github_token }}"
+          WUD_REGISTRY_CUSTOM_LSCR_URL: "https://lscr.io"
+          WUD_REGISTRY_CUSTOM_LSCR_LOGIN: "{{ github_username }}"
+          WUD_REGISTRY_CUSTOM_LSCR_PASSWORD: "{{ github_token }}"
         volumes:
           - /var/run/docker.sock:/var/run/docker.sock
           - "{{ docker_config_dir }}/{{ service }}:/store"

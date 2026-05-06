@@ -23,6 +23,8 @@
         value: "true"
       - key: "traefik.http.routers.{{ service }}.middlewares"
         value: "authelia-cors"
+      - key: "wud.tag.semver"
+        value: "true"
 
   hosts: all
   become: true

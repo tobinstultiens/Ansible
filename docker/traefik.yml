@@ -21,6 +21,8 @@
         value: "api@internal"
       - key: "traefik.http.routers.{{ service }}.middlewares"
         value: "authelia"
+      - key: "wud.tag.semver"
+        value: "true"
 
   hosts: all
   become: true

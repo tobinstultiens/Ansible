@@ -19,6 +19,8 @@
         value: "authelia"
       - key: "traefik.http.services.{{ service }}.loadbalancer.server.port"
         value: "3000"
+      - key: "wud.tag.semver"
+        value: "true"
 
   hosts: all
   vars_files:
@@ -28,7 +30,7 @@
   tasks:
     - name: Start grafana
       community.docker.docker_container:
-        image: grafana/grafana:11.3.0
+        image: grafana/grafana:13.1.0-25295570271-ubuntu
         name: "{{ service }}"
         user: "0:0"
         env:

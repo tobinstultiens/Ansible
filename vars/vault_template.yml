@@ -52,6 +52,8 @@ calibreweb_password: ""
 
 # WUD (What's Up Docker)
 discord_wud_webhook: ""
+github_username: ""
+github_token: ""  # PAT with read:packages scope — https://github.com/settings/tokens
 # Gatus service health notifications
 gatus_discord_webhook: ""
 dockerhub_username: ""

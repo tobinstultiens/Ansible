@@ -19,6 +19,8 @@
         value: "authelia"
       - key: "traefik.http.services.{{ service }}.loadbalancer.server.port"
         value: "8265"
+      - key: "wud.watch.digest"
+        value: "true"
 
   hosts: all
   vars_files:
@@ -50,7 +52,6 @@
           - "{{ docker_config_dir }}/{{ service }}/config:/app/configs"
           - "{{ docker_config_dir }}/{{ service }}/logs:/app/logs"
           - "{{ docker_nas_dir }}:/media"
-          - "{{ home }}/tmp/tdarr:/temp"
         restart_policy: unless-stopped
         ports: 8266:8266
         networks:
@@ -78,5 +79,8 @@
           - "{{ docker_config_dir }}/{{ service }}/config:/app/configs"
           - "{{ docker_config_dir }}/{{ service }}/logs:/app/logs"
           - "{{ docker_nas_dir }}:/media"
-          - "{{ home }}/tmp/tdarr:/temp"
         restart_policy: unless-stopped
+        labels:
+          {
+            "wud.watch.digest": "true"
+          }

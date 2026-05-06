@@ -76,7 +76,8 @@
           net.ipv6.conf.lo.disable_ipv6: "1"
         labels:
           {
-            "autoheal-app": "true"
+            "autoheal-app": "true",
+            "wud.watch": "false"
           }
         networks:
           - name: proxy

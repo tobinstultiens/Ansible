@@ -29,3 +29,5 @@
           - "{{ docker_config_dir }}/{{ service }}:/config"
         network_mode: container:vpn
         state: started
+        labels:
+          wud.tag.semver: "true"

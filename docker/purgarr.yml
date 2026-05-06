@@ -19,6 +19,8 @@
         value: "authelia"
       - key: "traefik.http.services.{{ service }}.loadbalancer.server.port"
         value: "9891"
+      - key: "wud.watch"
+        value: "false"
 
   hosts: all
   vars_files:

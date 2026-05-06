@@ -99,3 +99,13 @@
           type: tdarr
           url: http://tdarr:8265
           key: {{tdarr_apikey}}
+
+- System:
+    - WUD:
+        icon: whats-up-docker.png
+        href: https://wud.{{DOMAIN}}/
+        description: Container update tracker
+        siteMonitor: https://wud.{{DOMAIN}}/
+        widget:
+          type: whatsupdocker
+          url: http://wud:3000
