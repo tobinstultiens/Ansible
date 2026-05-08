@@ -24,7 +24,6 @@
 
   hosts: all
   vars_files:
-    - ../vars/vars.yml
     - ../vars/vault.yml
 
   tasks:
@@ -32,6 +31,7 @@
       community.docker.docker_container:
         image: linuxserver/grocy:v4.6.0-ls320
         name: "{{ service }}"
+        state: absent
         env:
           PUID: "1000"
           PGID: "1000"

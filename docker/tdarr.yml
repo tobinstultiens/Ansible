@@ -22,15 +22,14 @@
       - key: "wud.watch.digest"
         value: "true"
 
-  hosts: all
+  hosts: home
   vars_files:
-    - ../vars/vars.yml
     - ../vars/vault.yml
 
   tasks:
     - name: Start tdarr
       community.docker.docker_container:
-        image: ghcr.io/haveagitgat/tdarr:2.68.01
+        image: ghcr.io/haveagitgat/tdarr:2.71.01
         name: "{{ service }}"
         env:
           PUID: "1000"
@@ -51,6 +50,7 @@
           - "{{ docker_config_dir }}/{{ service }}/server:/app/server"
           - "{{ docker_config_dir }}/{{ service }}/config:/app/configs"
           - "{{ docker_config_dir }}/{{ service }}/logs:/app/logs"
+          - "{{ home }}/tmp/tdarr:/temp"
           - "{{ docker_nas_dir }}:/media"
         restart_policy: unless-stopped
         ports: 8266:8266
@@ -61,7 +61,7 @@
     - name: Start tdarr node.
       community.docker.docker_container:
         name: "{{ service }}-node"
-        image: ghcr.io/haveagitgat/tdarr_node:2.68.01
+        image: ghcr.io/haveagitgat/tdarr_node:2.71.01
         network_mode: "container:{{ service }}"
         env:
           PUID: "1000"
@@ -78,6 +78,7 @@
         volumes:
           - "{{ docker_config_dir }}/{{ service }}/config:/app/configs"
           - "{{ docker_config_dir }}/{{ service }}/logs:/app/logs"
+          - "{{ home }}/tmp/tdarr:/temp"
           - "{{ docker_nas_dir }}:/media"
         restart_policy: unless-stopped
         labels:

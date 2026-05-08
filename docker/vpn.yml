@@ -6,7 +6,6 @@
   become: true
   hosts: all
   vars_files:
-    - ../vars/vars.yml
     - ../vars/vault.yml
 
   tasks:

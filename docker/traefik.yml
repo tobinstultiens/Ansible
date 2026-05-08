@@ -27,7 +27,6 @@
   hosts: all
   become: true
   vars_files:
-    - ../vars/vars.yml
     - ../vars/vault.yml
 
   tasks:
@@ -58,7 +57,7 @@
     - name: Starting the reverse proxy.
       community.docker.docker_container:
         name: "{{ service }}"
-        image: traefik:v3.3.7
+        image: traefik:v3.7.0
         restart_policy: always
         state: started
         ports:
