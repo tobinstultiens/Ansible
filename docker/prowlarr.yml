@@ -2,23 +2,8 @@
 - name: Prowlarr
   vars:
     service: "prowlarr"
-    labels:
-      - key: "traefik.enable"
-        value: "true"
-      - key: "traefik.http.routers.{{ service }}.rule"
-        value: "Host(`{{ service }}.{{ DOMAIN }}`)"
-      - key: "traefik.http.routers.{{ service }}.service"
-        value: "{{ service }}"
-      - key: "traefik.http.routers.{{ service }}.entrypoints"
-        value: "https"
-      - key: "traefik.http.routers.{{ service }}.tls"
-        value: "true"
-      - key: "traefik.http.routers.{{ service }}.tls.certresolver"
-        value: "letsencrypt"
-      - key: "traefik.http.routers.{{ service }}.middlewares"
-        value: "authelia"
-      - key: "traefik.http.services.{{ service }}.loadbalancer.server.port"
-        value: "9696"
+    service_port: "9696"
+    service_labels:
       - key: "autoheal-app"
         value: "true"
       - key: "wud.tag.include"
@@ -27,6 +12,7 @@
   hosts: all
   vars_files:
     - ../vars/vault.yml
+    - ../vars/traefik_labels.yml
 
   tasks:
     - name: Start prowlarr
@@ -45,7 +31,7 @@
         state: healthy
         dns_opts:
           - options: "single-request"
-        labels: "{{ labels | items2dict }}"
+        labels: "{{ (traefik_default_labels + service_labels) | items2dict }}"
         healthcheck:
           test: bash -c 'echo > /dev/tcp/localhost/9696'
           interval: 30s

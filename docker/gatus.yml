@@ -2,23 +2,8 @@
 - name: Gatus
   vars:
     service: "gatus"
-    labels:
-      - key: "traefik.enable"
-        value: "true"
-      - key: "traefik.http.routers.{{ service }}.rule"
-        value: "Host(`{{ service }}.{{ DOMAIN }}`)"
-      - key: "traefik.http.routers.{{ service }}.service"
-        value: "{{ service }}"
-      - key: "traefik.http.routers.{{ service }}.entrypoints"
-        value: "https"
-      - key: "traefik.http.routers.{{ service }}.tls"
-        value: "true"
-      - key: "traefik.http.routers.{{ service }}.tls.certresolver"
-        value: "letsencrypt"
-      - key: "traefik.http.routers.{{ service }}.middlewares"
-        value: "authelia"
-      - key: "traefik.http.services.{{ service }}.loadbalancer.server.port"
-        value: "8080"
+    service_port: "8080"
+    service_labels:
       - key: "wud.tag.semver"
         value: "true"
 
@@ -26,6 +11,7 @@
   become: true
   vars_files:
     - ../vars/vault.yml
+    - ../vars/traefik_labels.yml
 
   tasks:
     - name: Ensure gatus config dir exists
@@ -63,7 +49,7 @@
           'calibre.' + DOMAIN: 'host-gateway',
           'prometheus.' + DOMAIN: 'host-gateway'
           } }}"
-        labels: "{{ labels | items2dict }}"
+        labels: "{{ (traefik_default_labels + service_labels) | items2dict }}"
 
   handlers:
     - name: Restart gatus

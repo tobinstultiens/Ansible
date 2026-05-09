@@ -2,6 +2,7 @@
 - name: Traefik
   vars:
     service: "traefik"
+    traefik_file: "traefik.yml"
     labels:
       - key: "traefik.enable"
         value: "true"

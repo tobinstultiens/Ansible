@@ -2,29 +2,15 @@
 - name: Tdarr
   vars:
     service: "tdarr"
-    labels:
-      - key: "traefik.enable"
-        value: "true"
-      - key: "traefik.http.routers.{{ service }}.rule"
-        value: "Host(`{{ service }}.{{ DOMAIN }}`)"
-      - key: "traefik.http.routers.{{ service }}.service"
-        value: "{{ service }}"
-      - key: "traefik.http.routers.{{ service }}.entrypoints"
-        value: "https"
-      - key: "traefik.http.routers.{{ service }}.tls"
-        value: "true"
-      - key: "traefik.http.routers.{{ service }}.tls.certresolver"
-        value: "letsencrypt"
-      - key: "traefik.http.routers.{{ service }}.middlewares"
-        value: "authelia"
-      - key: "traefik.http.services.{{ service }}.loadbalancer.server.port"
-        value: "8265"
+    service_port: "8265"
+    service_labels:
       - key: "wud.watch.digest"
         value: "true"
 
   hosts: home
   vars_files:
     - ../vars/vault.yml
+    - ../vars/traefik_labels.yml
 
   tasks:
     - name: Start tdarr
@@ -56,7 +42,7 @@
         ports: 8266:8266
         networks:
           - name: proxy
-        labels: "{{ labels | items2dict }}"
+        labels: "{{ (traefik_default_labels + service_labels) | items2dict }}"
 
     - name: Start tdarr node.
       community.docker.docker_container:
