@@ -23,7 +23,7 @@
           PUID: "1000"
           PGID: "1000"
           TZ: Europe/Amsterdam
-        state: healthy
+        state: started
         volumes:
           - "{{ docker_config_dir }}/{{ service }}:/config"
           - "{{ docker_nas_dir }}:/storage"
@@ -35,3 +35,27 @@
           interval: 30s
           timeout: 10s
           start_period: 60s
+      register: bazarr_container
+
+    - name: Wait for Bazarr to initialise and write config
+      ansible.builtin.pause:
+        seconds: 20
+      when: bazarr_container.changed
+
+    - name: Disable bazarr built-in authentication
+      ansible.builtin.shell: |
+        CONFIG="{{ docker_config_dir }}/{{ service }}/config/config.yaml"
+        if sed -n '/^auth:/,/^[a-z]/p' "$CONFIG" | grep -qE '  type: (form|basic)'; then
+          sed -i '/^auth:/,/^[a-z]/ s/^  type: .*/  type:/' "$CONFIG"
+          echo changed
+        fi
+      register: bazarr_auth
+      changed_when: "'changed' in bazarr_auth.stdout"
+      notify: Restart bazarr
+
+  handlers:
+    - name: Restart bazarr
+      community.docker.docker_container:
+        name: "{{ service }}"
+        restart: true
+        state: started
