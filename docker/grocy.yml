@@ -3,9 +3,7 @@
   vars:
     service: "grocy"
     service_port: "80"
-    service_labels:
-      - key: "wud.tag.include"
-        value: '^v?\d+\.\d+\.\d+(\.\d+)?(-r\d+)?-ls\d+$'
+    service_labels: []
 
   hosts: all
   vars_files:
@@ -15,7 +13,7 @@
   tasks:
     - name: Start grocy
       community.docker.docker_container:
-        image: linuxserver/grocy:v4.6.0-ls320
+        image: lscr.io/linuxserver/grocy:latest
         name: "{{ service }}"
         state: absent
         env:

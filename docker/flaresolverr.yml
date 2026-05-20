@@ -6,8 +6,6 @@
     service_labels:
       - key: "autoheal-app"
         value: "true"
-      - key: "wud.tag.semver"
-        value: "true"
 
   hosts: all
   vars_files:
@@ -17,7 +15,7 @@
   tasks:
     - name: Start Flaresolverr
       community.docker.docker_container:
-        image: ghcr.io/flaresolverr/flaresolverr:v3.4.6
+        image: ghcr.io/flaresolverr/flaresolverr:latest
         name: "{{ service }}"
         env:
           TZ: Europe/Amsterdam

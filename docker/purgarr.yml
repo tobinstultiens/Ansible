@@ -3,9 +3,7 @@
   vars:
     service: "purgarr"
     service_port: "9891"
-    service_labels:
-      - key: "wud.watch"
-        value: "false"
+    service_labels: []
 
   hosts: all
   vars_files:

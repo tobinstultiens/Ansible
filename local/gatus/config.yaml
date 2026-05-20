@@ -71,16 +71,6 @@ endpoints:
     alerts:
       - type: discord
 
-  - name: WUD
-    group: Infrastructure
-    url: http://wud:3000
-    interval: 2m
-    conditions:
-      - "[STATUS] >= 200"
-      - "[STATUS] < 400"
-    alerts:
-      - type: discord
-
   - name: Node Exporter
     group: Infrastructure
     url: http://node-exporter:9100/metrics

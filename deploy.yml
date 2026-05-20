@@ -8,8 +8,8 @@
   vars_files:
     - vars/vault.yml
 
-- name: WUD
-  ansible.builtin.import_playbook: docker/wud.yml
+- name: Watchtower
+  ansible.builtin.import_playbook: docker/watchtower.yml
 - name: Autoheal
   ansible.builtin.import_playbook: docker/autoheal.yml
 - name: Vpn

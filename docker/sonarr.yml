@@ -6,8 +6,6 @@
     service_labels:
       - key: "autoheal-app"
         value: "true"
-      - key: "wud.tag.include"
-        value: '^v?\d+\.\d+\.\d+(\.\d+)?(-r\d+)?-ls\d+$'
 
   hosts: all
   vars_files:
@@ -17,7 +15,7 @@
   tasks:
     - name: Start Sonarr
       community.docker.docker_container:
-        image: linuxserver/sonarr:4.0.17.2952-ls306
+        image: lscr.io/linuxserver/sonarr:latest
         name: "{{ service }}"
         env:
           PUID: "1000"

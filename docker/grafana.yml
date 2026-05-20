@@ -3,9 +3,7 @@
   vars:
     service: "grafana"
     service_port: "3000"
-    service_labels:
-      - key: "wud.tag.semver"
-        value: "true"
+    service_labels: []
 
   hosts: all
   vars_files:
@@ -15,7 +13,7 @@
   tasks:
     - name: Start grafana
       community.docker.docker_container:
-        image: grafana/grafana:13.1.0-25295570271-ubuntu
+        image: grafana/grafana:latest
         name: "{{ service }}"
         user: "0:0"
         env:

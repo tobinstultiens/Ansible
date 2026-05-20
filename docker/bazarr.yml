@@ -6,8 +6,6 @@
     service_labels:
       - key: "autoheal-app"
         value: "true"
-      - key: "wud.tag.include"
-        value: '^v?\d+\.\d+\.\d+(\.\d+)?(-r\d+)?-ls\d+$'
 
   hosts: all
   vars_files:
@@ -17,7 +15,7 @@
   tasks:
     - name: Start Bazarr
       community.docker.docker_container:
-        image: linuxserver/bazarr:v1.5.6-ls343
+        image: lscr.io/linuxserver/bazarr:latest
         name: "{{ service }}"
         env:
           PUID: "1000"
@@ -37,18 +35,21 @@
           start_period: 60s
       register: bazarr_container
 
-    - name: Wait for Bazarr to initialise and write config
+    - name: Wait for Bazarr to initialise and write config  # noqa: no-handler
       ansible.builtin.pause:
         seconds: 20
       when: bazarr_container.changed
 
     - name: Disable bazarr built-in authentication
       ansible.builtin.shell: |
+        set -o pipefail
         CONFIG="{{ docker_config_dir }}/{{ service }}/config/config.yaml"
         if sed -n '/^auth:/,/^[a-z]/p' "$CONFIG" | grep -qE '  type: (form|basic)'; then
           sed -i '/^auth:/,/^[a-z]/ s/^  type: .*/  type:/' "$CONFIG"
           echo changed
         fi
+      args:
+        executable: /bin/bash
       register: bazarr_auth
       changed_when: "'changed' in bazarr_auth.stdout"
       notify: Restart bazarr

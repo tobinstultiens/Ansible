@@ -3,9 +3,7 @@
   vars:
     service: "homepage"
     service_port: "3000"
-    service_labels:
-      - key: "wud.tag.semver"
-        value: "true"
+    service_labels: []
 
   hosts: all
   become: true
@@ -72,7 +70,7 @@
 
     - name: Start homepage
       community.docker.docker_container:
-        image: ghcr.io/gethomepage/homepage:v1.12.3
+        image: ghcr.io/gethomepage/homepage:latest
         name: "{{ service }}"
         env:
           HOMEPAGE_ALLOWED_HOSTS: "{{ service }}.{{ DOMAIN }}"

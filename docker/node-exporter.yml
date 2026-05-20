@@ -11,7 +11,7 @@
   tasks:
     - name: Start node-exporter
       community.docker.docker_container:
-        image: prom/node-exporter:v1.8.2
+        image: prom/node-exporter:latest
         name: "{{ service }}"
         pid_mode: host
         volumes:
@@ -28,4 +28,3 @@
           - name: proxy
         labels:
           prometheus.scrape: "true"
-          wud.tag.semver: "true"

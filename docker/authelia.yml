@@ -10,8 +10,6 @@
         value: "true"
       - key: "traefik.http.routers.{{ service }}.middlewares"
         value: "authelia-cors"
-      - key: "wud.tag.semver"
-        value: "true"
 
   hosts: all
   become: true
@@ -40,56 +38,6 @@
         authelia_oidc_hmac: >-
           {{ lookup('password', lookup('env', 'HOME') +
              '/.ansible/homelab-secrets/authelia_oidc_hmac chars=ascii_letters,digits length=64') }}
-      no_log: true
-
-    - name: Generate WUD OIDC client secret
-      ansible.builtin.set_fact:
-        authelia_oidc_wud_secret: >-
-          {{ lookup('password', lookup('env', 'HOME') +
-             '/.ansible/homelab-secrets/authelia_oidc_wud_secret chars=ascii_letters,digits length=32') }}
-      no_log: true
-
-    - name: Check if WUD bcrypt hash is cached
-      ansible.builtin.stat:
-        path: "{{ lookup('env', 'HOME') }}/.ansible/homelab-secrets/authelia_oidc_wud_secret_hash"
-      register: wud_hash_stat
-      delegate_to: localhost
-      become: false
-
-    - name: Generate WUD client secret bcrypt hash
-      ansible.builtin.command:
-        argv:
-          - docker
-          - run
-          - --rm
-          - authelia/authelia:latest
-          - authelia
-          - crypto
-          - hash
-          - generate
-          - bcrypt
-          - --password
-          - "{{ authelia_oidc_wud_secret }}"
-      register: wud_hash_output
-      changed_when: false
-      no_log: true
-      when: not wud_hash_stat.stat.exists
-
-    - name: Save WUD bcrypt hash to cache
-      ansible.builtin.copy:
-        content: "{{ wud_hash_output.stdout | regex_search('Digest: (\\S+)', '\\1') | first }}"
-        dest: "{{ lookup('env', 'HOME') }}/.ansible/homelab-secrets/authelia_oidc_wud_secret_hash"
-        mode: "0600"
-      no_log: true
-      when: not wud_hash_stat.stat.exists
-      delegate_to: localhost
-      become: false
-
-    - name: Load WUD client secret hash
-      ansible.builtin.set_fact:
-        authelia_oidc_wud_secret_hash: >-
-          {{ lookup('file', lookup('env', 'HOME') +
-             '/.ansible/homelab-secrets/authelia_oidc_wud_secret_hash') }}
       no_log: true
 
     - name: Ensure authelia config dir exists
@@ -125,7 +73,7 @@
 
     - name: Start authelia
       community.docker.docker_container:
-        image: authelia/authelia:4.39.16
+        image: authelia/authelia:latest
         name: "{{ service }}"
         env:
           TZ: Europe/Amsterdam

@@ -1,0 +1,29 @@
+---
+- name: Watchtower
+  vars:
+    service: "watchtower"
+
+  hosts: home
+  vars_files:
+    - ../vars/vault.yml
+
+  tasks:
+    - name: Compute Discord shoutrrr URL
+      ansible.builtin.set_fact:
+        discord_shoutrrr_url: >-
+          {{ discord_wud_webhook |
+             regex_replace('https://discord\.com/api/webhooks/([0-9]+)/(.+)', 'discord://\2@\1') }}
+      no_log: true
+
+    - name: Start watchtower
+      community.docker.docker_container:
+        image: ghcr.io/nicholas-fedor/watchtower:latest
+        name: "{{ service }}"
+        volumes:
+          - /var/run/docker.sock:/var/run/docker.sock
+        env:
+          WATCHTOWER_SCHEDULE: "0 0 3 * * *"
+          WATCHTOWER_CLEANUP: "true"
+          WATCHTOWER_NOTIFICATION_URL: "{{ discord_shoutrrr_url }}"
+        restart_policy: unless-stopped
+        state: started

@@ -6,8 +6,6 @@
     service_labels:
       - key: "autoheal-app"
         value: "true"
-      - key: "wud.tag.semver"
-        value: "true"
 
   hosts: all
   become: true
@@ -27,7 +25,7 @@
 
     - name: Start prometheus
       community.docker.docker_container:
-        image: prom/prometheus:v3.11.3
+        image: prom/prometheus:latest
         name: "{{ service }}"
         user: root
         volumes:

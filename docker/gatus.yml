@@ -3,9 +3,7 @@
   vars:
     service: "gatus"
     service_port: "8080"
-    service_labels:
-      - key: "wud.tag.semver"
-        value: "true"
+    service_labels: []
 
   hosts: all
   become: true
@@ -27,9 +25,22 @@
         mode: "0644"
       notify: Restart gatus
 
+    - name: Set gatus host overrides
+      ansible.builtin.set_fact:
+        gatus_etc_hosts:
+          "{{ 'sonarr.' + DOMAIN }}": host-gateway
+          "{{ 'radarr.' + DOMAIN }}": host-gateway
+          "{{ 'lidarr.' + DOMAIN }}": host-gateway
+          "{{ 'prowlarr.' + DOMAIN }}": host-gateway
+          "{{ 'bazarr.' + DOMAIN }}": host-gateway
+          "{{ 'ombi.' + DOMAIN }}": host-gateway
+          "{{ 'qbittorrent.' + DOMAIN }}": host-gateway
+          "{{ 'calibre.' + DOMAIN }}": host-gateway
+          "{{ 'prometheus.' + DOMAIN }}": host-gateway
+
     - name: Start gatus
       community.docker.docker_container:
-        image: twinproduction/gatus:v5.12.0
+        image: twinproduction/gatus:latest
         name: "{{ service }}"
         env:
           TZ: Europe/Amsterdam
@@ -38,17 +49,7 @@
         restart_policy: unless-stopped
         networks:
           - name: proxy
-        etc_hosts: "{{ {
-          'sonarr.' + DOMAIN: 'host-gateway',
-          'radarr.' + DOMAIN: 'host-gateway',
-          'lidarr.' + DOMAIN: 'host-gateway',
-          'prowlarr.' + DOMAIN: 'host-gateway',
-          'bazarr.' + DOMAIN: 'host-gateway',
-          'ombi.' + DOMAIN: 'host-gateway',
-          'qbittorrent.' + DOMAIN: 'host-gateway',
-          'calibre.' + DOMAIN: 'host-gateway',
-          'prometheus.' + DOMAIN: 'host-gateway'
-          } }}"
+        etc_hosts: "{{ gatus_etc_hosts }}"
         labels: "{{ (traefik_default_labels + service_labels) | items2dict }}"
 
   handlers:

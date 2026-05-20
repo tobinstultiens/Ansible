@@ -6,8 +6,6 @@
     service_labels:
       - key: "autoheal-app"
         value: "true"
-      - key: "wud.tag.include"
-        value: '^v?\d+\.\d+\.\d+(\.\d+)?(-r\d+)?-ls\d+$'
 
   hosts: all
   vars_files:
@@ -17,7 +15,7 @@
   tasks:
     - name: Start prowlarr
       community.docker.docker_container:
-        image: linuxserver/prowlarr:2.3.5.5327-ls141
+        image: lscr.io/linuxserver/prowlarr:latest
         name: "{{ service }}"
         env:
           PUID: "1000"

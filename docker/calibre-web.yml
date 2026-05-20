@@ -3,9 +3,7 @@
   vars:
     service: "calibre-web"
     service_port: "8083"
-    service_labels:
-      - key: "wud.tag.include"
-        value: '^v?\d+\.\d+\.\d+(\.\d+)?(-r\d+)?-ls\d+$'
+    service_labels: []
 
   hosts: all
   vars_files:
@@ -15,7 +13,7 @@
   tasks:
     - name: Start calibre web
       community.docker.docker_container:
-        image: lscr.io/linuxserver/calibre-web:0.6.26-ls377
+        image: lscr.io/linuxserver/calibre-web:latest
         name: "{{ service }}"
         env:
           PUID: "1000"

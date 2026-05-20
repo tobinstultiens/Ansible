@@ -24,7 +24,7 @@
 
     - name: Start promtail
       community.docker.docker_container:
-        image: grafana/promtail:3.1.0
+        image: grafana/promtail:latest
         name: "{{ service }}"
         volumes:
           - "{{ docker_config_dir }}/{{ service }}:/etc/promtail"
@@ -37,7 +37,6 @@
         labels:
           prometheus.scrape: "true"
           prometheus.port: "9080"
-          wud.tag.semver: "true"
 
   handlers:
     - name: Restart promtail

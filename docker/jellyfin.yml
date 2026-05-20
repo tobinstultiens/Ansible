@@ -3,9 +3,7 @@
   vars:
     service: "jellyfin"
     service_port: "8096"
-    service_labels:
-      - key: "wud.tag.include"
-        value: '^\d+\.\d+\.\d+[a-zA-Z0-9]+-ls\d+$'
+    service_labels: []
 
   hosts: all
   vars_files:
@@ -15,7 +13,7 @@
   tasks:
     - name: Start Jellyfin
       community.docker.docker_container:
-        image: lscr.io/linuxserver/jellyfin:10.11.8ubu2404-ls27
+        image: lscr.io/linuxserver/jellyfin:latest
         name: "{{ service }}"
         env:
           PUID: "1000"

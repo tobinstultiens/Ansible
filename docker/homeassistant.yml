@@ -3,9 +3,7 @@
   vars:
     service: "homeassistant"
     service_port: "8123"
-    service_labels:
-      - key: "wud.tag.semver"
-        value: "true"
+    service_labels: []
 
   hosts: all
   become: true
@@ -25,7 +23,7 @@
 
     - name: Start homeassistant
       community.docker.docker_container:
-        image: "ghcr.io/home-assistant/home-assistant:2026.4.1"
+        image: "ghcr.io/home-assistant/home-assistant:latest"
         name: "{{ service }}"
         volumes:
           - "{{ docker_config_dir }}/{{ service }}:/config"
