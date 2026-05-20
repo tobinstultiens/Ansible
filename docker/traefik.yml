@@ -12,6 +12,8 @@
         value: "true"
       - key: "traefik.http.middlewares.authelia.forwardauth.authResponseHeaders"
         value: "Remote-User,Remote-Groups,Remote-Name,Remote-Email"
+      - key: "traefik.http.middlewares.authelia.forwardauth.maxResponseBodySize"
+        value: "4096"
       - key: "prometheus.scrape"
         value: "true"
       - key: "prometheus.port"

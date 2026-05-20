@@ -32,9 +32,9 @@
         state: healthy
         labels: "{{ (traefik_default_labels + service_labels) | items2dict }}"
         healthcheck:
-          test: bash -c 'echo > /dev/tcp/localhost/8989'
+          test: bash -c 'echo > /dev/tcp/localhost/8989 && echo > /dev/tcp/1.1.1.1/443'
           interval: 30s
-          timeout: 10s
+          timeout: 15s
           start_period: 60s
 
     - name: Set sonarr authentication to external

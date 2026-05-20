@@ -32,7 +32,7 @@
         labels: "{{ (traefik_default_labels + service_labels) | items2dict }}"
         state: healthy
         healthcheck:
-          test: bash -c 'echo > /dev/tcp/localhost/4343'
+          test: bash -c 'echo > /dev/tcp/localhost/4343 && echo > /dev/tcp/1.1.1.1/443'
           interval: 30s
-          timeout: 10s
+          timeout: 15s
           start_period: 60s

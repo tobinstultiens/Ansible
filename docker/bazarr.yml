@@ -31,9 +31,9 @@
         restart_policy: unless-stopped
         labels: "{{ (traefik_default_labels + service_labels) | items2dict }}"
         healthcheck:
-          test: bash -c 'echo > /dev/tcp/localhost/6767'
+          test: bash -c 'echo > /dev/tcp/localhost/6767 && echo > /dev/tcp/1.1.1.1/443'
           interval: 30s
-          timeout: 10s
+          timeout: 15s
           start_period: 60s
       register: bazarr_container
 

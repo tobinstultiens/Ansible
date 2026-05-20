@@ -44,9 +44,9 @@
         state: healthy
         labels: "{{ (traefik_default_labels + service_labels) | items2dict }}"
         healthcheck:
-          test: wget -q --spider http://localhost:9090/-/healthy
+          test: sh -c 'wget -q --spider http://localhost:9090/-/healthy && wget -q -T 10 --tries=1 --spider http://1.1.1.1'
           interval: 30s
-          timeout: 10s
+          timeout: 15s
           start_period: 60s
 
   handlers:
