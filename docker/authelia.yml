@@ -33,36 +33,11 @@
              '/.ansible/homelab-secrets/lldap_admin_password chars=ascii_letters,digits length=32') }}
       no_log: true
 
-    - name: Generate OIDC HMAC secret
-      ansible.builtin.set_fact:
-        authelia_oidc_hmac: >-
-          {{ lookup('password', lookup('env', 'HOME') +
-             '/.ansible/homelab-secrets/authelia_oidc_hmac chars=ascii_letters,digits length=64') }}
-      no_log: true
-
     - name: Ensure authelia config dir exists
       ansible.builtin.file:
         path: "{{ docker_config_dir }}/{{ service }}"
         state: directory
         mode: "0700"
-
-    - name: Generate OIDC RSA private key
-      community.crypto.openssl_privatekey:
-        path: "{{ docker_config_dir }}/{{ service }}/oidc_private.pem"
-        type: RSA
-        size: 4096
-        mode: "0600"
-
-    - name: Read OIDC private key
-      ansible.builtin.slurp:
-        src: "{{ docker_config_dir }}/{{ service }}/oidc_private.pem"
-      register: authelia_oidc_private_key_raw
-      no_log: true
-
-    - name: Store OIDC private key content
-      ansible.builtin.set_fact:
-        authelia_oidc_private_key: "{{ authelia_oidc_private_key_raw.content | b64decode }}"
-      no_log: true
 
     - name: Deploy authelia configuration
       ansible.builtin.template:

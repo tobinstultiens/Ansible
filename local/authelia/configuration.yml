@@ -74,14 +74,3 @@ notifier:
     username: '{{ authelia_smtp_username }}'
     password: '{{ authelia_smtp_password }}'
     sender: 'Authelia <{{ authelia_smtp_username }}>'
-
-identity_providers:
-  oidc:
-    hmac_secret: '{{ authelia_oidc_hmac }}'
-    jwks:
-      - key_id: 'default'
-        algorithm: 'RS256'
-        use: 'sig'
-        key: |
-          {{ authelia_oidc_private_key | indent(10) }}
-    clients: []
