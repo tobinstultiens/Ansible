@@ -65,3 +65,23 @@ rest:
         value_template: "{{ (value_json.episodes | int(0)) + (value_json.movies | int(0)) }}"
         unit_of_measurement: "wanted"
         icon: mdi:subtitles
+
+# System Monitor exposes disk "use" (GB) and "free" (GB) per mount but no total.
+# These template sensors compute total = use + free so the dashboard can show
+# "used of total" for the system (/) and NAS (/storage) mounts.
+template:
+  - sensor:
+      - name: "Disk total root"
+        unique_id: disk_total_root
+        unit_of_measurement: GiB
+        icon: mdi:harddisk
+        state: >-
+          {{ (states('sensor.system_monitor_disk_use') | float(0))
+             + (states('sensor.system_monitor_disk_free') | float(0)) }}
+      - name: "Disk total storage"
+        unique_id: disk_total_storage
+        unit_of_measurement: GiB
+        icon: mdi:nas
+        state: >-
+          {{ (states('sensor.system_monitor_disk_use_storage') | float(0))
+             + (states('sensor.system_monitor_disk_free_storage') | float(0)) }}

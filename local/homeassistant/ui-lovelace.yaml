@@ -166,11 +166,42 @@ views:
               green: 0
               yellow: 70
               red: 90
+          # gauge = % used, tiles = used / total GB, per mount.
+          - type: heading
+            heading: Storage — / (system)
+            heading_style: subtitle
           - type: gauge
-            name: Disk /
+            name: Usage
             entity: sensor.system_monitor_disk_usage
             unit: "%"
             severity:
               green: 0
               yellow: 80
               red: 92
+          - type: tile
+            entity: sensor.system_monitor_disk_use
+            name: Used
+            icon: mdi:harddisk
+          - type: tile
+            entity: sensor.disk_total_root
+            name: Total
+            icon: mdi:harddisk
+          - type: heading
+            heading: Storage — /storage (NAS)
+            heading_style: subtitle
+          - type: gauge
+            name: Usage
+            entity: sensor.system_monitor_disk_usage_storage
+            unit: "%"
+            severity:
+              green: 0
+              yellow: 80
+              red: 92
+          - type: tile
+            entity: sensor.system_monitor_disk_use_storage
+            name: Used
+            icon: mdi:nas
+          - type: tile
+            entity: sensor.disk_total_storage
+            name: Total
+            icon: mdi:nas
