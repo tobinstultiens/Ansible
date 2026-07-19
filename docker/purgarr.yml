@@ -11,6 +11,19 @@
     - ../vars/traefik_labels.yml
 
   tasks:
+    - name: Read Sonarr and Radarr config for API keys
+      ansible.builtin.slurp:
+        src: "{{ docker_config_dir }}/{{ item }}/config.xml"
+      register: arr_configs
+      loop:
+        - sonarr
+        - radarr
+
+    - name: Extract arr API keys
+      ansible.builtin.set_fact:
+        sonarr_api_key: "{{ arr_configs.results[0].content | b64decode | regex_search('<ApiKey>([^<]+)</ApiKey>', '\\1') | first }}"
+        radarr_api_key: "{{ arr_configs.results[1].content | b64decode | regex_search('<ApiKey>([^<]+)</ApiKey>', '\\1') | first }}"
+
     - name: Start Purgarr
       community.docker.docker_container:
         image: ghcr.io/steveharsant/purgarr:latest
@@ -18,17 +31,28 @@
         env:
           PUID: "1000"
           PGID: "1000"
-          QBIT_URL: "vpn:4343"
+          # Reach qBittorrent and the *arr apps over localhost inside the shared
+          # VPN namespace. qBittorrent's host-header validation rejects other
+          # hostnames (e.g. "vpn"), returning no SID cookie on login.
+          QBIT_URL: "localhost:4343"
+          QBIT_USER: "{{ QBT_USER }}"
           QBIT_PASSWORD: "{{ QBT_PASS }}"
-          SONARR_URL: "https://sonarr.{{ DOMAIN }}"
-          SONARR_API_KEY: "{{ sonarr_apikey }}"
-          RADARR_URL: "https://radarr.{{ DOMAIN }}"
-          RADARR_API_KEY: "{{ radarr_apikey }}"
+          # API keys are read from each app's config.xml (see set_fact above)
+          # because Sonarr/Radarr use External auth and ignore the proxy on
+          # direct localhost calls, so a valid key is required.
+          SONARR_URL: "http://localhost:8989"
+          SONARR_API_KEY: "{{ sonarr_api_key }}"
+          RADARR_URL: "http://localhost:7878"
+          RADARR_API_KEY: "{{ radarr_api_key }}"
+          # Stalled downloads: remove them, blocklist in Sonarr/Radarr and
+          # trigger a search for a replacement release.
+          PURGE_STALLED: "true"
+          BLOCK_STALLED_TORRENTS: "true"
+          RETRY_SEARCH: "true"
         state: started
         restart_policy: unless-stopped
         volumes:
           - "{{ docker_config_dir }}/{{ service }}:/config"
           - "{{ docker_nas_dir }}:/storage"
-        networks:
-          - name: proxy
+        network_mode: container:vpn
         labels: "{{ (traefik_default_labels + service_labels) | items2dict }}"
