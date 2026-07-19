@@ -17,10 +17,28 @@ http:
     - 172.17.0.0/24
     - 172.18.0.0/24
 
-# Git-managed dashboard (disables the WYSIWYG editor for the default dashboard).
-# Layout lives in ui-lovelace.yaml, templated by docker/homeassistant.yml.
+# Git-managed dashboard. Uses the non-deprecated `dashboards:` form (the old
+# top-level `lovelace: mode: yaml` is removed in HA 2026.8). Layout lives in
+# ui-lovelace.yaml, templated by docker/homeassistant.yml. resource_mode: yaml
+# keeps Lovelace resources loaded from YAML rather than the UI resource store.
 lovelace:
-  mode: yaml
+  resource_mode: yaml
+  dashboards:
+    lovelace:
+      mode: yaml
+      filename: ui-lovelace.yaml
+      title: Overview
+      icon: mdi:view-dashboard
+      show_in_sidebar: true
+
+# Ombi is a YAML-only integration (no UI config flow). Reached over the `proxy`
+# network via the shared `vpn` container. Creates sensor.ombi_* entities.
+ombi:
+  host: vpn
+  port: 3579
+  ssl: false
+  username: !secret ombi_username
+  api_key: !secret ombi_apikey
 
 # Declarative live sensors for services that have no native HA integration.
 # Prowlarr & Bazarr expose simple GET APIs; keys come from vault via secrets.yaml.

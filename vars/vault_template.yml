@@ -44,6 +44,7 @@ prowlarr_apikey: ""
 bazarr_apikey: ""
 jellyfin_apikey: ""
 ombi_apikey: ""
+ombi_username: ""  # Ombi login username — required by the Home Assistant ombi integration
 tdarr_apikey: ""
 
 # Calibre-web

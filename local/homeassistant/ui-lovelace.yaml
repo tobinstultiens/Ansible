@@ -160,11 +160,3 @@ views:
               green: 0
               yellow: 80
               red: 92
-      - type: horizontal-stack
-        cards:
-          - type: button
-            name: Watchtower
-            icon: mdi:update
-            tap_action:
-              action: url
-              url_path: "https://watchtower.{{ DOMAIN }}"

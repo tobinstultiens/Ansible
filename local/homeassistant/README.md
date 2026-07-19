@@ -31,11 +31,10 @@ The rich integrations below are **config-flow only** — Home Assistant stores t
    | Radarr         | `http://vpn:7878`      | API key               |
    | Lidarr         | `http://vpn:8686`      | API key               |
    | Jellyfin       | `http://jellyfin:8096` | username / password   |
-   | Ombi           | `http://vpn:3579`      | API key               |
    | System Monitor | —                      | enable CPU %, Memory %, Disk usage for `/` and `/storage` |
    | Weather        | —                      | Met.no (free, no key) |
 
-   > *arr / Jellyfin / Ombi API keys are found in each service's own **Settings → General → Security**.
+   > *arr / Jellyfin API keys are found in each service's own **Settings → General → Security**.
 
 3. On the *arr integrations, **enable the default-disabled sensors** (Queue, Wanted, Disk space) —
    HA ships them disabled.
@@ -46,9 +45,10 @@ The rich integrations below are **config-flow only** — Home Assistant stores t
 ## No manual step needed
 
 - **Prowlarr, Bazarr** — live via git-managed REST sensors.
-- **Tdarr, Watchtower, Calibre, Calibre-Web** — link tiles only (Watchtower exposes no HTTP API and
-  isn't on the `proxy` network; Tdarr's stats API is a POST/`cruddb` shape not wired for the MVP;
-  Calibre has nothing worth polling — same treatment as the old homepage dashboard).
+- **Ombi** — YAML-only integration configured in `configuration.yaml`. Requires `ombi_username` in
+  `vars/vault.yml` (alongside `ombi_apikey`).
+- **Tdarr, Calibre, Calibre-Web** — link tiles only (Tdarr's stats API is a POST/`cruddb` shape not
+  wired for the MVP; Calibre has nothing worth polling — same treatment as the old homepage dashboard).
 
 ## Deploy
 
