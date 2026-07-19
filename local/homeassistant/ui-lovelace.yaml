@@ -1,39 +1,44 @@
 # =============================================================================
-# Git-managed Lovelace dashboard (YAML mode) — MVP replacement for the
+# Git-managed Lovelace dashboard — modern Sections view. MVP replacement for the
 # gethomepage dashboard. Templated by docker/homeassistant.yml (the DOMAIN
 # placeholder resolves at deploy time). Do NOT put Home-Assistant Jinja
 # (e.g. a states(...) template) in this file — Ansible would try to render it
 # and fail. Use static entity_ids only; the only Ansible var used below is DOMAIN.
 #
 # ENTITY IDs: the *arr / Jellyfin / Ombi / System Monitor entities below only
-# exist AFTER you add those integrations in the HA UI (Settings > Devices &
-# Services). Until then their cards show "Entity not available" — harmless.
-# HA may suffix auto-generated ids (e.g. sensor.system_monitor_disk_usage_2);
-# confirm and tweak the ids here once onboarding is done.
+# exist AFTER those integrations are added, and *arr / System Monitor ids depend
+# on the HA UI language at creation time (rename Dutch slugs to these English
+# targets, or enable the default-disabled ones). Tiles read "unavailable" until
+# then — harmless.
 #
 # Guaranteed-live (git-managed) sensors: sensor.prowlarr_indexers,
-# sensor.bazarr_wanted_subtitles (defined as REST sensors in configuration.yaml).
+# sensor.bazarr_wanted_subtitles, sensor.ombi_* (REST sensors / ombi YAML integration).
 # =============================================================================
 title: Home
 views:
   - title: Dashboard
     path: home
     icon: mdi:home
-    cards:
-      - type: markdown
-        content: >
-          # 🏠 Home Server
-
-          🔎 Search: [DuckDuckGo](https://duckduckgo.com)
-
-      # ------------------------------------------------------------------ MEDIA
-      - type: markdown
-        content: "## 🎬 Media"
-      - type: horizontal-stack
+    type: sections
+    sections:
+      # -------------------------------------------------------------- MEDIA
+      - type: grid
         cards:
+          - type: heading
+            heading: 🏠 Home Server
+            badges:
+              - type: button
+                text: DuckDuckGo
+                icon: mdi:magnify
+                tap_action:
+                  action: url
+                  url_path: "https://duckduckgo.com"
+          - type: heading
+            heading: Media
+            icon: mdi:multimedia
           - type: button
             name: Jellyfin
-            icon: mdi:jellyfin
+            icon: mdi:play-network
             tap_action:
               action: url
               url_path: "https://jellyfin.{{ DOMAIN }}"
@@ -55,24 +60,27 @@ views:
             tap_action:
               action: url
               url_path: "https://calibre-web.{{ DOMAIN }}"
-      # After onboarding Jellyfin, add a `type: media-control` card per
-      # media_player.<client> entity here for now-playing.
-      - type: entities
-        title: Requests (Ombi)
-        show_header_toggle: false
-        entities:
-          - entity: sensor.ombi_pending_requests
+          # After onboarding Jellyfin, add a `type: media-control` card per
+          # media_player.<client> entity here for now-playing.
+          - type: heading
+            heading: Requests
+            heading_style: subtitle
+          - type: tile
+            entity: sensor.ombi_pending_requests
             name: Pending
-          - entity: sensor.ombi_movie_requests
+          - type: tile
+            entity: sensor.ombi_movie_requests
             name: Movies
-          - entity: sensor.ombi_tv_show_requests
+          - type: tile
+            entity: sensor.ombi_tv_show_requests
             name: TV shows
 
-      # --------------------------------------------------------------- SOURCERS
-      - type: markdown
-        content: "## 📥 Sourcers"
-      - type: horizontal-stack
+      # ----------------------------------------------------------- SOURCERS
+      - type: grid
         cards:
+          - type: heading
+            heading: Sourcers
+            icon: mdi:download
           - type: button
             name: Sonarr
             icon: mdi:television-classic
@@ -91,8 +99,6 @@ views:
             tap_action:
               action: url
               url_path: "https://lidarr.{{ DOMAIN }}"
-      - type: horizontal-stack
-        cards:
           - type: button
             name: Prowlarr
             icon: mdi:magnify
@@ -111,31 +117,39 @@ views:
             tap_action:
               action: url
               url_path: "https://tdarr.{{ DOMAIN }}"
-      - type: entities
-        title: Queues & backlog
-        show_header_toggle: false
-        entities:
-          - entity: sensor.sonarr_queue
+          - type: heading
+            heading: Queues & backlog
+            heading_style: subtitle
+          - type: tile
+            entity: sensor.sonarr_queue
             name: Sonarr queue
-          - entity: sensor.sonarr_wanted
+          - type: tile
+            entity: sensor.sonarr_wanted
             name: Sonarr wanted
-          - entity: sensor.radarr_queue
+          - type: tile
+            entity: sensor.radarr_queue
             name: Radarr queue
-          - entity: sensor.lidarr_queue
+          - type: tile
+            entity: sensor.lidarr_queue
             name: Lidarr queue
-          - entity: sensor.lidarr_wanted
+          - type: tile
+            entity: sensor.lidarr_wanted
             name: Lidarr wanted
-          # Git-managed REST sensors (live immediately, no onboarding needed):
-          - entity: sensor.prowlarr_indexers
+          # Git-managed sensors (live immediately, no onboarding needed):
+          - type: tile
+            entity: sensor.prowlarr_indexers
             name: Prowlarr indexers
-          - entity: sensor.bazarr_wanted_subtitles
+          - type: tile
+            entity: sensor.bazarr_wanted_subtitles
             name: Bazarr wanted subs
 
-      # ----------------------------------------------------------------- SYSTEM
-      - type: markdown
-        content: "## 🖥️ System"
-      - type: horizontal-stack
+      # ------------------------------------------------------------- SYSTEM
+      - type: grid
         cards:
+          - type: heading
+            heading: System
+            icon: mdi:server
+          # Gauges stay — best visual for a percentage (the "tile/gauge hybrid").
           - type: gauge
             name: CPU
             entity: sensor.system_monitor_processor_use
