@@ -1,0 +1,11 @@
+---
+# Services whose API key lives in <ApiKey> inside {{ docker_config_dir }}/<svc>/config.xml
+arr_apikeys_xml_services:
+  - sonarr
+  - radarr
+  - lidarr
+  - prowlarr
+
+# Bazarr stores its key differently ({{ docker_config_dir }}/bazarr/config/config.yaml,
+# `apikey:` field), so it is handled separately. Set false to skip it.
+arr_apikeys_extract_bazarr: true

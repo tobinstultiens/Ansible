@@ -11,41 +11,11 @@
     - ../vars/vault.yml
     - ../vars/traefik_labels.yml
 
+  roles:
+    # Sets sonarr/radarr/lidarr/prowlarr/bazarr *_apikey facts from each service's config.
+    - arr_apikeys
+
   tasks:
-    - name: Read *arr service configs to extract API keys
-      ansible.builtin.slurp:
-        src: "{{ docker_config_dir }}/{{ item }}/config.xml"
-      register: arr_configs
-      ignore_errors: true
-      loop:
-        - sonarr
-        - radarr
-        - lidarr
-        - prowlarr
-
-    - name: Extract *arr API keys from config files
-      ansible.builtin.set_fact:
-        "{{ item.item }}_apikey": >-
-          {{ item.content | b64decode | regex_search('<ApiKey>(.*?)</ApiKey>', '\1') | first }}
-      when: item.content is defined
-      loop: "{{ arr_configs.results }}"
-      loop_control:
-        label: "{{ item.item }}"
-      no_log: true
-
-    - name: Read Bazarr config to extract API key
-      ansible.builtin.slurp:
-        src: "{{ docker_config_dir }}/bazarr/config/config.yaml"
-      register: bazarr_config
-      ignore_errors: true
-
-    - name: Extract Bazarr API key
-      ansible.builtin.set_fact:
-        bazarr_apikey: >-
-          {{ bazarr_config.content | b64decode | regex_search('apikey:\s+(\S+)', '\1') | first }}
-      when: bazarr_config.content is defined
-      no_log: true
-
     - name: Copy css and js files
       ansible.builtin.template:
         src: ../local/homepage/{{ item }}

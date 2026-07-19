@@ -1,0 +1,170 @@
+# =============================================================================
+# Git-managed Lovelace dashboard (YAML mode) — MVP replacement for the
+# gethomepage dashboard. Templated by docker/homeassistant.yml (the DOMAIN
+# placeholder resolves at deploy time). Do NOT put Home-Assistant Jinja
+# (e.g. a states(...) template) in this file — Ansible would try to render it
+# and fail. Use static entity_ids only; the only Ansible var used below is DOMAIN.
+#
+# ENTITY IDs: the *arr / Jellyfin / Ombi / System Monitor entities below only
+# exist AFTER you add those integrations in the HA UI (Settings > Devices &
+# Services). Until then their cards show "Entity not available" — harmless.
+# HA may suffix auto-generated ids (e.g. sensor.system_monitor_disk_usage_2);
+# confirm and tweak the ids here once onboarding is done.
+#
+# Guaranteed-live (git-managed) sensors: sensor.prowlarr_indexers,
+# sensor.bazarr_wanted_subtitles (defined as REST sensors in configuration.yaml).
+# =============================================================================
+title: Home
+views:
+  - title: Dashboard
+    path: home
+    icon: mdi:home
+    cards:
+      - type: markdown
+        content: >
+          # 🏠 Home Server
+
+          🔎 Search: [DuckDuckGo](https://duckduckgo.com)
+
+      # ------------------------------------------------------------------ MEDIA
+      - type: markdown
+        content: "## 🎬 Media"
+      - type: horizontal-stack
+        cards:
+          - type: button
+            name: Jellyfin
+            icon: mdi:jellyfin
+            tap_action:
+              action: url
+              url_path: "https://jellyfin.{{ DOMAIN }}"
+          - type: button
+            name: Ombi
+            icon: mdi:filmstrip-box-multiple
+            tap_action:
+              action: url
+              url_path: "https://ombi.{{ DOMAIN }}"
+          - type: button
+            name: Calibre
+            icon: mdi:book-open-page-variant
+            tap_action:
+              action: url
+              url_path: "https://calibre.{{ DOMAIN }}"
+          - type: button
+            name: Calibre-Web
+            icon: mdi:bookshelf
+            tap_action:
+              action: url
+              url_path: "https://calibre-web.{{ DOMAIN }}"
+      # After onboarding Jellyfin, add a `type: media-control` card per
+      # media_player.<client> entity here for now-playing.
+      - type: entities
+        title: Requests (Ombi)
+        show_header_toggle: false
+        entities:
+          - entity: sensor.ombi_pending_requests
+            name: Pending
+          - entity: sensor.ombi_movie_requests
+            name: Movies
+          - entity: sensor.ombi_tv_show_requests
+            name: TV shows
+
+      # --------------------------------------------------------------- SOURCERS
+      - type: markdown
+        content: "## 📥 Sourcers"
+      - type: horizontal-stack
+        cards:
+          - type: button
+            name: Sonarr
+            icon: mdi:television-classic
+            tap_action:
+              action: url
+              url_path: "https://sonarr.{{ DOMAIN }}"
+          - type: button
+            name: Radarr
+            icon: mdi:movie-open
+            tap_action:
+              action: url
+              url_path: "https://radarr.{{ DOMAIN }}"
+          - type: button
+            name: Lidarr
+            icon: mdi:music
+            tap_action:
+              action: url
+              url_path: "https://lidarr.{{ DOMAIN }}"
+      - type: horizontal-stack
+        cards:
+          - type: button
+            name: Prowlarr
+            icon: mdi:magnify
+            tap_action:
+              action: url
+              url_path: "https://prowlarr.{{ DOMAIN }}"
+          - type: button
+            name: Bazarr
+            icon: mdi:subtitles
+            tap_action:
+              action: url
+              url_path: "https://bazarr.{{ DOMAIN }}"
+          - type: button
+            name: Tdarr
+            icon: mdi:video-vintage
+            tap_action:
+              action: url
+              url_path: "https://tdarr.{{ DOMAIN }}"
+      - type: entities
+        title: Queues & backlog
+        show_header_toggle: false
+        entities:
+          - entity: sensor.sonarr_queue
+            name: Sonarr queue
+          - entity: sensor.sonarr_wanted
+            name: Sonarr wanted
+          - entity: sensor.radarr_queue
+            name: Radarr queue
+          - entity: sensor.lidarr_queue
+            name: Lidarr queue
+          - entity: sensor.lidarr_wanted
+            name: Lidarr wanted
+          # Git-managed REST sensors (live immediately, no onboarding needed):
+          - entity: sensor.prowlarr_indexers
+            name: Prowlarr indexers
+          - entity: sensor.bazarr_wanted_subtitles
+            name: Bazarr wanted subs
+
+      # ----------------------------------------------------------------- SYSTEM
+      - type: markdown
+        content: "## 🖥️ System"
+      - type: horizontal-stack
+        cards:
+          - type: gauge
+            name: CPU
+            entity: sensor.system_monitor_processor_use
+            unit: "%"
+            severity:
+              green: 0
+              yellow: 70
+              red: 90
+          - type: gauge
+            name: Memory
+            entity: sensor.system_monitor_memory_usage
+            unit: "%"
+            severity:
+              green: 0
+              yellow: 70
+              red: 90
+          - type: gauge
+            name: Disk /
+            entity: sensor.system_monitor_disk_usage
+            unit: "%"
+            severity:
+              green: 0
+              yellow: 80
+              red: 92
+      - type: horizontal-stack
+        cards:
+          - type: button
+            name: Watchtower
+            icon: mdi:update
+            tap_action:
+              action: url
+              url_path: "https://watchtower.{{ DOMAIN }}"

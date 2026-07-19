@@ -11,15 +11,30 @@
     - ../vars/vault.yml
     - ../vars/traefik_labels.yml
 
+  roles:
+    # Sets sonarr/radarr/lidarr/prowlarr/bazarr *_apikey facts from each service's
+    # config (used by secrets.yaml REST sensors + the onboarding reminder below).
+    - arr_apikeys
+
   tasks:
-    - name: Adding yaml files
+    # configuration.yaml contains Home-Assistant Jinja (REST value_template,
+    # !secret) and no Ansible vars, so it is copied verbatim — templating it
+    # would make Ansible try to render HA's Jinja.
+    - name: Copy Home Assistant configuration
+      ansible.builtin.copy:
+        src: ../local/homeassistant/configuration.yaml
+        dest: '{{ docker_config_dir }}/{{ service }}/configuration.yaml'
+        mode: "0644"
+
+    # These need Ansible vars (DOMAIN, vault API keys) and contain no HA Jinja.
+    - name: Template Home Assistant files needing Ansible vars
       ansible.builtin.template:
         src: ../local/homeassistant/{{ item }}
-        dest: '{{ docker_config_dir }}/{{ service }}'
+        dest: '{{ docker_config_dir }}/{{ service }}/{{ item }}'
         mode: "0644"
       loop:
-        - configuration.yaml
-
+        - ui-lovelace.yaml
+        - secrets.yaml
 
     - name: Start homeassistant
       community.docker.docker_container:
@@ -27,6 +42,7 @@
         name: "{{ service }}"
         volumes:
           - "{{ docker_config_dir }}/{{ service }}:/config"
+          - "{{ docker_nas_dir }}:/storage"
           - /etc/localtime:/etc/localtime:ro
         restart_policy: unless-stopped
         privileged: true
@@ -34,4 +50,29 @@
           - 8123:8123
         networks:
           - name: proxy
-        labels: "{{ (traefik_default_labels + service_labels) | items2dict }}"
+        # Public labels = no Authelia middleware; Home Assistant owns its own auth
+        # (keeps the companion app + API working). Mirrors docker/jellyfin.yml.
+        labels: "{{ (traefik_public_labels + service_labels) | items2dict }}"
+
+    # These integrations are config-flow only: their setup lives in HA's
+    # .storage and is NOT reproduced by this playbook, so a fresh deploy needs
+    # the one-time manual steps below. Full runbook: local/homeassistant/README.md
+    # NOTE: this intentionally echoes plaintext API keys to the deploy output for
+    # copy/paste convenience during onboarding. The keys already live unencrypted
+    # in vars/vault.yml, so this adds no new exposure beyond terminal scrollback.
+    - name: Remind about one-time manual integration onboarding
+      ansible.builtin.debug:
+        msg:
+          - "Home Assistant deployed. ONE-TIME manual UI setup is required on a fresh install:"
+          - "  1. https://homeassistant.{{ DOMAIN }} -> create the owner account (first run only)."
+          - "  2. Settings > Devices & Services > Add Integration (URL + credential):"
+          - "       Sonarr   http://vpn:8989      key: {{ sonarr_apikey }}"
+          - "       Radarr   http://vpn:7878      key: {{ radarr_apikey }}"
+          - "       Lidarr   http://vpn:8686      key: {{ lidarr_apikey }}"
+          - "       Ombi     http://vpn:3579      key: {{ ombi_apikey }}"
+          - "       Jellyfin http://jellyfin:8096 (asks for your Jellyfin username/password, not a key)"
+          - "       System Monitor  (enable CPU %, Memory %, Disk usage for / and /storage)"
+          - "       Weather         (Met.no, no key needed)"
+          - "  3. Enable the default-disabled *arr sensors (Queue, Wanted, Disk space)."
+          - "  Prowlarr & Bazarr are already live via git-managed REST sensors (no action needed)."
+          - "  See local/homeassistant/README.md for the full runbook."

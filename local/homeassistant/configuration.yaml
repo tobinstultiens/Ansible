@@ -16,3 +16,34 @@ http:
     - ::1
     - 172.17.0.0/24
     - 172.18.0.0/24
+
+# Git-managed dashboard (disables the WYSIWYG editor for the default dashboard).
+# Layout lives in ui-lovelace.yaml, templated by docker/homeassistant.yml.
+lovelace:
+  mode: yaml
+
+# Declarative live sensors for services that have no native HA integration.
+# Prowlarr & Bazarr expose simple GET APIs; keys come from vault via secrets.yaml.
+# Reached over the `proxy` network via the shared `vpn` container (same as homepage).
+rest:
+  - resource: "http://vpn:9696/api/v1/indexer"
+    scan_interval: 300
+    headers:
+      X-Api-Key: !secret prowlarr_apikey
+    sensor:
+      - name: "Prowlarr Indexers"
+        unique_id: prowlarr_indexers
+        value_template: "{{ value_json | length }}"
+        unit_of_measurement: "indexers"
+        icon: mdi:magnify
+
+  - resource: "http://vpn:6767/api/badges"
+    scan_interval: 300
+    headers:
+      X-API-KEY: !secret bazarr_apikey
+    sensor:
+      - name: "Bazarr Wanted Subtitles"
+        unique_id: bazarr_wanted_subtitles
+        value_template: "{{ (value_json.episodes | int(0)) + (value_json.movies | int(0)) }}"
+        unit_of_measurement: "wanted"
+        icon: mdi:subtitles

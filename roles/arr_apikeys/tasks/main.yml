@@ -1,0 +1,40 @@
+---
+# Extracts *arr API keys straight from each service's own config file and exposes
+# them as facts (`<service>_apikey`) for the calling play. Keeps the service as the
+# single source of truth for its key instead of duplicating it into vars/vault.yml.
+# Shared by docker/homepage.yml and docker/homeassistant.yml.
+
+- name: Read *arr service configs to extract API keys
+  ansible.builtin.slurp:
+    src: "{{ docker_config_dir }}/{{ item }}/config.xml"
+  register: arr_apikeys_configs
+  ignore_errors: true
+  loop: "{{ arr_apikeys_xml_services }}"
+
+# Output facts are deliberately un-prefixed (`sonarr_apikey`, ...) so the calling
+# plays and templates can consume them by their conventional names.
+- name: Extract *arr API keys from config files  # noqa: var-naming[no-role-prefix]
+  ansible.builtin.set_fact:
+    "{{ item.item }}_apikey": >-
+      {{ item.content | b64decode | regex_search('<ApiKey>(.*?)</ApiKey>', '\1') | first }}
+  when: item.content is defined
+  loop: "{{ arr_apikeys_configs.results }}"
+  loop_control:
+    label: "{{ item.item }}"
+  no_log: true
+
+- name: Read Bazarr config to extract API key
+  ansible.builtin.slurp:
+    src: "{{ docker_config_dir }}/bazarr/config/config.yaml"
+  register: arr_apikeys_bazarr_config
+  ignore_errors: true
+  when: arr_apikeys_extract_bazarr
+
+- name: Extract Bazarr API key  # noqa: var-naming[no-role-prefix]
+  ansible.builtin.set_fact:
+    bazarr_apikey: >-
+      {{ arr_apikeys_bazarr_config.content | b64decode | regex_search('apikey:\s+(\S+)', '\1') | first }}
+  when:
+    - arr_apikeys_extract_bazarr
+    - arr_apikeys_bazarr_config.content is defined
+  no_log: true
