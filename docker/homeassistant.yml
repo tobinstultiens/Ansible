@@ -4,6 +4,10 @@
     service: "homeassistant"
     service_port: "8123"
     service_labels: []
+    # hass-oidc-auth (the `auth_oidc` custom component) gives HA OpenID Connect login
+    # against Authelia. Watchtower only updates images, so this pin is bumped by hand:
+    # https://github.com/christiaangoossens/hass-oidc-auth/releases
+    hass_oidc_version: "1.1.1"
 
   hosts: all
   become: true
@@ -25,6 +29,7 @@
         src: ../local/homeassistant/configuration.yaml
         dest: '{{ docker_config_dir }}/{{ service }}/configuration.yaml'
         mode: "0644"
+      notify: Restart homeassistant
 
     # These need Ansible vars (DOMAIN, vault API keys) and contain no HA Jinja.
     - name: Template Home Assistant files needing Ansible vars
@@ -32,9 +37,35 @@
         src: ../local/homeassistant/{{ item }}
         dest: '{{ docker_config_dir }}/{{ service }}/{{ item }}'
         mode: "0644"
+      notify: Restart homeassistant
       loop:
         - ui-lovelace.yaml
         - secrets.yaml
+
+    # Required by the unarchive task below (not installed by default on Arch).
+    - name: Ensure unzip is installed
+      ansible.builtin.package:
+        name: unzip
+        state: present
+
+    # The release zip holds the component's files at the archive root, so it unpacks
+    # *into* custom_components/auth_oidc/ rather than alongside it.
+    - name: Ensure Home Assistant custom_components dir exists
+      ansible.builtin.file:
+        path: '{{ docker_config_dir }}/{{ service }}/custom_components/auth_oidc'
+        state: directory
+        mode: "0755"
+
+    - name: Install the OIDC auth custom component
+      ansible.builtin.unarchive:
+        src: >-
+          https://github.com/christiaangoossens/hass-oidc-auth/releases/download/v{{
+          hass_oidc_version }}/hass-oidc-auth.zip
+        dest: '{{ docker_config_dir }}/{{ service }}/custom_components/auth_oidc'
+        remote_src: true
+        # No `mode:` on purpose — the zip already carries 0755 dirs / 0644 files, and
+        # forcing a file mode would strip +x from the component's subdirectories.
+      notify: Restart homeassistant
 
     - name: Start homeassistant
       community.docker.docker_container:
@@ -50,8 +81,16 @@
           - 8123:8123
         networks:
           - name: proxy
+        # HA fetches Authelia's discovery document over the public URL, which does not
+        # hairpin from inside Docker. host-gateway points it at the host bridge IP so the
+        # request goes host :443 -> Traefik (valid Let's Encrypt cert, no TLS override
+        # needed). Same trick as docker/gatus.yml.
+        etc_hosts:
+          "{{ 'authelia.' + DOMAIN }}": host-gateway
         # Public labels = no Authelia middleware; Home Assistant owns its own auth
         # (keeps the companion app + API working). Mirrors docker/jellyfin.yml.
+        # SSO is done *inside* HA via the auth_oidc component instead — putting HA behind
+        # forward-auth would break the OIDC callback as well as the companion app.
         labels: "{{ (traefik_public_labels + service_labels) | items2dict }}"
 
     # These integrations are config-flow only: their setup lives in HA's
@@ -65,6 +104,8 @@
         msg:
           - "Home Assistant deployed. ONE-TIME manual UI setup is required on a fresh install:"
           - "  1. https://homeassistant.{{ DOMAIN }} -> create the owner account (first run only)."
+          - "     Use the SAME username as your LLDAP account, so Authelia SSO links to it"
+          - "     instead of creating a second HA user (features.automatic_user_linking)."
           - "  2. Settings > Devices & Services > Add Integration (URL + credential):"
           - "       Sonarr   http://vpn:8989      key: {{ sonarr_apikey }}"
           - "       Radarr   http://vpn:7878      key: {{ radarr_apikey }}"
@@ -76,3 +117,11 @@
           - "  Prowlarr, Bazarr & Ombi are already configured in git (REST sensors / ombi YAML) - no UI step."
           - "  NOTE: Ombi needs `ombi_username` set in vars/vault.yml (currently '{{ ombi_username }}')."
           - "  See local/homeassistant/README.md for the full runbook."
+
+  handlers:
+    # Config files and the auth_oidc component are only read at start-up.
+    - name: Restart homeassistant
+      community.docker.docker_container:
+        name: "{{ service }}"
+        restart: true
+        state: started

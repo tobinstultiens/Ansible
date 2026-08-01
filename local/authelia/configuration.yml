@@ -52,6 +52,48 @@ access_control:
         - 'tdarr.{{ DOMAIN }}'
       policy: deny
 
+# OpenID Connect provider. Used by services that speak OIDC natively instead of
+# sitting behind the forward-auth middleware — currently only Home Assistant, which
+# must stay outside forward-auth to keep its companion app and API working.
+# hmac_secret + the RSA signing key are generated once on the controller by
+# docker/authelia.yml and stored in ~/.ansible/homelab-secrets/ (never in git).
+identity_providers:
+  oidc:
+    hmac_secret: '{{ authelia_oidc_hmac_secret }}'
+    jwks:
+      - key_id: 'main'
+        algorithm: 'RS256'
+        use: 'sig'
+        key: |
+          {{ authelia_oidc_jwks_key | trim | indent(10) }}
+    clients:
+      # Public client + PKCE: the hass-oidc-auth docs recommend it over a confidential
+      # client ("a client secret introduces the risk of it getting lost/stolen"), and it
+      # avoids keeping one secret in sync across the authelia and homeassistant playbooks.
+      # `token_endpoint_auth_method: none` is what a public client requires.
+      - client_id: 'homeassistant'
+        client_name: 'Home Assistant'
+        public: true
+        require_pkce: true
+        pkce_challenge_method: 'S256'
+        authorization_policy: 'two_factor'
+        redirect_uris:
+          - 'https://homeassistant.{{ DOMAIN }}/auth/oidc/callback'
+        scopes:
+          - 'openid'
+          - 'profile'
+          - 'groups'
+        response_types:
+          - 'code'
+        grant_types:
+          - 'authorization_code'
+        access_token_signed_response_alg: 'none'
+        # Must be 'none': hass-oidc-auth merges the *userinfo* response into the id_token
+        # claims and expects plain JSON there, not a signed JWT. The `groups` claim (used
+        # for the HA admin role) arrives this way.
+        userinfo_signed_response_alg: 'none'
+        token_endpoint_auth_method: 'none'
+
 session:
   secret: '{{ authelia_session_secret }}'
   cookies:

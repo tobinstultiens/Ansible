@@ -33,6 +33,28 @@
              '/.ansible/homelab-secrets/lldap_admin_password chars=ascii_letters,digits length=32') }}
       no_log: true
 
+    # OIDC provider signing material. Generated once on the controller and reused on
+    # every run, so the issuer keeps a stable kid and existing OIDC sessions survive
+    # a redeploy. Kept out of git (same place as the LLDAP admin password).
+    - name: Ensure authelia OIDC JWKS key exists
+      community.crypto.openssl_privatekey:
+        path: "{{ lookup('env', 'HOME') }}/.ansible/homelab-secrets/authelia_oidc_jwk.pem"
+        type: RSA
+        size: 4096
+        mode: "0600"
+      delegate_to: localhost
+      become: false
+
+    - name: Load authelia OIDC secrets
+      ansible.builtin.set_fact:
+        authelia_oidc_hmac_secret: >-
+          {{ lookup('password', lookup('env', 'HOME') +
+             '/.ansible/homelab-secrets/authelia_oidc_hmac_secret chars=ascii_letters,digits length=64') }}
+        authelia_oidc_jwks_key: >-
+          {{ lookup('file', lookup('env', 'HOME') +
+             '/.ansible/homelab-secrets/authelia_oidc_jwk.pem') }}
+      no_log: true
+
     - name: Ensure authelia config dir exists
       ansible.builtin.file:
         path: "{{ docker_config_dir }}/{{ service }}"

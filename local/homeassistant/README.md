@@ -15,6 +15,42 @@ MVP dashboard that replaces the gethomepage dashboard, deployed by
 - **Live without any manual step:** Prowlarr (indexer count) and Bazarr (wanted subtitles),
   defined as declarative REST sensors in `configuration.yaml`.
 
+## Authelia SSO (OpenID Connect)
+
+HA is the one Traefik-routed service that deliberately skips the Authelia forward-auth
+middleware (forward-auth breaks the companion app and the API), so SSO is done *inside* HA
+with the [`hass-oidc-auth`](https://github.com/christiaangoossens/hass-oidc-auth) custom
+component (`auth_oidc`) instead.
+
+**Fully automated:**
+
+- The Authelia OIDC provider + a `homeassistant` client
+  (`local/authelia/configuration.yml`, deployed by `docker/authelia.yml`). It's a **public
+  client**: no client secret, PKCE/S256 instead — the component's own docs recommend this
+  over a confidential client. The `hmac_secret` and RSA signing key are generated once on
+  the Ansible controller into `~/.ansible/homelab-secrets/` and reused every run, so the
+  key id stays stable and existing sessions survive a redeploy.
+- Downloading and unpacking the component into `/config/custom_components/auth_oidc`.
+- The `auth_oidc:` block in `configuration.yaml` (`client_id` / `discovery_url` come via
+  `secrets.yaml`, because `configuration.yaml` is copied verbatim and can't take `DOMAIN`).
+- An `etc_hosts` entry pinning `authelia.<DOMAIN>` to `host-gateway`, so the container can
+  actually fetch the discovery document (the public name doesn't hairpin inside Docker).
+
+**Things to know:**
+
+- **Version pin.** `hass_oidc_version` in `docker/homeassistant.yml` (currently `1.1.1`).
+  Watchtower only updates container images, so bump this by hand from the
+  [releases page](https://github.com/christiaangoossens/hass-oidc-auth/releases).
+- **Username must match.** `features.automatic_user_linking` links an SSO login to an
+  existing HA account with the *same username*. Create the owner account with your LLDAP
+  username, or you'll end up with two HA users.
+- **Admin rights.** Members of the LLDAP `admins` group become HA administrators
+  (`roles.admin`). There is no `roles.user` restriction, so any Authelia account can log in
+  as a regular HA user — add one if you want to narrow that.
+- **2FA.** The client's `authorization_policy` is `two_factor`, matching Authelia's default.
+- **Fallback.** HA local login is untouched — the welcome screen has an "alternative login
+  method" link, and long-lived access tokens / the companion app keep working.
+
 ## ⚠️ One-time manual onboarding (NOT reproducible by this playbook)
 
 The rich integrations below are **config-flow only** — Home Assistant stores their setup in
