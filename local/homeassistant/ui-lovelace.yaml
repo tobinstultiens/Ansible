@@ -166,6 +166,21 @@ views:
               green: 0
               yellow: 70
               red: 90
+          # Default-disabled by the System Monitor integration — enable it under
+          # Settings > Devices & Services > Entities or this reads "unavailable".
+          # Thresholds are for an Intel NUC: idle should sit ~35-45 C. Sustained
+          # 85+ at low CPU means a clogged heatsink/fan, not a workload.
+          - type: gauge
+            name: CPU temp
+            entity: sensor.system_monitor_processor_temperature
+            unit: "°C"
+            min: 20
+            max: 100
+            needle: true
+            severity:
+              green: 0
+              yellow: 70
+              red: 85
           # gauge = % used, tiles = used / total GB, per mount.
           - type: heading
             heading: Storage — / (system)

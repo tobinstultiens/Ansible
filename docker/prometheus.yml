@@ -40,6 +40,16 @@
         restart_policy: unless-stopped
         network_mode: container:vpn
         state: healthy
+        # Runs tini as PID 1 so orphaned children get reaped. Without it the
+        # prometheus binary is PID 1, and it never calls wait() — so every wget
+        # the healthcheck below spawns is left as a zombie. At 2 wgets / 30s that
+        # is ~17k dead PIDs a day; after ~2 weeks of uptime it exhausts
+        # kernel.threads-max (253686 here), fork() starts failing host-wide and
+        # sshd can no longer spawn session children (connections are accepted,
+        # then reset before the version banner).
+        # Only prometheus needs this: every other healthcheck in this repo either
+        # uses a bash /dev/tcp builtin (no fork) or runs under an s6/tini PID 1.
+        init: true
         labels: "{{ (traefik_default_labels + service_labels) | items2dict }}"
         healthcheck:
           test: sh -c 'wget -q --spider http://localhost:9090/-/healthy && wget -q -T 10 --tries=1 --spider http://1.1.1.1'

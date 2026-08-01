@@ -67,7 +67,7 @@ The rich integrations below are **config-flow only** — Home Assistant stores t
    | Radarr         | `http://vpn:7878`      | API key               |
    | Lidarr         | `http://vpn:8686`      | API key               |
    | Jellyfin       | `http://jellyfin:8096` | username / password   |
-   | System Monitor | —                      | enable CPU %, Memory %, Disk usage for `/` and `/storage` |
+   | System Monitor | —                      | enable CPU %, Memory %, Processor temperature, Disk usage for `/` and `/storage` |
    | Weather        | —                      | Met.no (free, no key) |
 
    > *arr / Jellyfin API keys are found in each service's own **Settings → General → Security**.
