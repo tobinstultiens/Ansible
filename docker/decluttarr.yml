@@ -1,0 +1,70 @@
+---
+- name: Decluttarr
+  vars:
+    service: "decluttarr"
+
+  hosts: home
+  become: true
+  vars_files:
+    - ../vars/vault.yml
+
+  tasks:
+    - name: Read Sonarr and Radarr config for API keys
+      ansible.builtin.slurp:
+        src: "{{ docker_config_dir }}/{{ item }}/config.xml"
+      register: arr_configs
+      loop:
+        - sonarr
+        - radarr
+
+    - name: Extract arr API keys
+      ansible.builtin.set_fact:
+        sonarr_api_key: "{{ arr_configs.results[0].content | b64decode | regex_search('<ApiKey>([^<]+)</ApiKey>', '\\1') | first }}"
+        radarr_api_key: "{{ arr_configs.results[1].content | b64decode | regex_search('<ApiKey>([^<]+)</ApiKey>', '\\1') | first }}"
+      no_log: true
+
+    - name: Create config directory
+      ansible.builtin.file:
+        path: "{{ docker_config_dir }}/{{ service }}"
+        state: directory
+        mode: "0755"
+
+    - name: Add config file
+      ansible.builtin.template:
+        src: ../local/decluttarr/config.yaml
+        dest: "{{ docker_config_dir }}/{{ service }}/config.yaml"
+        mode: "0600"
+        owner: "1000"
+        group: "1000"
+      notify: Restart decluttarr
+
+    - name: Start Decluttarr
+      community.docker.docker_container:
+        image: ghcr.io/manimatter/decluttarr:latest
+        name: "{{ service }}"
+        env:
+          PUID: "1000"
+          PGID: "1000"
+          TZ: Europe/Amsterdam
+        volumes:
+          - "{{ docker_config_dir }}/{{ service }}/config.yaml:/app/config/config.yaml"
+        network_mode: container:vpn
+        restart_policy: unless-stopped
+        state: started
+        labels:
+          autoheal-app: "true"
+        # If the vpn container is recreated, this container keeps a dead network
+        # namespace (connection refused on localhost). Failing health lets
+        # autoheal restart it onto the new namespace.
+        healthcheck:
+          test: ["CMD", "python3", "-c", "import socket; socket.create_connection(('localhost', 4343), 5)"]
+          interval: 30s
+          timeout: 15s
+          start_period: 60s
+
+  handlers:
+    - name: Restart decluttarr
+      community.docker.docker_container:
+        name: "{{ service }}"
+        restart: true
+        state: started

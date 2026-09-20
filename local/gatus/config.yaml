@@ -269,16 +269,6 @@ endpoints:
     alerts:
       - type: discord
 
-  - name: Purgarr
-    group: Media
-    url: http://purgarr:9891
-    interval: 2m
-    conditions:
-      - "[STATUS] >= 200"
-      - "[STATUS] < 400"
-    alerts:
-      - type: discord
-
   # Home
   - name: Home Assistant
     group: Home

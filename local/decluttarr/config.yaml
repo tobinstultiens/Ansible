@@ -1,0 +1,51 @@
+general:
+  log_level: INFO
+  test_run: false
+  # Minutes between runs. A download is removed after max_strikes consecutive
+  # hits, so stalled/metadata removal happens after roughly timer * max_strikes.
+  timer: 10
+
+job_defaults:
+  max_strikes: 3
+
+jobs:
+  # Torrents where qBittorrent's excluded file names (.exe, .lnk, ...) leave no
+  # wanted files: every file ends up "not downloaded", so the torrent is removed
+  # and blocklisted in Sonarr/Radarr.
+  remove_bad_files:
+  # Downloads that finish but can't be imported because they only contained
+  # excluded or dangerous files.
+  remove_failed_imports:
+    message_patterns:
+      - "*Found potentially dangerous file with extension*"
+      - "No files found are eligible for import*"
+      - "Invalid video file*"
+  remove_failed_downloads:
+  # Stuck without peers / stuck fetching metadata for ~1 hour (10 min * 6).
+  remove_stalled:
+    max_strikes: 6
+  remove_metadata_missing:
+    max_strikes: 6
+  # Clean up torrents Sonarr/Radarr already imported (Post-Import Category).
+  # Only removes torrents qBittorrent has stopped after hitting its seeding
+  # limit (ratio or time, action "Stop torrent").
+  remove_done_seeding:
+    target_categories:
+      - "sonarr-imported"
+      - "radarr-imported"
+
+instances:
+  sonarr:
+    - base_url: "http://localhost:8989"
+      api_key: "{{ sonarr_api_key }}"
+  radarr:
+    - base_url: "http://localhost:7878"
+      api_key: "{{ radarr_api_key }}"
+
+download_clients:
+  qbittorrent:
+    # localhost inside the shared VPN namespace; qBittorrent's host-header
+    # validation rejects other hostnames.
+    - base_url: "http://localhost:4343"
+      username: "{{ QBT_USER }}"
+      password: "{{ QBT_PASS }}"

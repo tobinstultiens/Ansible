@@ -62,11 +62,9 @@
   ansible.builtin.import_playbook: docker/cadvisor.yml
 - name: Prometheus
   ansible.builtin.import_playbook: docker/prometheus.yml
-- name: Homepage
-  ansible.builtin.import_playbook: docker/homepage.yml
 - name: Bazarr
   ansible.builtin.import_playbook: docker/bazarr.yml
-- name: Purgarr
-  ansible.builtin.import_playbook: docker/purgarr.yml
+- name: Decluttarr
+  ansible.builtin.import_playbook: docker/decluttarr.yml
 - name: Recyclarr
   ansible.builtin.import_playbook: docker/recyclarr.yml

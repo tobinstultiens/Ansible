@@ -80,6 +80,31 @@ The rich integrations below are **config-flow only** — Home Assistant stores t
 
 ## No manual step needed
 
+- **Reverse proxy trust** (Settings → System → Network) — HA moved HTTP config out of
+  `configuration.yaml` into the `.storage/http` JSON store. The playbook edits that store
+  in place: it merges `hass_http_managed` (`use_x_forwarded_for`, `trusted_proxies`) into
+  whatever HA already wrote, so unmanaged keys (`ip_ban_enabled`, `cors_allowed_origins`,
+  `ssl_profile`, `created_at`) survive, and so does anything a future HA version adds.
+
+  Changing those two settings in the UI is reverted on the next deploy — edit
+  `docker/homeassistant.yml` instead. Both `/16`s are required: `proxy` is `172.18.0.0/16`
+  and the default bridge is `172.17.0.0/16`. If Traefik is not trusted, HA ignores
+  `X-Forwarded-Proto` and builds `http://` OIDC redirect URIs that Authelia rejects —
+  Authelia login breaks.
+
+  > **Fresh `/config` needs two runs.** The playbook never *creates* this store, only
+  > edits one HA wrote. `HTTPConfigStore.async_load` does `self._stable = raw["stable"]`
+  > with no schema validation and no merge against defaults — HA's own v1→v2 migration
+  > exists to guarantee "all keys present … so the load step can rely on direct key
+  > access". A hand-built store would `KeyError` HA at boot. So on a brand-new box the
+  > write is skipped (the playbook prints a warning), HA creates the store during
+  > onboarding, and the **second** deploy applies the proxy settings. Onboarding only
+  > needs HA's local login, which works regardless.
+
+  > This is the only part of `.storage` under Ansible's control, deliberately. The rest
+  > (`core.config_entries`, `auth`, `core.entity_registry`, …) is live runtime state HA
+  > rewrites continuously and must not be templated.
+
 - **Prowlarr, Bazarr** — live via git-managed REST sensors.
 - **Ombi** — YAML-only integration configured in `configuration.yaml`. Requires `ombi_username` in
   `vars/vault.yml` (alongside `ombi_apikey`).

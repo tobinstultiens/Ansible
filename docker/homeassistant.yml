@@ -8,6 +8,19 @@
     # against Authelia. Watchtower only updates images, so this pin is bumped by hand:
     # https://github.com/christiaangoossens/hass-oidc-auth/releases
     hass_oidc_version: "1.1.1"
+    # Reverse-proxy trust. HA no longer accepts these in configuration.yaml (see the note
+    # there) — they live in the .storage/http JSON store, written by Settings > System >
+    # Network. Both /16s are required: `proxy` is 172.18.0.0/16 and the default bridge is
+    # 172.17.0.0/16; a /24 only covers Traefik if it lands in the first subnet. An
+    # untrusted proxy makes HA ignore X-Forwarded-Proto and build http:// OIDC redirect
+    # URIs that Authelia rejects, which breaks SSO.
+    hass_http_managed:
+      use_x_forwarded_for: true
+      trusted_proxies:
+        - 127.0.0.1/32
+        - ::1/128
+        - 172.17.0.0/16
+        - 172.18.0.0/16
 
   hosts: all
   become: true
@@ -41,6 +54,49 @@
       loop:
         - ui-lovelace.yaml
         - secrets.yaml
+
+    # --- .storage/http -------------------------------------------------------------
+    # .storage is HA's internal state store and is normally off-limits to config
+    # management (HA rewrites it at runtime, and core.config_entries / auth / the entity
+    # registry carry live state and tokens). `http` is the exception worth managing: it is
+    # small, self-contained, only read at start-up, holds no secrets, and its
+    # reverse-proxy keys are load-bearing for Authelia SSO — too important to leave to a
+    # manual UI step that a wiped /config would silently lose.
+    #
+    # EDIT-IN-PLACE ONLY — never synthesize this file. HA's HTTPConfigStore.async_load
+    # does `self._stable = raw["stable"]` with no schema validation and no merge against
+    # its defaults; its own v1->v2 migration exists specifically to guarantee "all keys
+    # present ... so the load step can rely on direct key access". A hand-built store
+    # missing ip_ban_enabled / ssl_profile / use_x_frame_options KeyErrors HA at boot.
+    # So: read the store HA wrote, merge hass_http_managed into it, write it back. Every
+    # other key — including ones a future HA version adds — is carried through untouched.
+    # On a fresh /config the store does not exist yet, so the write is skipped and HA
+    # creates it on first boot; the next deploy applies the proxy settings.
+    - name: Read the existing Home Assistant http store
+      ansible.builtin.slurp:
+        src: "{{ docker_config_dir }}/{{ service }}/.storage/http"
+      register: hass_http_store
+      failed_when: false
+
+    - name: Write the Home Assistant http store
+      ansible.builtin.copy:
+        content: "{{ hass_http_store.content | b64decode | from_json | combine({'data': {'stable': hass_http_managed}}, recursive=true) | to_nice_json }}"
+        dest: "{{ docker_config_dir }}/{{ service }}/.storage/http"
+        owner: root
+        group: root
+        mode: "0600"
+      when: hass_http_store.content is defined
+      notify: Restart homeassistant
+
+    - name: Warn when the http store does not exist yet
+      ansible.builtin.debug:
+        msg:
+          - "No .storage/http yet — Home Assistant has never run against this /config."
+          - "Reverse-proxy trust was NOT applied. Finish onboarding, then re-run this"
+          - "playbook to set use_x_forwarded_for + trusted_proxies. Authelia SSO will"
+          - "fail until then (HA builds http:// OIDC redirect URIs behind an untrusted"
+          - "proxy); HA's own local login works, which is all onboarding needs."
+      when: hass_http_store.content is not defined
 
     # Required by the unarchive task below (not installed by default on Arch).
     - name: Ensure unzip is installed

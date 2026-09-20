@@ -9,17 +9,16 @@ automation: !include automations.yaml
 script: !include scripts.yaml
 scene: !include scenes.yaml
 
+# NOTE: there is deliberately no `http:` block here. HA migrated HTTP settings into
+# .storage and now ignores (and warns about) a YAML `http:` block. Reverse-proxy trust is
+# managed in the UI under Settings > System > Network, and must stay set to:
+#   Use X-Forwarded-For: on
+#   Trusted proxies: 127.0.0.1, ::1, 172.17.0.0/16, 172.18.0.0/16
 # The `proxy` network is 172.18.0.0/16 (and the default bridge 172.17.0.0/16), so these
 # must be /16 — a /24 only covers Traefik if it happens to land in the first subnet, and
 # an untrusted proxy makes HA ignore X-Forwarded-Proto and build http:// redirect URIs
-# that the Authelia OIDC client rejects.
-http:
-  use_x_forwarded_for: true
-  trusted_proxies:
-    - 127.0.0.1
-    - ::1
-    - 172.17.0.0/16
-    - 172.18.0.0/16
+# that the Authelia OIDC client rejects. Since this lives in .storage it is NOT git-managed
+# — a fresh install needs it set by hand (see local/homeassistant/README.md).
 
 # Authelia SSO via the hass-oidc-auth custom component (installed by
 # docker/homeassistant.yml into custom_components/auth_oidc). HA stays outside Traefik's
