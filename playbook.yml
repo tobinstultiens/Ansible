@@ -30,7 +30,8 @@
         path: "{{ docker_nas }}"
         src: "{{ nas_user }}@{{ nas_ip }}:/"
         fstype: fuse.sshfs
-        opts: "noauto,x-systemd.automount,_netdev,reconnect,identityfile=/home/tobins/.ssh/id_ed25519,allow_other,default_permissions"
+        opts: >-
+          noauto,x-systemd.automount,_netdev,reconnect,ServerAliveInterval=15,ServerAliveCountMax=3,identityfile=/home/tobins/.ssh/id_ed25519,allow_other,default_permissions
         boot: false
         state: present
       notify: Reboot for NAS mount
