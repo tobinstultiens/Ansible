@@ -1,0 +1,5 @@
+---
+# Pinned k3s release; bump it and re-run k3s.yml to upgrade.
+k3s_version: "v1.36.5+k3s1"
+# Where the kubeconfig ends up on the control machine
+k3s_local_kubeconfig: "{{ lookup('env', 'HOME') }}/.kube/homeserver.yaml"

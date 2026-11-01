@@ -7,7 +7,9 @@
       - key: "traefik.enable"
         value: "true"
       - key: "traefik.http.middlewares.authelia.forwardauth.address"
-        value: "http://authelia:9091/api/authz/forward-auth"
+        value: >-
+          {{ 'http://' ~ ansible_default_ipv4.address ~ ':' ~ k3s_authelia_nodeport
+             if authelia_on_k3s else 'http://authelia:9091' }}/api/authz/forward-auth
       - key: "traefik.http.middlewares.authelia.forwardauth.trustForwardHeader"
         value: "true"
       - key: "traefik.http.middlewares.authelia.forwardauth.authResponseHeaders"
@@ -29,6 +31,7 @@
   become: true
   vars_files:
     - ../vars/vault.yml
+    - ../vars/k3s.yml
 
   tasks:
     - name: Ensures traefik dir exists
@@ -50,6 +53,18 @@
         dest: "{{ traefik }}/traefik.yml"
         mode: "0600"
 
+    - name: Ensures traefik dynamic config dir exists
+      ansible.builtin.file:
+        path: "{{ traefik }}/dynamic"
+        state: directory
+        mode: "0755"
+
+    - name: Adding k3s routes
+      ansible.builtin.template:
+        src: ../local/traefik/k3s-routes.yml
+        dest: "{{ traefik }}/dynamic/k3s-routes.yml"
+        mode: "0644"
+
     - name: Create proxy network
       community.docker.docker_network:
         name: proxy
@@ -68,6 +83,7 @@
           - /var/run/docker.sock:/var/run/docker.sock
           - "{{ traefik }}/acme.json:/letsencrypt/acme.json"
           - "{{ traefik }}{{ traefik_file }}:/etc/traefik/traefik.yml"
+          - "{{ traefik }}/dynamic:/etc/traefik/dynamic:ro"
         networks:
           - name: proxy
         labels: "{{ labels | items2dict }}"

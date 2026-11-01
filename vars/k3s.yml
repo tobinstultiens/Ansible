@@ -1,0 +1,21 @@
+---
+# Bridge between the docker stack and the k3s cluster (homelab-gitops).
+# Docker traefik keeps 80/443 and TLS, and forwards the hosts below to k3s traefik.
+
+# NodePorts on the k3s side, must match homelab-gitops platform/traefik/values.yaml
+# and workloads/authelia/service.yaml
+k3s_ingress_nodeport: 30080
+k3s_authelia_nodeport: 30091
+
+# <name>.DOMAIN routed to k3s; auth: true puts authelia forward-auth in front.
+# Rollout order: argocd, cooking, grocy, then lldap + authelia (auth: false).
+k3s_routes: []
+#  - { name: argocd, auth: true }
+#  - { name: cooking, auth: false }
+
+# Docker containers replaced by k3s, removed by docker/retired.yml.
+# Also drop their import from deploy.yml.
+k3s_retired_containers: []
+
+# Flip once authelia runs in k3s: docker traefik's forward-auth then calls the NodePort.
+authelia_on_k3s: false

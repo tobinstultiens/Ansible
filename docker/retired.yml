@@ -1,0 +1,13 @@
+---
+- name: Remove containers that moved to k3s
+  hosts: all
+  become: true
+  vars_files:
+    - ../vars/k3s.yml
+
+  tasks:
+    - name: Remove migrated container
+      community.docker.docker_container:
+        name: "{{ item }}"
+        state: absent
+      loop: "{{ k3s_retired_containers }}"

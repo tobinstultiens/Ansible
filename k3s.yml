@@ -1,0 +1,8 @@
+---
+- name: Install k3s
+  hosts: home
+  become: true
+  vars_files:
+    - vars/vault.yml
+  roles:
+    - k3s

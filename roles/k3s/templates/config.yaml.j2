@@ -1,0 +1,10 @@
+# Managed by Ansible (roles/k3s)
+write-kubeconfig-mode: "0600"
+tls-san:
+  - "{{ ansible_default_ipv4.address }}"
+  - "k3s.{{ DOMAIN }}"
+# Traefik is deployed by Argo CD (homelab-gitops/platform/traefik) and the node has
+# no spare IP for the service load balancer, docker traefik holds 80/443.
+disable:
+  - traefik
+  - servicelb

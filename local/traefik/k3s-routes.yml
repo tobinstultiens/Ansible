@@ -1,0 +1,24 @@
+---
+# Managed by Ansible: hosts that live in k3s (vars/k3s.yml)
+http:
+{% if k3s_routes %}
+  routers:
+{% for route in k3s_routes %}
+    k3s-{{ route.name }}:
+      rule: "Host(`{{ route.name }}.{{ DOMAIN }}`)"
+      entryPoints:
+        - https
+      service: k3s
+      tls:
+        certResolver: letsencrypt
+{% if route.auth | default(false) %}
+      middlewares:
+        - authelia@docker
+{% endif %}
+{% endfor %}
+{% endif %}
+  services:
+    k3s:
+      loadBalancer:
+        servers:
+          - url: "http://{{ ansible_default_ipv4.address }}:{{ k3s_ingress_nodeport }}"

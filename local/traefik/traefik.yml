@@ -34,6 +34,10 @@ providers:
   docker:
     network: proxy
     exposedByDefault: false
+  # Routes to the k3s cluster, see local/traefik/k3s-routes.yml
+  file:
+    directory: /etc/traefik/dynamic
+    watch: true
 
 certificatesResolvers:
   letsencrypt:
