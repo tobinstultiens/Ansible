@@ -12,26 +12,46 @@
       ansible.builtin.package:
         update_cache: true
 
-    - name: Ensure sshfs is installed.
+    - name: Ensure nfs-utils is installed.
       ansible.builtin.package:
-        name: sshfs
+        name: nfs-utils
         state: present
+
+    # SSHFS funnels every container through one encrypted SFTP session, which
+    # the NAS (ARM, 642 MB RAM) can't keep up with. Replaced by NFS below.
+    - name: Remove old NAS SSHFS mount from fstab
+      ansible.posix.mount:
+        path: "{{ docker_nas }}"
+        state: absent_from_fstab
+
+    # Containers still hold the old mount, so detach it lazily; the reboot
+    # handler below cleans up whatever is left.
+    - name: Detach old NAS SSHFS mount # noqa: command-instead-of-module
+      ansible.builtin.shell: |
+        unit=$(systemd-escape -p --suffix=automount {{ docker_nas }})
+        if systemctl is-active -q "$unit" || mountpoint -q {{ docker_nas }}; then
+          systemctl stop "$unit" || true
+          while mountpoint -q {{ docker_nas }}; do umount -l {{ docker_nas }}; done
+          systemctl daemon-reload
+          echo detached
+        fi
+      register: sshfs_detach
+      changed_when: "'detached' in sshfs_detach.stdout"
+      notify: Reboot for NAS mount
 
     - name: Ensure NAS mount point directory exists
       ansible.builtin.file:
-        path: "{{ docker_nas }}"
+        path: "{{ docker_nas_dir }}"
         state: directory
         mode: "0755"
 
-      # Run sshfs locally on the machine TODO: Look into doing this automatically
-
-    - name: Configure NAS SSHFS mount in fstab
+    - name: Configure NAS NFS mount in fstab
       ansible.posix.mount:
-        path: "{{ docker_nas }}"
-        src: "{{ nas_user }}@{{ nas_ip }}:/"
-        fstype: fuse.sshfs
+        path: "{{ docker_nas_dir }}"
+        src: "{{ nas_ip }}:{{ nas_nfs_export }}"
+        fstype: nfs
         opts: >-
-          noauto,x-systemd.automount,_netdev,reconnect,ServerAliveInterval=15,ServerAliveCountMax=3,identityfile=/home/tobins/.ssh/id_ed25519,allow_other,default_permissions
+          noauto,x-systemd.automount,_netdev,nfsvers=4.0,hard,noatime,rsize=131072,wsize=131072
         boot: false
         state: present
       notify: Reboot for NAS mount

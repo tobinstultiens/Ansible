@@ -13,6 +13,12 @@
     - ../vars/traefik_labels.yml
 
   tasks:
+    - name: Ensure local incomplete downloads directory exists
+      ansible.builtin.file:
+        path: "{{ docker_incomplete_dir }}"
+        state: directory
+        mode: "0755"
+
     - name: Start qbittorrent
       community.docker.docker_container:
         image: lscr.io/linuxserver/qbittorrent:latest
@@ -25,6 +31,7 @@
         volumes:
           - "{{ docker_config_dir }}/{{ service }}:/config"
           - "{{ docker_nas_dir }}/Download:/downloads"
+          - "{{ docker_incomplete_dir }}:/incomplete"
         restart_policy: unless-stopped
         network_mode: container:vpn
         labels: "{{ (traefik_default_labels + service_labels) | items2dict }}"

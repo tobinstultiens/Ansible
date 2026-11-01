@@ -30,6 +30,10 @@ docker_config_dir: "/home/user/config"
 # Connection between nas and service
 docker_nas: "/mnt/nas"
 docker_nas_dir: "/mnt/nas/Location"
+# NFS export on the NAS, mounted at docker_nas_dir
+nas_nfs_export: "/volume1/Location"
+# Local disk for in-progress torrents (keeps hashing off the NAS)
+docker_incomplete_dir: "/home/user/incomplete"
 
 # VPN PIA
 VPN_USER: ""
