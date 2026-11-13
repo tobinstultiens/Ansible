@@ -1,0 +1,84 @@
+---
+# Meal planner server (github.com/tobinstultiens/mealplanner): API for the Android app plus the web client.
+# Public route, no Authelia: the Android app can't do forward-auth, so the server checks its own
+# bearer token (mealplanner_api_token). /health and the web page itself are open; /api needs the token.
+- name: Mealplanner
+  hosts: home
+  become: true
+  vars:
+    service: "mealplanner"
+    service_port: "8080"
+    service_labels: []
+    mealplanner_dir: "{{ docker_config_dir }}/{{ service }}"
+    # NEVO may not be redistributed, so it is never in the image: it is copied from this machine.
+    mealplanner_nevo_name: "NEVO2025_v9.0.csv"
+
+  vars_files:
+    - ../vars/vault.yml
+    - ../vars/traefik_labels.yml
+
+  tasks:
+    - name: Check the mealplanner API token is set
+      ansible.builtin.assert:
+        that: mealplanner_api_token | default('') | length >= 32
+        fail_msg: "Set mealplanner_api_token in vars/vault.yml (openssl rand -hex 32)."
+        quiet: true
+
+    # The container runs as 1000:1000, so it must own its data directory.
+    - name: Ensure mealplanner data dirs exist
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: "1000"
+        group: "1000"
+        mode: "0755"
+      loop:
+        - "{{ mealplanner_dir }}"
+        - "{{ mealplanner_dir }}/nevo"
+
+    - name: Copy the NEVO food table
+      ansible.builtin.copy:
+        src: "{{ mealplanner_nevo_csv }}"
+        dest: "{{ mealplanner_dir }}/nevo/{{ mealplanner_nevo_name }}"
+        owner: "1000"
+        group: "1000"
+        mode: "0644"
+      when: mealplanner_nevo_csv | default('') | length > 0
+
+    - name: Check the NEVO food table is on the server
+      ansible.builtin.stat:
+        path: "{{ mealplanner_dir }}/nevo/{{ mealplanner_nevo_name }}"
+      register: mealplanner_nevo
+
+    - name: Fail without the NEVO food table
+      ansible.builtin.fail:
+        msg: >-
+          {{ mealplanner_dir }}/nevo/{{ mealplanner_nevo_name }} is missing. Set mealplanner_nevo_csv in
+          vars/vault.yml to the CSV on this machine (mealplanner/data/nevo/{{ mealplanner_nevo_name }}).
+      when: not mealplanner_nevo.stat.exists
+
+    - name: Start mealplanner
+      community.docker.docker_container:
+        image: kick1999/mealplanner:latest
+        name: "{{ service }}"
+        user: "1000:1000"
+        env:
+          TZ: Europe/Amsterdam
+          HOME: /data
+          MEALPLANNER_API_TOKEN: "{{ mealplanner_api_token }}"
+          MEALPLANNER_DB_URL: "jdbc:sqlite:/data/mealplanner.db"
+          # Recipes are imported from the cooking site's repo, cloned here and refreshed every 6 hours.
+          COOKING_REPO_URL: "https://github.com/tobinstultiens/cooking.git"
+          COOKING_REPO_PATH: /data/cooking
+          NEVO_CSV_PATH: "/data/nevo/{{ mealplanner_nevo_name }}"
+        volumes:
+          - "{{ mealplanner_dir }}:/data"
+        restart_policy: "always"
+        networks:
+          - name: proxy
+        labels: "{{ (traefik_public_labels + service_labels) | items2dict }}"
+        healthcheck:
+          test: bash -c 'echo > /dev/tcp/localhost/8080'
+          interval: 30s
+          timeout: 15s
+          start_period: 60s

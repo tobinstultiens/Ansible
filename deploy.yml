@@ -24,6 +24,8 @@
   ansible.builtin.import_playbook: docker/authelia.yml
 - name: Cooking
   ansible.builtin.import_playbook: docker/cooking.yml
+- name: Mealplanner
+  ansible.builtin.import_playbook: docker/mealplanner.yml
 - name: Calibre web
   ansible.builtin.import_playbook: docker/calibre-web.yml
 - name: Calibre

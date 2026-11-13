@@ -298,3 +298,12 @@ endpoints:
       - "[STATUS] == 200"
     alerts:
       - type: discord
+
+  - name: Mealplanner
+    group: Home
+    url: http://mealplanner:8080/health
+    interval: 2m
+    conditions:
+      - "[STATUS] == 200"
+    alerts:
+      - type: discord
